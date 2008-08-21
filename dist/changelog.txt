@@ -1,0 +1,41 @@
+* = fixed; + = new; - = removed; dates = DD.MM.YY
+________________________________________________________________
+
+0.1.5
+  * 16.08.08 - Several selection fixes in the tileset (selecting near borders, etc)
+  * 16.08.08 - Sticky tileset selection should now properly show the rectangle after
+               finishing selecting
+  * 17.08.08 - Several predefined tile objects fixes
+0.1.4
+  * 13.08.08 - When creating a new sign, position defaults to the current
+               selection origin
+  * 13.08.08 - Correctly redraw the level when signs are created
+  * 14.08.08 - Several selection movement and creation fixes, should be even
+               MORE like the original editor now
+  * 15.08.08 - Read-only support for predefined tile objects:
+               They are read from the graaldir/tileobjects and
+               can be put into the selection by clicking on them
+0.1.3
+  * 09.08.08 - Fixed selecting of NPCs (you could flood fill through them)
+  + 09.08.08 - Clear selection when setting default tile in tileset
+  * 09.08.08 - Several minor NPC and tile selection fixes
+  + 10.08.08 - New "confirm changes" dialog
+  * 10.08.08 - Avoid infinite loops while recursing through directories
+  * 10.08.08 - Round tile selecting to nearest tile in the level, should make
+               it easier to select tiles (like in the original editor)
+  + 10.08.08 - Updated gtkmm version in the Windows installer to 2.12.7-1 (includes
+               a better open level dialog)
+  + 11.08.08 - Hide NPCs/Signs/Links functionality in new tool panel
+  + 11.08.08 - Preferences are now stored in the user config directory 
+               (~/.config/gonstruct on linux, Application Data\gonstruct on Windows)
+  * 12.08.08 - Tile selection and movement in both the level and tileset should be
+               smoother and more like the original editor now.
+0.1.2
+  * 02.08.08 - Fixed saving of levels with one-line sign texts
+  * 02.08.08 - Limit default value for creating new signs
+  + 08.08.08 - Created Installer for Windows which includes the gtk/gtkmm runtime
+0.1.1
+  + 02.08.08 - Include missing gtksourceview DLL for the windows package
+  + 02.08.08 - Reordering of level tabs
+  * 02.08.08 - Reload images/cache when changing Graal directory
+  + 01.08.08 - Screenshot level functionality

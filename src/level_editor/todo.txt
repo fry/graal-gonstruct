@@ -1,0 +1,24 @@
+links
+-highlight links on the map when selecting them in the list
+
+todo
+-smoother tile movement
+-output tile array function
+-predefined npcs/tiles
+<GrowlZ> Off the top of my head, I am envisioning something like the NPC icon
+         that you can drag around to reposition and double-click to edit;
+         possibly a semi-translucent signpost
+-mng support
+-limit undo buffer (preferences)
+-flood fill with a set of tiles (put deleting tiles on scroll button)
+-icon on the edit npc menu to show whether the image exists or not
+-test level function? (save level & start graal client with the current level)
+-real icons for the toolbar
+...
+-lua scripting or perhaps javascript
+-rounded corners for selection rectangles!!!
+-gtksourceview language file for gscript2
+-check for running instances when directly loading a new level
+
+optimizations todo
+-encapsulate selection code

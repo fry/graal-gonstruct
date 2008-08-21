@@ -1,0 +1,6 @@
+Import('env')
+
+env.StaticLibrary('core', [
+	'csvparser.cpp',
+	'helper.cpp',
+	'preferences.cpp'])

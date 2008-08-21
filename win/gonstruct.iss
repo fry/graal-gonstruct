@@ -1,0 +1,130 @@
+; Thanks to the Glom guys from whom I stole this!
+; TODO use configure script to set version
+[Setup]
+AppName=Gonstruct
+AppVerName=Gonstruct 0.1.5
+DefaultDirName={pf}\Gonstruct
+DefaultGroupName=Gonstruct
+UninstallDisplayIcon={app}\bin\Gonstruct.exe
+Uninstallable=yes
+AppPublisher=#gscript on FreeNode
+AppPublisherURL=http://londeroth.org/~fry/gonstruct/
+AppVersion=0.1.5
+OutputBaseFilename=gonstruct-setup-0.1.5
+
+[Components]
+Name: "main"; Description: "Gonstruct"; Types: full compact custom; Flags: fixed
+
+[Tasks]
+Name: common; Description: "For all users"; Components: main; Flags: exclusive
+Name: user; Description: "For the current user only"; Components: main; Flags: exclusive unchecked
+
+[Icons]
+; Common task icons
+Name: "{commonprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\Gonstruct.exe"; Tasks: common
+Name: "{commonprograms}\{groupname}\readme"; Filename: "{app}\readme.html"; Tasks: common
+Name: "{commonprograms}\{groupname}\changelog"; Filename: "{app}\changelog.txt"; Tasks: common
+Name: "{commonprograms}\{groupname}\Uninstall Gonstruct"; Filename: "{uninstallexe}"; Tasks: common
+
+; User task icons
+Name: "{userprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\Gonstruct.exe"; Tasks: user
+Name: "{userprograms}\{groupname}\readme"; Filename: "{app}\readme.html"; Tasks: user
+Name: "{userprograms}\{groupname}\changelog"; Filename: "{app}\changelog.txt"; Tasks: user
+Name: "{userprograms}\{groupname}\Uninstall Gonstruct"; Filename: "{uninstallexe}"; Tasks: user
+
+[Files]
+; GTK+ & gtkmm
+Source: "bin\iconv.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\intl.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\jpeg62.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libatk-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libatkmm-1.6-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libcairo-2.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libcairomm-1.0-1.dll"; DestDir:"{app}\bin"; Components: main
+;Source: "bin\libfontconfig-1.dll"; DestDir:"{app}\bin"; Components: main
+;Source: "bin\libfreetype-6.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgdk-win32-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgdkmm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgdk_pixbuf-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgio-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libglademm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libglib-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libglibmm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgmodule-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgobject-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgthread-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgtk-win32-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgtkmm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpango-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpangocairo-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpangoft2-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpangomm-1.4-1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpangowin32-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libpng12-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libsigc-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libtiff3.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libxml2.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\zlib1.dll"; DestDir:"{app}\bin"; Components: main
+
+; gtksourceview
+Source: "bin\libgtksourceview-2.0-0.dll"; DestDir: "{app}\bin"; Components: main
+
+; Gonstruct executable
+Source: "bin\Gonstruct.exe"; DestDir: "{app}\bin"; Components: main
+
+; Modules
+Source: "lib\gtk-2.0\2.10.0\immodules\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\immodules"; Components: main
+Source: "bin\gtk-query-immodules-2.0.exe"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
+
+Source: "lib\gtk-2.0\2.10.0\engines\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines"; Components: main
+
+Source: "lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\loaders"; Components: main
+Source: "bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
+
+Source: "share\themes\MS-Windows\*"; DestDir: "{app}\share\themes\MS-Windows"; Flags: recursesubdirs; Components: main
+Source: "etc\gtk-2.0\gtkrc"; DestDir: "{app}\etc\gtk-2.0"; Components: main
+Source: "querymodules.bat"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
+
+; GtkSourceView
+Source: "share\gtksourceview-2.0\language-specs\*"; DestDir: "{app}\share\gtksourceview-2.0\language-specs"; Components: main
+Source: "share\gtksourceview-2.0\styles\*"; DestDir: "{app}\share\gtksourceview-2.0\styles"; Components: main
+
+; readme
+Source: "readme.html"; DestDir: "{app}"; Components: main
+
+; changelog
+Source: "changelog.txt"; DestDir: "{app}"; Components: main
+
+[Dirs]
+Name: "{app}\etc\gtk-2.0";
+
+[Run]
+Filename: "{app}\bin\querymodules.bat"; StatusMsg: "Querying modules..."; Flags: runhidden
+Filename: "{app}\bin\Gonstruct.exe"; Description: "Launch Gonstruct"; Flags: shellexec postinstall
+Filename: "{app}\readme.html"; Description: "Open Readme"; Flags: shellexec skipifdoesntexist postinstall skipifsilent
+Filename: "{app}\changelog.txt"; Description: "Open Changelog"; Flags: shellexec skipifdoesntexist postinstall skipifsilent
+
+[Code]
+{ Remove generated files not generated by the installer }
+
+procedure CurUninstallStepChanged(CurUninstallStep: TUninstallStep);
+begin
+	if CurUninstallStep = usUninstall then
+	begin
+		DeleteFile(ExpandConstant('{app}') + '\etc\gtk-2.0\gtk.immodules');
+		DeleteFile(ExpandConstant('{app}') + '\etc\gtk-2.0\gdk-pixbuf.loaders');
+		DeleteFile(ExpandConstant('{app}') + 'preferences');
+	end;
+end;
+
+procedure DeinitializeUninstall();
+begin
+	{ Remove main dir and etc/ which are not removed automatically,
+          probably because of the querymodule files not installed by the
+          installer }
+	DelTree(ExpandConstant('{app}') + '\etc', TRUE, TRUE, TRUE);
+	DelTree(ExpandConstant('{app}'), TRUE, FALSE, FALSE);
+end;
+
+
+
