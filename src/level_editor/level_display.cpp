@@ -407,8 +407,14 @@ void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
     << "Tile (" << tx << ", " << ty << "): "
     << m_level->tiles.get_tile(tx, ty).index;
   m_signal_status_update(str.str());
-  if (in_selection(x, y)) {
-    // TODO: change mouse cursor when hovering
+
+  // change cursor
+  if ((in_selection(x, y) || m_dragging) && !m_selecting) {
+    Gdk::Cursor new_cursor(Gdk::FLEUR);
+    get_window()->set_cursor(new_cursor);
+  } else {
+    Gdk::Cursor new_cursor(Gdk::ARROW);
+    get_window()->set_cursor(new_cursor);
   }
 }
 
@@ -473,9 +479,13 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
         const int npc_height = npc_image->get_height();
         if (x >= npc_x && x < npc_x + npc_width
             && y >= npc_y && y < npc_y + npc_height) {
+          // NPC clicked; deselect previous selection
+          if (has_selection()) {
+            save_selection();
+            clear_selection();
+          }
           selected_npc = iter;
           set_selection(*selected_npc);
-          m_selecting = true;
           break;
         }
       }
@@ -484,8 +494,6 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
 
     // Did we click on a selection?
     if (in_selection(x, y)) {
-      // start dragging
-
       if (event->button == 3) {
         // write selection if we right click
         if (npc_selected()) {
@@ -502,8 +510,9 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
         }
       } else if (!npc_selected() && selection.empty()) {
         lift_selection();
-      }
+      } 
 
+      // start dragging
       m_dragging = true;
       m_drag_mouse_x = x - m_select_x;
       m_drag_mouse_y = y - m_select_y;
@@ -514,7 +523,6 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
         // If not and we already have one, copy selection to map and clear selection
         save_selection();
         clear_selection();
-        selected_npc = m_level->npcs.end();
       } else {
        // flood fill if right clicked
         if (event->button == 3) {
