@@ -26,6 +26,15 @@ namespace Graal {
       Gtk::ComboBoxEntryText m_groups;
       Gtk::ComboBoxEntryText m_objects;
 
+      Gtk::Label m_group_label;
+      Gtk::Button m_group_new;
+      Gtk::Button m_group_delete;
+      Gtk::Button m_group_save;
+
+      Gtk::Label m_object_label;
+      Gtk::Button m_object_new;
+      Gtk::Button m_object_delete;
+
       tiles_display m_display;
 
       preferences& m_preferences;

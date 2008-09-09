@@ -4,9 +4,15 @@
 using namespace Graal;
 
 level_editor::tile_objects_display::tile_objects_display(level_editor::preferences& preferences)
-    : m_preferences(preferences) {
-  pack_start(m_groups, Gtk::PACK_SHRINK);
-  pack_start(m_objects, Gtk::PACK_SHRINK);
+    : m_preferences(preferences), m_group_label("Group:"), m_object_label("Object:") {
+  Gtk::Table& table = *Gtk::manage(new Gtk::Table(5, 4));
+  pack_start(table, Gtk::PACK_SHRINK);
+
+
+  table.attach(m_group_label, 0, 1, 0, 1, Gtk::FILL|Gtk::SHRINK, Gtk::FILL|Gtk::SHRINK, 0, 3);
+  table.attach(m_groups, 0, 2, 1, 2, Gtk::EXPAND | Gtk::SHRINK | Gtk::FILL);
+  table.attach(m_object_label, 0, 1, 2, 3, Gtk::FILL|Gtk::SHRINK, Gtk::FILL|Gtk::SHRINK, 0, 3);
+  table.attach(m_objects, 0, 2, 3, 4, Gtk::EXPAND | Gtk::SHRINK | Gtk::FILL);
 
   Gtk::Entry& groups_entry = *static_cast<Gtk::Entry*>(m_groups.get_child());
   groups_entry.set_editable(false);
@@ -17,6 +23,41 @@ level_editor::tile_objects_display::tile_objects_display(level_editor::preferenc
   Gtk::ScrolledWindow& scrolled = *Gtk::manage(new Gtk::ScrolledWindow());
   scrolled.add(m_display);
   pack_start(scrolled);
+
+  Gtk::Image* image;
+  int width, height;
+  Gtk::IconSize::lookup(Gtk::ICON_SIZE_BUTTON, width, height);
+
+  Gtk::AttachOptions btn_attach_option = Gtk::FILL;
+  // Group new
+  image = Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU));
+  m_group_new.set_size_request(width + 4, height + 4);
+  m_group_new.add(*image);
+  table.attach(m_group_new, 2, 3, 1, 2, btn_attach_option);
+
+  // Group delete
+  image = Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_MENU));
+  m_group_delete.set_size_request(width + 4, height + 4);
+  m_group_delete.add(*image);
+  table.attach(m_group_delete, 3, 4, 1, 2, btn_attach_option);
+
+  // Group save
+  image = Gtk::manage(new Gtk::Image(Gtk::Stock::SAVE, Gtk::ICON_SIZE_MENU));
+  m_group_save.set_size_request(width + 4, height + 4);
+  m_group_save.add(*image);
+  table.attach(m_group_save, 4, 5, 1, 2, btn_attach_option);
+
+  // Object new
+  image = Gtk::manage(new Gtk::Image(Gtk::Stock::NEW, Gtk::ICON_SIZE_MENU));
+  m_object_new.set_size_request(width + 4, height + 4);
+  m_object_new.add(*image);
+  table.attach(m_object_new, 2, 3, 3, 4, btn_attach_option);
+
+  // Object delete
+  image = Gtk::manage(new Gtk::Image(Gtk::Stock::DELETE, Gtk::ICON_SIZE_MENU));
+  m_object_delete.set_size_request(width + 4, height + 4);
+  m_object_delete.add(*image);
+  table.attach(m_object_delete, 3, 4, 3, 4, btn_attach_option);
 
   m_groups.signal_changed().connect_notify(
       sigc::mem_fun(this, &tile_objects_display::on_group_changed), true);
