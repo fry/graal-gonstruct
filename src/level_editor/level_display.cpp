@@ -486,7 +486,7 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
           }
           selected_npc = iter;
           set_selection(*selected_npc);
-          break;
+          //break;
         }
       }
     }
