@@ -413,8 +413,7 @@ void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
     Gdk::Cursor new_cursor(Gdk::FLEUR);
     get_window()->set_cursor(new_cursor);
   } else {
-    Gdk::Cursor new_cursor(Gdk::ARROW);
-    get_window()->set_cursor(new_cursor);
+    get_window()->set_cursor();
   }
 }
 
