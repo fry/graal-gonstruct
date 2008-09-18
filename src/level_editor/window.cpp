@@ -299,6 +299,8 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::on_tileset_update));
   m_tile_objects.signal_tiles_selected().connect(
       sigc::mem_fun(this, &window::tiles_selected));
+  m_tile_objects.signal_create_tile_object().connect(
+      sigc::mem_fun(this, &window::get_current_tile_selection));
 
   std::cout << "Caching...";
   fs.update_cache();
@@ -812,4 +814,17 @@ void level_editor::window::on_hide_signs_toggled() {
 void level_editor::window::on_hide_links_toggled() {
   m_preferences.hide_links = m_hide_links.get_active();
   get_current_level_display()->queue_draw();
+}
+
+tile_buf level_editor::window::get_current_tile_selection() {
+  level_display& disp = *get_current_level_display();
+  tile_buf buf(disp.selection);
+  if (buf.empty()) {
+    disp.lift_selection();
+    buf = disp.selection;
+    disp.undo();
+    return buf;
+  }
+
+  return tile_buf();
 }

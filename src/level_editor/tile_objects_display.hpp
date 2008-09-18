@@ -20,6 +20,8 @@ namespace Graal {
 
       typedef sigc::signal<void, tile_buf&, int, int> signal_tiles_selected_type;
       signal_tiles_selected_type& signal_tiles_selected();
+      typedef sigc::signal<tile_buf> signal_create_tile_object_type;
+      signal_create_tile_object_type& signal_create_tile_object();
       
       void on_mouse_pressed(GdkEventButton* event);
     protected:
@@ -42,7 +44,14 @@ namespace Graal {
       void on_group_changed();
       void on_object_changed();
 
+      void on_group_new_clicked();
+      void on_group_delete_clicked();
+      void on_group_save_clicked();
+      void on_object_new_clicked();
+      void on_object_delete_clicked();
+
       signal_tiles_selected_type m_signal_tiles_selected;
+      signal_create_tile_object_type m_signal_create_tile_object;
     };
   }
 }

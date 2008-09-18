@@ -39,6 +39,8 @@ namespace Graal {
       void tiles_selected(tile_buf& selection, int x, int y);
       void set_default_tile(int tile_index);
 
+      tile_buf get_current_tile_selection();
+
       bool save_current_page();
       bool save_current_page_as();
 

@@ -178,5 +178,33 @@ void level_editor::preferences::load_tile_objects() {
   }
 }
 
-void level_editor::preferences::save_tile_objects() {
+void level_editor::preferences::save_tile_objects(const std::string& group) {
+  boost::filesystem::path tile_objects_path(
+      boost::filesystem::path(graal_dir) / "tileobjects");
+  if (graal_dir.empty() || !boost::filesystem::is_directory(tile_objects_path))
+    return;
+
+  std::string file_name = "objects" + group + ".txt";
+  boost::filesystem::path group_file(tile_objects_path / file_name);
+  
+  std::ofstream stream(group_file.string().c_str());
+  stream << "GOBJSET01" << std::endl;
+
+  tile_object_group_type object_group = tile_object_groups[group];
+  tile_object_group_type::iterator it = object_group.begin(), end = object_group.end();
+
+  for (; it != end; ++it) {
+    tile_buf& buf = it->second;
+    stream << std::endl;
+    stream << "OBJECT " << buf.get_width() << " " << buf.get_height() << " "
+           << it->first << std::endl;
+    
+    for (int y = 0; y < buf.get_height(); ++y) {
+      for (int x = 0; x < buf.get_width(); ++x) {
+        stream << helper::format_base64(buf.get_tile(x, y).index);
+      }
+      stream << std::endl;
+    }
+    stream << "OBJECTEND" << std::endl;
+  }
 }

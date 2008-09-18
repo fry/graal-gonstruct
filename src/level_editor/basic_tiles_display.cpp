@@ -90,5 +90,12 @@ void level_editor::basic_tiles_display::set_surface_buffers() {
   );
 }
 
+void level_editor::basic_tiles_display::clear() {
+  get_tile_buf().clear();
+  set_surface_buffers();
+  update_all();
+  queue_draw();
+}
+
 /*bool level_editor::basic_tiles_display::on_expose_event(GdkEventExpose* event) {
 }*/

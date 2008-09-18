@@ -19,6 +19,9 @@ namespace Graal {
       void set_tile_size(int tile_width, int tile_height);
       void set_tileset_surface(const Cairo::RefPtr<Cairo::Surface>& surface);
       void set_surface_buffers();
+
+      void clear();
+
       virtual tile_buf& get_tile_buf() = 0;
     protected:
       int m_tile_width, m_tile_height;
