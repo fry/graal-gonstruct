@@ -217,8 +217,12 @@ void level_editor::tile_objects_display::on_object_new_clicked() {
     dialog.show_all_children();
     dialog.add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
     if (dialog.run() == Gtk::RESPONSE_OK) {
+      // TODO: check for existing object first
       m_preferences.tile_object_groups[m_groups.get_active_text()][name.get_text()] = buf;
+      // Store active group name to restore afterwards
+      Glib::ustring group = m_groups.get_active_text();
       get();
+      m_groups.set_active_text(group);
       m_objects.set_active_text(name.get_text());
     }
   }
