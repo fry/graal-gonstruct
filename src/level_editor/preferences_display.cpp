@@ -1,4 +1,5 @@
 #include "preferences_display.hpp"
+#include <boost/filesystem.hpp>
 
 using namespace Graal::level_editor;
 
