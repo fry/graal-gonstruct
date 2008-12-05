@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "default_tile_display.hpp"
 #include "window.hpp"
 #include "helper.hpp"

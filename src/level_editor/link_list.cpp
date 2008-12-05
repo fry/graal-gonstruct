@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "link_list.hpp"
 #include "window.hpp"
 #include <boost/lexical_cast.hpp>

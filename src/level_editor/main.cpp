@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "window.hpp"
 #include "preferences.hpp"
 #include "preferences_display.hpp"

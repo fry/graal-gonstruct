@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "sign_list.hpp"
 #include "window.hpp"
 #include "helper.hpp"

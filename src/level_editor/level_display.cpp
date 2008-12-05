@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "level_display.hpp"
 #include "npc_list.hpp"
 #include "helper.hpp"

@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "helper.hpp"
 
 using namespace Graal;

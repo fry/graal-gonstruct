@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "tile_objects_display.hpp"
 #include "level.hpp"
 

@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "level.hpp"
 #include "helper.hpp"
 #include <fstream>

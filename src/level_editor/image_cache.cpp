@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include <cstddef>
 #include <algorithm>
 #include "image_cache.hpp"

@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "undo_buffer.hpp"
 
 using namespace Graal;

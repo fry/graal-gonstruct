@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "preferences_display.hpp"
 
 using namespace Graal::level_editor;

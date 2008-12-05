@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "tileset.hpp"
 
 using namespace Graal;

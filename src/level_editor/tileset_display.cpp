@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "tileset_display.hpp"
 #include "helper.hpp"
 #include <sstream>

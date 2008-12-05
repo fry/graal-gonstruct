@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "preferences.hpp"
 #include "helper.hpp"
 #include <fstream>

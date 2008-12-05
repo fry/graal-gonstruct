@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "undo_diffs.hpp"
 #include "level_display.hpp"
 

@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "basic_tiles_display.hpp"
 #include "helper.hpp"
 

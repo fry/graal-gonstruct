@@ -1,4 +1,3 @@
-#include "_precompiled.hpp"
 #include "window.hpp"
 #include "npc_list.hpp"
 #include "helper.hpp"
