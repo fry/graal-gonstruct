@@ -1,11 +1,5 @@
 Import('env', 'install')
 
-local_env = env.Clone()
-local_env.Append(
-    LIBPATH = ['level_editor', 'core'],
-    LIBS = ['level_editor', 'core'])
-
-install.AddProgram(local_env.Program('#dist/gonstruct', []))
-
+env.Append(CPPPATH = '.')
 SConscript(['core/SConscript', 'level_editor/SConscript'],
            exports = ['env', 'install'])

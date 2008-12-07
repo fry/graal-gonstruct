@@ -1,4 +1,5 @@
 Import('env', 'install')
+env = env.Clone() # What happens here, stays here.
 
 images = []
 
@@ -30,28 +31,35 @@ def config_cpp_build(target, source, env):
 env.AlwaysBuild(
   env.Command('config.cpp', 'config.cpp.in', config_cpp_build))
 
-env.StaticLibrary('level_editor', [
-    'basic_tiles_display.cpp',
-    'config.cpp',
-    'copy_cache.cpp',
-    'default_tile_display.cpp',
-    'filesystem.cpp',
-    'helper.cpp',
-    'image_cache.cpp',
-    'image_data.cpp',
-    'level.cpp',
-    'level_display.cpp',
-    'link_list.cpp',
-    'main.cpp',
-    'npc_list.cpp',
-    '_precompiled.cpp',
-    'preferences.cpp',
-    'preferences_display.cpp',
-    'sign_list.cpp',
-    'tile_objects_display.cpp',
-    'tileset.cpp',
-    'tileset_display.cpp',
-    'tileset_list.cpp',
-    'undo_buffer.cpp',
-    'undo_diffs.cpp',
-    'window.cpp'])
+env.Append(LIBS = ['core', 'boost_system', 'boost_filesystem'],
+           CPPPATH = '.',
+           LIBPATH = '#src/core')
+
+env.ParseConfig('pkg-config --cflags --libs gtkmm-2.4 gthread-2.0 gtksourceview-2.0')
+
+src_files = Split("""
+  basic_tiles_display.cpp
+  config.cpp
+  copy_cache.cpp
+  default_tile_display.cpp
+  filesystem.cpp
+  helper.cpp
+  image_cache.cpp
+  image_data.cpp
+  level.cpp
+  level_display.cpp
+  link_list.cpp
+  main.cpp
+  npc_list.cpp
+  preferences.cpp
+  preferences_display.cpp
+  sign_list.cpp
+  tile_objects_display.cpp
+  tileset.cpp
+  tileset_display.cpp
+  tileset_list.cpp
+  undo_buffer.cpp
+  undo_diffs.cpp
+  window.cpp""")
+
+env.Program('#dist/gonstruct', src_files)
