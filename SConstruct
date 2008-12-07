@@ -27,10 +27,12 @@ env.Append(CXXFLAGS = '-ansi -Wall -Wextra '
                       '-Wno-unused-parameter -Wtrigraphs -Wsign-promo')
 
 if ARGUMENTS.get('debug', '0') == '0':
+  print "Building release build"
   env.Append(CXXFLAGS = '-O3')
   if env['PLATFORM'] == 'win32':
     env.Append(LINKFLAGS = '-mwindows')
 else:
+  print "Building debug build"
   env.Append(CXXFLAGS = '-g -O0')
 
 env.Alias('gonstruct', 'src/level_editor')

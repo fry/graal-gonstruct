@@ -17,6 +17,12 @@ image_data = \
 env.SideEffect('image_data.hpp', image_data)
 env.Depends(image_data, 'make_images.rb')
 
+if env['PLATFORM'] == 'win32':
+  resource_file = \
+    env.Command('resource.o', '#/win/gonstruct.rc', 'windres -i $SOURCE -o $TARGET')
+  env.Depends(resource_file, '#/win/gonstruct.rc')
+
+
 def config_cpp_build(target, source, env):
   values = install.GetConfig()
   values['version_string'] = env['VERSION']
@@ -60,6 +66,7 @@ src_files = Split("""
   tileset_list.cpp
   undo_buffer.cpp
   undo_diffs.cpp
-  window.cpp""")
+  window.cpp
+  resource.o""")
 
 env.Program('#dist/gonstruct', src_files)
