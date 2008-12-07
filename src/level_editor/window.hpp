@@ -48,7 +48,7 @@ namespace Graal {
 
       window(preferences& _prefs);
 
-      ~window();
+      virtual ~window();
 
       tileset_display display_tileset;
       default_tile_display default_tile;
@@ -70,6 +70,7 @@ namespace Graal {
         Gtk::Button m_button;
       };
 
+      image_cache m_image_cache;
       preferences& m_preferences;
 
       link_list m_link_list;
@@ -118,8 +119,6 @@ namespace Graal {
       std::auto_ptr<level_display> create_level_display();
 
       boost::shared_ptr<level> m_level;
-
-      image_cache m_image_cache;
       
       tile_objects_display m_tile_objects;
 

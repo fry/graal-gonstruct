@@ -8,6 +8,7 @@ namespace Graal {
     class level_display;
     class basic_diff {
     public:
+      virtual ~basic_diff() {}
       virtual basic_diff* apply(level_display& target) = 0;
     };
 

@@ -25,6 +25,8 @@ namespace Graal {
       
       void on_mouse_pressed(GdkEventButton* event);
     protected:
+      preferences& m_preferences;
+
       Gtk::ComboBoxEntryText m_groups;
       Gtk::ComboBoxEntryText m_objects;
 
@@ -38,8 +40,6 @@ namespace Graal {
       Gtk::Button m_object_delete;
 
       tiles_display m_display;
-
-      preferences& m_preferences;
 
       void on_group_changed();
       void on_object_changed();

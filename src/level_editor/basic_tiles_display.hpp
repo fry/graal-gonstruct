@@ -23,6 +23,8 @@ namespace Graal {
       void clear();
 
       virtual tile_buf& get_tile_buf() = 0;
+
+      virtual ~basic_tiles_display() {}
     protected:
       int m_tile_width, m_tile_height;
 

@@ -15,6 +15,9 @@ namespace Graal {
 
       void update_cache();
       bool get_path(const std::string& file_name, boost::filesystem::path& path_found);
+
+      /*void load(const boost::filesystem::path& path);
+      void save(const boost::filesystem::path& path);*/
     protected:
       cache_type m_cache;
       preferences& m_preferences;

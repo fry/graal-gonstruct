@@ -537,8 +537,8 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
 
       // otherwise select tiles only with left mouse button
       if (!npc_selected() && event->button == 1) {   
-        m_select_x = to_tiles_x(x) * m_tile_width;
-        m_select_y = to_tiles_y(y) * m_tile_height;
+        m_select_x = tile_x * m_tile_width;
+        m_select_y = tile_y * m_tile_height;
 
         m_select_width = 0;
         m_select_height = 0;

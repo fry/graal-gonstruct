@@ -10,6 +10,7 @@ namespace Graal {
     class default_tile_display: public basic_tiles_display {
     public:
       default_tile_display();
+      virtual ~default_tile_display() {}
 
       void set_tile(int index) {
         m_tile_buf.get_tile(0, 0).index = index;

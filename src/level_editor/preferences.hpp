@@ -53,6 +53,8 @@ namespace Graal {
 
       void load_tile_objects();
       void save_tile_objects(const std::string& group);
+
+      virtual ~preferences() {}
     protected:
       virtual void serialize();
       virtual void deserialize();

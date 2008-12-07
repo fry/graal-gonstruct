@@ -4,18 +4,6 @@
 
 using namespace Graal;
 
-namespace {
-  struct equivalent {
-    equivalent(const boost::filesystem::path& p) : path(p) {}
-
-    bool operator()(const boost::filesystem::path& p) {
-      return boost::filesystem::equivalent(path, p);
-    }
-
-    const boost::filesystem::path& path;
-  };
-}
-
 level_editor::filesystem::filesystem(preferences& _prefs): m_preferences(_prefs) {
 }
 
@@ -29,15 +17,11 @@ void level_editor::filesystem::update_cache() {
   for (;iter != end; iter++) {
     const boost::filesystem::path& path = iter->path();
     const boost::filesystem::file_status& status = iter->status();
-    if (status.type() == boost::filesystem::directory_file) {
-      if (std::find_if(visited.begin(), visited.end(), equivalent(path))
-          == visited.end()) {
-        visited.insert(path);
-      } else {
-        iter.no_push();
-      }
+    // ignore symlinks to avoid possible recursive linkage
+    if (status.type() == boost::filesystem::symlink_file) {
+      iter.no_push();
     } else {
-      m_cache[iter->path().leaf()] = iter->path();
+      m_cache[path.leaf()] = path;
     }
   }
 }
@@ -69,3 +53,5 @@ bool level_editor::filesystem::get_path(const std::string& file_name,
   return false;
 }
 
+/*void level_editor::filesystem::load(const boost::filesystem::path& path) {}
+void level_editor::filesystem::save(const boost::filesystem::path& path) {}*/

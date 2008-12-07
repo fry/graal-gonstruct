@@ -17,6 +17,7 @@ namespace Graal {
     class level_display: public basic_tiles_display {
     public:
       level_display(preferences& _prefs, image_cache& cache, int default_tile_index);
+      virtual ~level_display() {}
 
       void set_default_tile(int tile_index);
 
