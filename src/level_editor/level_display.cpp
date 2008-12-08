@@ -343,6 +343,7 @@ bool level_editor::level_display::on_expose_event(GdkEventExpose* event) {
 
   return true;
 }
+#include <iostream>
 
 void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
   int x, y;
@@ -355,21 +356,24 @@ void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
   const int ty = helper::bound_by(tile_y, 0, m_level->get_height() - 1);
 
   if (m_dragging) {
-    refresh_selection();
     const int delta_x = (to_tiles_x(x - m_drag_mouse_x) - to_tiles_x(m_select_x)) * m_tile_width;
     const int delta_y = (to_tiles_y(y - m_drag_mouse_y) - to_tiles_y(m_select_y)) * m_tile_height;
-    //const int delta_x = tile_x * m_tile_width - (m_select_x + m_drag_mouse_x);
-    //const int delta_y = tile_y * m_tile_height - (m_select_y + m_drag_mouse_y);
 
-    m_select_x += delta_x;
-    m_select_y += delta_y;
+    const int new_select_x = m_select_x + delta_x;
+    const int new_select_y = m_select_y + delta_y;
 
     // move npc if selected
     if (npc_selected()) {
-      selected_npc->x = to_tiles_x(m_select_x);
-      selected_npc->y = to_tiles_y(m_select_y);
+      selected_npc->x = new_select_x / m_tile_width;
+      selected_npc->y = new_select_y / m_tile_height;
     }
 
+    // refresh old area
+    refresh_selection();
+
+    m_select_x = new_select_x;
+    m_select_y = new_select_y;
+    // refresh new area
     refresh_selection();
 
   } else if (m_selecting) {
