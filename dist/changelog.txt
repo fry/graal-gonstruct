@@ -1,6 +1,13 @@
 * = fixed; + = new; - = removed; dates = DD.MM.YY
 ________________________________________________________________
 
+0.1.6
+  * 09.09.08 - NPC selection fixes
+  + 18.09.08 - Implemented creating, deleting and saving of predefined tile objects
+  * 05.12.08 - Fixed the SConstruct file for Windows, it should now be used to compile
+               the repository on both Windows and Linux (see repository changelog)
+  * 07.12.08 - Improved Graal directory caching by a lot
+  * 08.12.08 - Minor fixes to NPC dragging near the level border
 0.1.5
   * 16.08.08 - Several selection fixes in the tileset (selecting near borders, etc)
   * 16.08.08 - Sticky tileset selection should now properly show the rectangle after
