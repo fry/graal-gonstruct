@@ -2,15 +2,15 @@
 ; TODO use configure script to set version
 [Setup]
 AppName=Gonstruct
-AppVerName=Gonstruct 0.1.5
+AppVerName=Gonstruct 0.1.6
 DefaultDirName={pf}\Gonstruct
 DefaultGroupName=Gonstruct
 UninstallDisplayIcon={app}\bin\Gonstruct.exe
 Uninstallable=yes
 AppPublisher=#gscript on FreeNode
 AppPublisherURL=http://londeroth.org/~fry/gonstruct/
-AppVersion=0.1.5
-OutputBaseFilename=gonstruct-setup-0.1.5
+AppVersion=0.1.6
+OutputBaseFilename=gonstruct-setup-0.1.6
 
 [Components]
 Name: "main"; Description: "Gonstruct"; Types: full compact custom; Flags: fixed
@@ -65,6 +65,7 @@ Source: "bin\libsigc-2.0-0.dll"; DestDir:"{app}\bin"; Components: main
 Source: "bin\libtiff3.dll"; DestDir:"{app}\bin"; Components: main
 Source: "bin\libxml2.dll"; DestDir:"{app}\bin"; Components: main
 Source: "bin\zlib1.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgiomm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
 
 ; gtksourceview
 Source: "bin\libgtksourceview-2.0-0.dll"; DestDir: "{app}\bin"; Components: main
@@ -73,12 +74,12 @@ Source: "bin\libgtksourceview-2.0-0.dll"; DestDir: "{app}\bin"; Components: main
 Source: "bin\Gonstruct.exe"; DestDir: "{app}\bin"; Components: main
 
 ; Modules
-Source: "lib\gtk-2.0\2.10.0\immodules\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\immodules"; Components: main
+;Source: "lib\gtk-2.0\2.10.0\immodules\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\immodules"; Components: main
 Source: "bin\gtk-query-immodules-2.0.exe"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
 
 Source: "lib\gtk-2.0\2.10.0\engines\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines"; Components: main
 
-Source: "lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\loaders"; Components: main
+;Source: "lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\loaders"; Components: main
 Source: "bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
 
 Source: "share\themes\MS-Windows\*"; DestDir: "{app}\share\themes\MS-Windows"; Flags: recursesubdirs; Components: main
