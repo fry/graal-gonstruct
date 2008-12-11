@@ -66,7 +66,9 @@ src_files = Split("""
   tileset_list.cpp
   undo_buffer.cpp
   undo_diffs.cpp
-  window.cpp
-  resource.o""")
+  window.cpp""")
+
+if env['PLATFORM'] == 'win32':
+  src_files += ['resource.o']
 
 env.Program('#dist/gonstruct', src_files)
