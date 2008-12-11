@@ -11,7 +11,7 @@ env = Environment(
   BUILDERS = {'Svg' : svg_builder},
   tools = ['g++', 'mingw'])
 
-env.Append(VERSION = "0.1.5")
+env.Append(VERSION = "0.1.6")
 opts = Options(ARGUMENTS)
 
 installer.AddOptions(opts)
@@ -36,4 +36,5 @@ else:
   env.Append(CXXFLAGS = '-g -O0')
 
 env.Alias('gonstruct', 'src/level_editor')
+
 SConscript(['src/SConscript'], exports = ['env', 'install'])
