@@ -2,15 +2,15 @@
 ; TODO use configure script to set version
 [Setup]
 AppName=Gonstruct
-AppVerName=Gonstruct 0.1.6
+AppVerName=Gonstruct %(version_string)s
 DefaultDirName={pf}\Gonstruct
 DefaultGroupName=Gonstruct
 UninstallDisplayIcon={app}\bin\Gonstruct.exe
 Uninstallable=yes
 AppPublisher=#gscript on FreeNode
 AppPublisherURL=http://londeroth.org/~fry/gonstruct/
-AppVersion=0.1.6
-OutputBaseFilename=gonstruct-setup-0.1.6
+AppVersion=%(version_string)s
+OutputBaseFilename=gonstruct-setup-%(version_string)s
 
 [Components]
 Name: "main"; Description: "Gonstruct"; Types: full compact custom; Flags: fixed

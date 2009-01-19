@@ -1,6 +1,17 @@
 Import('env', 'install')
 env = env.Clone() # What happens here, stays here.
 
+def config_build(target, source, env):
+  values = install.GetConfig()
+  values['version_string'] = env['VERSION']
+
+  for t,s in zip(target,source):
+    source_file = file(str(s), 'r')
+    target_file = file(str(t), 'w')
+    target_file.write(source_file.read() % values)
+    target_file.close()
+    source_file.close()
+
 images = []
 
 images.append(env.Svg('#/dist/images/no-img.png',      'no-img'))
@@ -21,21 +32,12 @@ if env['PLATFORM'] == 'win32':
   resource_file = \
     env.Command('resource.o', '#/win/gonstruct.rc', 'windres -i $SOURCE -o $TARGET')
   env.Depends(resource_file, '#/win/gonstruct.rc')
+  env.AlwaysBuild(
+    env.Command('#/win/gonstruct.iss', '#/win/gonstruct.iss.in', config_build))
 
-
-def config_cpp_build(target, source, env):
-  values = install.GetConfig()
-  values['version_string'] = env['VERSION']
-
-  for t, s in zip(target, source):
-    source_file = file(str(s), 'r')
-    target_file = file(str(t), 'w')
-    target_file.write(source_file.read() % values)
-    target_file.close()
-    source_file.close()
 
 env.AlwaysBuild(
-  env.Command('config.cpp', 'config.cpp.in', config_cpp_build))
+  env.Command('config.cpp', 'config.cpp.in', config_build))
 
 env.Append(LIBS = ['core', 'boost_system', 'boost_filesystem'],
            CPPPATH = '.',
