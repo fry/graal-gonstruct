@@ -11,7 +11,7 @@ env = Environment(
   BUILDERS = {'Svg' : svg_builder},
   tools = ['g++', 'mingw'])
 
-env.Append(VERSION = "0.1.6")
+env.Append(VERSION = "0.1.7")
 opts = Options(ARGUMENTS)
 
 installer.AddOptions(opts)
