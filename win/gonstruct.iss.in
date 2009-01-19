@@ -5,7 +5,7 @@ AppName=Gonstruct
 AppVerName=Gonstruct %(version_string)s
 DefaultDirName={pf}\Gonstruct
 DefaultGroupName=Gonstruct
-UninstallDisplayIcon={app}\bin\Gonstruct.exe
+UninstallDisplayIcon={app}\bin\gonstruct.exe
 Uninstallable=yes
 AppPublisher=#gscript on FreeNode
 AppPublisherURL=http://londeroth.org/~fry/gonstruct/
@@ -21,13 +21,13 @@ Name: user; Description: "For the current user only"; Components: main; Flags: e
 
 [Icons]
 ; Common task icons
-Name: "{commonprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\Gonstruct.exe"; Tasks: common
+Name: "{commonprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\gonstruct.exe"; Tasks: common
 Name: "{commonprograms}\{groupname}\readme"; Filename: "{app}\readme.html"; Tasks: common
 Name: "{commonprograms}\{groupname}\changelog"; Filename: "{app}\changelog.txt"; Tasks: common
 Name: "{commonprograms}\{groupname}\Uninstall Gonstruct"; Filename: "{uninstallexe}"; Tasks: common
 
 ; User task icons
-Name: "{userprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\Gonstruct.exe"; Tasks: user
+Name: "{userprograms}\{groupname}\Gonstruct"; Filename: "{app}\bin\gonstruct.exe"; Tasks: user
 Name: "{userprograms}\{groupname}\readme"; Filename: "{app}\readme.html"; Tasks: user
 Name: "{userprograms}\{groupname}\changelog"; Filename: "{app}\changelog.txt"; Tasks: user
 Name: "{userprograms}\{groupname}\Uninstall Gonstruct"; Filename: "{uninstallexe}"; Tasks: user
@@ -71,7 +71,7 @@ Source: "bin\libgiomm-2.4-1.dll"; DestDir:"{app}\bin"; Components: main
 Source: "bin\libgtksourceview-2.0-0.dll"; DestDir: "{app}\bin"; Components: main
 
 ; Gonstruct executable
-Source: "bin\Gonstruct.exe"; DestDir: "{app}\bin"; Components: main
+Source: "bin\gonstruct.exe"; DestDir: "{app}\bin"; Components: main
 
 ; Modules
 ;Source: "lib\gtk-2.0\2.10.0\immodules\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\immodules"; Components: main
@@ -101,7 +101,7 @@ Name: "{app}\etc\gtk-2.0";
 
 [Run]
 Filename: "{app}\bin\querymodules.bat"; StatusMsg: "Querying modules..."; Flags: runhidden
-Filename: "{app}\bin\Gonstruct.exe"; Description: "Launch Gonstruct"; Flags: shellexec postinstall
+Filename: "{app}\bin\gonstruct.exe"; Description: "Launch Gonstruct"; Flags: shellexec postinstall
 Filename: "{app}\readme.html"; Description: "Open Readme"; Flags: shellexec skipifdoesntexist postinstall skipifsilent
 Filename: "{app}\changelog.txt"; Description: "Open Changelog"; Flags: shellexec skipifdoesntexist postinstall skipifsilent
 
