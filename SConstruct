@@ -33,7 +33,7 @@ if ARGUMENTS.get('debug', '0') == '0':
     env.Append(LINKFLAGS = '-mwindows')
 else:
   print "Building debug build"
-  env.Append(CXXFLAGS = '-g -O0')
+  env.Append(CXXFLAGS = '-g -O0 -D DEBUG')
 
 env.Alias('gonstruct', 'src/level_editor')
 

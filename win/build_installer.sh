@@ -70,7 +70,7 @@ mkdir -p installer/share/gtksourceview-2.0/styles || exit
 cp -R share/gtksourceview-2.0/styles/ installer/share/gtksourceview-2.0 || exit
 
 echo "Copying Gonstruct distribution files..."
-cp ../dist/Gonstruct.exe installer/bin || exit
+cp ../dist/gonstruct.exe installer/bin || exit
 cp ../dist/readme.html installer || exit
 cp ../dist/changelog.txt installer || exit
 cp gonstruct.iss installer || exit
