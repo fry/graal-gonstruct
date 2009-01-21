@@ -328,7 +328,6 @@ level_editor::window::~window() {
 void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::Surface>& surface) {
   m_tile_objects.set_tileset_surface(surface);
   default_tile.set_tileset_surface(surface);
-  default_tile.update_all();
   if (m_nb_levels.get_n_pages() > 0) {
     get_current_level_display()->set_tileset_surface(surface);
   }
@@ -588,7 +587,7 @@ void level_editor::window::on_action_new() {
   try {
     std::auto_ptr<level_display> display(create_level_display());
     // update tileset here to make sure the level connected to the tileset
-    display_tileset.update_tileset("");
+    //display_tileset.update_tileset("");
     display->new_level(default_tile.get_tile());
     create_new_page(*Gtk::manage((display.release())), "new");
     set_level_buttons(true);
@@ -686,7 +685,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path) 
 
   try {
     std::auto_ptr<level_display> display(create_level_display());
-    display_tileset.update_tileset(file_path.leaf());
+    //display_tileset.update_tileset(file_path.leaf());
     display->load_level(file_path);
     create_new_page(*Gtk::manage(display.release()), file_path.leaf());
     set_level_buttons(true);
@@ -696,8 +695,10 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path) 
 }
 
 void level_editor::window::create_new_page(level_display& display, const std::string& name) {
+  
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
+  
   tab_label* label = Gtk::manage(new tab_label(name));
   label->close_event().connect(sigc::bind(
     sigc::mem_fun(this, &level_editor::window::on_close_level_clicked),
@@ -707,6 +708,8 @@ void level_editor::window::create_new_page(level_display& display, const std::st
       sigc::mem_fun(*label, &tab_label::set_label));
   display.signal_unsaved_status_changed().connect(
       sigc::mem_fun(*label, &tab_label::set_unsaved_status));
+
+  // TODO: Somehow prevent double on_switch_page here (on append_page and set_current_page)
   m_nb_levels.append_page(*scrolled, *label);
   m_nb_levels.set_tab_reorderable(*scrolled, true);
   m_nb_levels.show_all_children();

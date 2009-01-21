@@ -10,6 +10,7 @@ level_editor::edit_tileset::edit_tileset()
 : Gtk::Dialog("Edit Tileset", true, false), m_table(2, 5) {
   add_button(Gtk::Stock::OK, Gtk::RESPONSE_OK);
   add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+  set_border_width(16);
 
   m_label_image.set_text("Image:");
   m_table.attach(m_label_image, 0, 1, 0, 1);

@@ -1,5 +1,6 @@
 #include "basic_tiles_display.hpp"
 #include "helper.hpp"
+#include <iostream>
 
 using namespace Graal;
 
@@ -19,7 +20,7 @@ void level_editor::basic_tiles_display::set_tileset_surface(
 }
 
 void level_editor::basic_tiles_display::update_all() {
-  if (!m_surface)
+  if (!m_surface || !m_tileset_surface)
     return;
 
   Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(m_surface);
@@ -34,7 +35,7 @@ void level_editor::basic_tiles_display::update_all() {
 
 void level_editor::basic_tiles_display::update_tiles(int x, int y,
                                                     int width, int height) {
-  if (!m_surface)
+  if (!m_surface || !m_tileset_surface)
     return;
 
   Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(m_surface);
@@ -57,13 +58,14 @@ void level_editor::basic_tiles_display::update_tile(Cairo::RefPtr<Cairo::Context
   if (!m_tileset_surface)
     return;
 
+  //std::cout << "update tile" << std::endl;
   ct->save();
     ct->translate(x * m_tile_width, y * m_tile_height);
     ct->rectangle(0, 0, m_tile_width, m_tile_height);
     ct->clip();
 
-    int tile_x = -(m_tile_width * helper::get_tile_x(_tile.index));
-    int tile_y = -(m_tile_height * helper::get_tile_y(_tile.index));
+    const int tile_x = -(m_tile_width * helper::get_tile_x(_tile.index));
+    const int tile_y = -(m_tile_height * helper::get_tile_y(_tile.index));
     ct->set_source(
       m_tileset_surface,
       tile_x,

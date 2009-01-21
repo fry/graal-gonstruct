@@ -3,6 +3,9 @@
 
 #include <string>
 #include <sstream>
+#ifdef DEBUG
+  #include <iostream>
+#endif
 
 namespace Graal {
   namespace helper {

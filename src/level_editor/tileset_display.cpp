@@ -71,10 +71,9 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
     main = m_image_cache.get_image(main_iter->name);
   }
   //std::cout << "creating surface" << std::endl;
-  m_surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
-    main->get_width(),
-    main->get_height()
-  );
+  const int main_width = main->get_width();
+  const int main_height = main->get_height();
+  m_surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32, main_width, main_height);
 
   Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(m_surface);
   cr->set_source(main, 0, 0);
@@ -96,13 +95,9 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
     }
   }
 
-  set_size_request(
-    main->get_width(),
-    main->get_height()
-  );
+  set_size_request(main_width, main_height);
 
   queue_draw();
-
   // Fire signal to users
   m_signal_tileset_updated(m_surface);
 }

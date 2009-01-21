@@ -16,10 +16,14 @@ namespace Graal {
       void update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile, int x, int y);
       void update_tile(Cairo::RefPtr<Cairo::Context>& ct, int x, int y);
 
+      // Calls update_all
       void set_tile_size(int tile_width, int tile_height);
+      // Calls update_all
       void set_tileset_surface(const Cairo::RefPtr<Cairo::Surface>& surface);
+      // Doesn't call update_all
       void set_surface_buffers();
 
+      // Calls update_all
       void clear();
 
       virtual tile_buf& get_tile_buf() = 0;

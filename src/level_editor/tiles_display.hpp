@@ -3,6 +3,7 @@
 
 #include "basic_tiles_display.hpp"
 #include "level.hpp"
+#include <iostream>
 
 namespace Graal {
   namespace level_editor {
