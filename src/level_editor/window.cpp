@@ -640,6 +640,13 @@ bool level_editor::window::save_current_page_as() {
   dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
   dialog.add_button("Save", Gtk::RESPONSE_OK);
 
+  level_display* disp = get_current_level_display();
+  boost::filesystem::path path = disp->get_level_path();
+  if (path.empty())
+    dialog.set_current_name("new.nw");
+  else
+    dialog.set_filename(path.string());
+
   Gtk::FileFilter filter;
   filter.add_pattern("*.nw");
   filter.set_name("Graal Level (*.nw)");
