@@ -7,6 +7,7 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/scoped_ptr.hpp>
+#include <boost/filesystem/convenience.hpp>
 
 void set_default_preferences(Graal::level_editor::preferences& prefs) {
   // Default tileset
@@ -54,7 +55,9 @@ int main(int argc, char* argv[]) {
   boost::filesystem::path preferences_path;
   preferences_path = Glib::get_user_config_dir();
   preferences_path = preferences_path / "gonstruct";
-  boost::filesystem::create_directory(preferences_path);
+  
+  // Make sure all directories to this path exist
+  boost::filesystem::create_directories(preferences_path);
 
   prefs.load(preferences_path / "preferences");
   set_default_preferences(prefs);

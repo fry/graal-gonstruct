@@ -1,5 +1,5 @@
 Import('env', 'install')
 
-env.Append(CPPPATH = '.')
+env.Append(CPPPATH = ['#/src'], LIBPATH = ['#/src/core'])
 SConscript(['core/SConscript', 'level_editor/SConscript'],
            exports = ['env', 'install'])

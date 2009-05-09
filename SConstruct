@@ -35,6 +35,11 @@ else:
   print "Building debug build"
   env.Append(CXXFLAGS = '-g -O0 -D DEBUG')
 
+# add default include/lib directories on darwin
+if env['PLATFORM'] == 'darwin':
+  env.Append(CPPPATH = ['/opt/local/include'],
+             LIBPATH = ['/opt/local/libs'])
+
 env.Alias('gonstruct', 'src/level_editor')
 
 SConscript(['src/SConscript'], exports = ['env', 'install'])

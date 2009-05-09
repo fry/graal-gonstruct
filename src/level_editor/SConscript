@@ -39,7 +39,7 @@ if env['PLATFORM'] == 'win32':
 env.AlwaysBuild(
   env.Command('config.cpp', 'config.cpp.in', config_build))
 
-env.Append(LIBS = ['core', 'boost_system', 'boost_filesystem'],
+env.Append(LIBS = ['core', 'boost_system-mt', 'boost_filesystem-mt'],
            CPPPATH = '.',
            LIBPATH = '#src/core')
 
