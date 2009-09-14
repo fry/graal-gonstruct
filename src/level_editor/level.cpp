@@ -5,8 +5,10 @@
 #include <boost/filesystem/path.hpp>
 #include <string>
 
-// Fill layer 0 with fill_tile
-Graal::level::level(int fill_tile): m_unique_npc_id_counter(0), m_fill_tile(fill_tile) {}
+Graal::level::level(int fill_tile): m_unique_npc_id_counter(0), m_fill_tile(fill_tile) {
+  // Always create one layer
+  create_tiles(0);
+}
 
 inline int Graal::level::get_width() const {
   return 64;
@@ -65,7 +67,7 @@ Graal::tile_buf& Graal::level::create_tiles(int layer, bool fill, bool overwrite
 }
 
 bool Graal::level::tiles_exist(int layer) {
-  if (layers.size() < layer + 1)
+  if (get_layer_count() < layer + 1)
     return false;
 
   Graal::tile_buf& tiles = layers[layer];
@@ -78,6 +80,10 @@ Graal::tile_buf& Graal::level::get_tiles(int layer) {
 
 const Graal::tile_buf& Graal::level::get_tiles(int layer) const {
   return layers[layer];
+}
+
+inline int Graal::level::get_layer_count() const {
+  return layers.size();
 }
 
 namespace {
@@ -119,6 +125,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       int layer = read<int>(file);
       std::string data = read<std::string>(file);
 
+      std::cout << "reading layer: " << layer << std::endl;
       Graal::tile_buf& tiles = level->create_tiles(layer, true, false);
 
       for (int i = 0; i < width * 2; i +=2) {
@@ -196,7 +203,7 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
   // white space separator
   std::string s = " ";
   // write tiles
-  for (int layer = 0; layer < level->layers.size(); layer ++) {
+  for (int layer = 0; layer < level->get_layer_count(); layer ++) {
     const Graal::tile_buf& tiles = level->get_tiles(layer);
     for (int y = 0; y < level->get_height(); y ++) {
       std::string data;

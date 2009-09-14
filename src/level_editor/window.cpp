@@ -271,6 +271,11 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::on_hide_links_toggled));
   tools.pack_start(m_hide_links, Gtk::PACK_SHRINK);
 
+  // Layer selection
+  m_spin_layer.signal_changed().connect_notify(
+      sigc::mem_fun(this, &window::on_layer_changed));
+  tools.pack_start(m_spin_layer, Gtk::PACK_SHRINK);
+
   m_nb_toolset.append_page(tools, "Tools");
   // tile objects
   m_nb_toolset.append_page(m_tile_objects, "Tile Objects");
@@ -340,6 +345,7 @@ void level_editor::window::set_level_buttons(bool enabled) {
   m_hide_signs.set_sensitive(enabled);
   m_hide_links.set_sensitive(enabled);
   m_tile_objects.set_sensitive(enabled);
+  m_spin_layer.set_sensitive(enabled);
 }
 
 void level_editor::window::set_default_tile(int tile_index) {
@@ -362,8 +368,12 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 
 // change tileset to the level's one when the page changes
 void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
-  display_tileset.update_tileset(get_nth_level_display(page_num)->get_level_path().leaf());
-  
+  level_display* display = get_nth_level_display(page_num);
+  display_tileset.update_tileset(display->get_level_path().leaf());
+  m_spin_layer.set_range(0, display->get_level()->get_layer_count() - 1);
+  m_spin_layer.set_value(0);
+  m_spin_layer.set_increments(1, 1);
+
   if (m_nb_levels.get_n_pages() > 0) {
     m_link_list.get();
     m_npc_list.get();
@@ -824,6 +834,14 @@ void level_editor::window::on_hide_signs_toggled() {
 void level_editor::window::on_hide_links_toggled() {
   m_preferences.hide_links = m_hide_links.get_active();
   get_current_level_display()->queue_draw();
+}
+
+void level_editor::window::on_layer_changed() {
+  level_display* display = get_current_level_display();
+  int layer = m_spin_layer.get_value_as_int();
+  std::cout << "layer change: " << layer << std::endl;
+  std::cout << display->get_level()->layers[layer].get_width() << "x" << display->get_level()->layers[layer].get_height() << std::endl;
+  display->set_active_layer(layer);
 }
 
 tile_buf level_editor::window::get_current_tile_selection() {

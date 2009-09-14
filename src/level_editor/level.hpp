@@ -110,6 +110,8 @@ namespace Graal {
     const tile_buf& get_tiles(int layer = 0) const;
     bool tiles_exist(int layer = 0);
 
+    int get_layer_count() const;
+
     layers_list_type layers;
     link_list_type links;
     sign_list_type signs;

@@ -95,6 +95,8 @@ namespace Graal {
       void set_unsaved(bool new_unsaved);
       bool get_unsaved();
 
+      void set_active_layer(int layer);
+
       virtual tile_buf& get_tile_buf();
       Cairo::RefPtr<Cairo::Surface> render_level(
           bool show_selection_border = true, bool show_selection = true,
@@ -126,6 +128,7 @@ namespace Graal {
       int m_drag_mouse_x, m_drag_mouse_y;
 
     private:
+      bool m_active_layer;
       bool m_unsaved;
 
       Cairo::RefPtr<Cairo::Surface> m_tileset_surface;

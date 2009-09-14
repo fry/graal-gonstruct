@@ -114,6 +114,7 @@ namespace Graal {
       void on_hide_npcs_toggled();
       void on_hide_signs_toggled();
       void on_hide_links_toggled();
+      void on_layer_changed();
 
       bool close_all_levels();
       std::auto_ptr<level_display> create_level_display();
@@ -130,6 +131,8 @@ namespace Graal {
       Glib::RefPtr<Gtk::ActionGroup> m_level_actions;
       Glib::RefPtr<Gtk::UIManager> m_ui;
       //Glib::RefPtr<Gdk::Pixbuf> m_logo;
+
+      Gtk::SpinButton m_spin_layer;
     };
   }
 }
