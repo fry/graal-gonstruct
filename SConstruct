@@ -21,7 +21,7 @@ env.Help(opts.GenerateHelpText(env))
 env.Help("\nType: 'scons debug=1' to build the debug version.\n")
 
 # no -Wold-style-cast, -Wredundant-decls or -pedantic because of the gtkmm headers
-env.Append(CXXFLAGS = '-ansi -Wall -Wextra '
+env.Append(CXXFLAGS = '-Wall -Wextra '
                       '-Wfloat-equal -Wwrite-strings -Wpointer-arith '
                       '-Wcast-qual -Wctor-dtor-privacy -Woverloaded-virtual '
                       '-Wno-unused-parameter -Wtrigraphs -Wsign-promo')

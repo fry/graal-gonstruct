@@ -476,7 +476,7 @@ void level_editor::window::on_action_prefs() {
 void level_editor::window::on_action_about() {
   Gtk::AboutDialog dialog;
   dialog.set_name("Gonstruct");
-  dialog.set_version(config::version_string); // TODO: put version somewhere central
+  dialog.set_version(config::version_string);
   dialog.set_comments("An alternative Graal Online level editor");
 
   dialog.set_copyright("Copyright \302\251 2008 "
@@ -771,6 +771,7 @@ level_editor::level_display* level_editor::window::get_current_level_display() {
   return get_nth_level_display(m_nb_levels.get_current_page());
 }
 
+// Update the tileset of all level displays that start with prefix
 void level_editor::window::update_matching_level_displays(const std::string& prefix) {
   level_display* display;
   for (int i = 0; i < m_nb_levels.get_n_pages(); ++i) {

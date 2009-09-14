@@ -95,6 +95,7 @@ namespace Graal {
     typedef std::list<link> link_list_type;
     typedef std::list<sign> sign_list_type;
     typedef std::list<npc> npc_list_type;
+    typedef std::vector<tile_buf> layers_list_type;
 
     int get_width() const;
     int get_height() const;
@@ -104,12 +105,18 @@ namespace Graal {
     level::npc_list_type::iterator get_npc(int id);
     void delete_npc(int id);
 
-    tile_buf tiles;
+    tile_buf& create_tiles(int layer = 0, bool fill = true, bool overwrite = false);
+    tile_buf& get_tiles(int layer = 0);
+    const tile_buf& get_tiles(int layer = 0) const;
+    bool tiles_exist(int layer = 0);
+
+    layers_list_type layers;
     link_list_type links;
     sign_list_type signs;
     npc_list_type npcs;
   protected:
     int m_unique_npc_id_counter;
+    int m_fill_tile;
   };
 
   level* load_nw_level(const boost::filesystem::path& path);

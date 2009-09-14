@@ -5,21 +5,14 @@
 #include <boost/filesystem/path.hpp>
 #include <string>
 
-Graal::level::level(int fill_tile): m_unique_npc_id_counter(0) {
-  tiles.resize(get_width(), get_height());
+// Fill layer 0 with fill_tile
+Graal::level::level(int fill_tile): m_unique_npc_id_counter(0), m_fill_tile(fill_tile) {}
 
-  for (int x = 0; x < get_width(); x ++) {
-    for (int y = 0; y < get_height(); y ++) {
-      tiles.get_tile(x, y).index = fill_tile;
-    }
-  }
-}
-
-int Graal::level::get_width() const {
+inline int Graal::level::get_width() const {
   return 64;
 }
 
-int Graal::level::get_height() const {
+inline int Graal::level::get_height() const {
   return 64;
 }
 
@@ -48,6 +41,43 @@ Graal::level::npc_list_type::iterator Graal::level::get_npc(int id) {
 
 void Graal::level::delete_npc(int id) {
   npcs.erase(get_npc(id));
+}
+
+Graal::tile_buf& Graal::level::create_tiles(int layer, bool fill, bool overwrite) {
+  if (!tiles_exist(layer)) {
+    layers.resize(layer + 1);
+  } else if (!overwrite) {
+    return layers[layer];
+  }
+
+  tile_buf& tiles = layers[layer];
+  tiles.resize(get_width(), get_height());
+
+  if (fill) {
+    for (int x = 0; x < get_width(); x ++) {
+      for (int y = 0; y < get_height(); y ++) {
+        tiles.get_tile(x, y).index = m_fill_tile;
+      }
+    }
+  }
+
+  return tiles;
+}
+
+bool Graal::level::tiles_exist(int layer) {
+  if (layers.size() < layer + 1)
+    return false;
+
+  Graal::tile_buf& tiles = layers[layer];
+  return tiles.get_width() == get_width() && tiles.get_height() == get_height();
+}
+
+Graal::tile_buf& Graal::level::get_tiles(int layer) {
+  return layers[layer];
+}
+
+const Graal::tile_buf& Graal::level::get_tiles(int layer) const {
+  return layers[layer];
 }
 
 namespace {
@@ -86,14 +116,16 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       int start_x = read<int>(file);
       int start_y = read<int>(file);
       int width = read<int>(file);
-      /* int layer = */ read<int>(file); // TODO: layers
+      int layer = read<int>(file);
       std::string data = read<std::string>(file);
+
+      Graal::tile_buf& tiles = level->create_tiles(layer, true, false);
 
       for (int i = 0; i < width * 2; i +=2) {
         int tile_index = helper::parse_base64(data.substr(i, 2));
         int x = start_x + i/2;
 
-        level->tiles.get_tile(x, start_y) = Graal::tile(tile_index);
+        tiles.get_tile(x, start_y) = Graal::tile(tile_index);
       }
     // read links
     } else if (type == "LINK") {
@@ -164,14 +196,17 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
   // white space separator
   std::string s = " ";
   // write tiles
-  for (int y = 0; y < level->get_height(); y ++) {
-    std::string data;
-    stream << "BOARD" << s << 0 << s << y << s << level->get_width() << s << 0; // x, y, width, layer // TODO: layers
-    for (int x = 0; x < level->get_width(); x ++) {
-      Graal::tile tile = level->tiles.get_tile(x, y);
-      data += helper::format_base64(tile.index);      
+  for (int layer = 0; layer < level->layers.size(); layer ++) {
+    const Graal::tile_buf& tiles = level->get_tiles(layer);
+    for (int y = 0; y < level->get_height(); y ++) {
+      std::string data;
+      stream << "BOARD" << s << 0 << s << y << s << level->get_width() << s << layer; // x, y, width, layer
+      for (int x = 0; x < level->get_width(); x ++) {
+        Graal::tile tile = tiles.get_tile(x, y);
+        data += helper::format_base64(tile.index);      
+      }
+      stream << s << data << std::endl;
     }
-    stream << s << data << std::endl;
   }
 
   // write links

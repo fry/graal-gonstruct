@@ -20,7 +20,7 @@ level_editor::basic_diff* level_editor::tile_diff::apply(
       const int tx = m_x + x;
       const int ty = m_y + y;
 
-      tile& t = target_level.tiles.get_tile(tx, ty);
+      tile& t = target_level.get_tiles().get_tile(tx, ty);
       buf.get_tile(x, y) = t;
       t = m_tiles.get_tile(x, y);
     }

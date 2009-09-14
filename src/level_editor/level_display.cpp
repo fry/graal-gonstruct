@@ -8,6 +8,7 @@
 
 using namespace Graal;
 
+// Convert cursor position to tile. Round to nearest tile.
 inline int level_editor::level_display::to_tiles_x(int x) {
   return (x + m_tile_width / 2) / m_tile_width;
   //return x / m_tile_width;
@@ -68,6 +69,7 @@ void level_editor::level_display::load_level(const boost::filesystem::path& file
   set_level(Graal::load_nw_level(file_path.string()));
 }
 
+// Takes ownership of the pointer
 void level_editor::level_display::set_level(Graal::level* _level) {
   m_level.reset(_level);
   selected_npc = m_level->npcs.end();
@@ -169,7 +171,7 @@ void level_editor::level_display::save_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level->tiles.get_tile(tx, ty);
+      tile& t = m_level->get_tiles().get_tile(tx, ty);
       buf.get_tile(x - offset_left, y - offset_top) = t;
       t = selection.get_tile(x, y);
       update_tile(context, t, tx, ty);
@@ -216,7 +218,7 @@ void level_editor::level_display::set_selection(const Graal::npc& npc) {
 }
 
 tile_buf& level_editor::level_display::get_tile_buf() {
-  return m_level->tiles;
+  return m_level->get_tiles();
 }
 
 Cairo::RefPtr<Cairo::Surface> level_editor::level_display::render_level(
@@ -343,7 +345,6 @@ bool level_editor::level_display::on_expose_event(GdkEventExpose* event) {
 
   return true;
 }
-#include <iostream>
 
 void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
   int x, y;
@@ -408,7 +409,7 @@ void level_editor::level_display::on_button_motion(GdkEventMotion* event) {
   std::ostringstream str;
   str
     << "Tile (" << tx << ", " << ty << "): "
-    << m_level->tiles.get_tile(tx, ty).index;
+    << m_level->get_tiles().get_tile(tx, ty).index;
   m_signal_status_update(str.str());
 
   // change cursor
@@ -450,7 +451,7 @@ void level_editor::level_display::on_button_pressed(GdkEventButton* event) {
 
       // set default tile
       if (!has_selection()) {
-        const int tile_index = m_level->tiles.get_tile(x/m_tile_width, y/m_tile_height).index;
+        const int tile_index = m_level->get_tiles().get_tile(x/m_tile_width, y/m_tile_height).index;
         m_signal_default_tile_changed.emit(tile_index);
       }
     }
@@ -629,7 +630,7 @@ void level_editor::level_display::lift_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level->tiles.get_tile(tx, ty);
+      tile& t = m_level->get_tiles().get_tile(tx, ty);
       selection.get_tile(x, y)
         = buf.get_tile(x - offset_left, y - offset_top)
         = t;
@@ -801,7 +802,7 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
   static int vec_y[] = { 0, -1, 0, 1};
 
   // the index of the tiles to fill
-  tile& start_tile = m_level->tiles.get_tile(tx, ty);
+  tile& start_tile = m_level->get_tiles().get_tile(tx, ty);
   int fill_index = start_tile.index;
   if (fill_with_index == fill_index)
     return;
@@ -839,7 +840,7 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
 
       if (current_tx >= 0 && current_tx < m_level->get_width() &&
           current_ty >= 0 && current_ty < m_level->get_height()) {
-        tile& adjacent_tile = m_level->tiles.get_tile(current_tx, current_ty);
+        tile& adjacent_tile = m_level->get_tiles().get_tile(current_tx, current_ty);
         if (adjacent_tile.index == fill_index) {
           queue.push(std::pair<int, int>(current_tx, current_ty));
           adjacent_tile.index = fill_with_index;
@@ -874,7 +875,7 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
       const int cx = start_x + x;
       const int cy = start_y + y;
       tile& current_tile = buffer.get_tile(x, y);
-      current_tile = m_level->tiles.get_tile(cx, cy);
+      current_tile = m_level->get_tiles().get_tile(cx, cy);
     }
   }
 

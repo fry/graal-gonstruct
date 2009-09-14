@@ -4,9 +4,9 @@
 using namespace Graal::level_editor;
 
 preferences_display::preferences_display(preferences& prefs)
-    : Gtk::Dialog("Preferences - Graal Level Editor"),
+    : Gtk::Dialog("Preferences - Gonstruct"),
       m_prefs(prefs),
-      m_pref_graaldir("Select Graal Directory - Graal Level Editor",
+      m_pref_graaldir("Select Graal Directory - Gonstruct",
                       Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER),
       m_pref_selection_border_while_dragging(
           "Show selection border while dragging"),
