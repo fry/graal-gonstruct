@@ -839,8 +839,7 @@ void level_editor::window::on_hide_links_toggled() {
 void level_editor::window::on_layer_changed() {
   level_display* display = get_current_level_display();
   int layer = m_spin_layer.get_value_as_int();
-  std::cout << "layer change: " << layer << std::endl;
-  std::cout << display->get_level()->layers[layer].get_width() << "x" << display->get_level()->layers[layer].get_height() << std::endl;
+
   display->set_active_layer(layer);
 }
 

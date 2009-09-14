@@ -128,7 +128,7 @@ namespace Graal {
       int m_drag_mouse_x, m_drag_mouse_y;
 
     private:
-      bool m_active_layer;
+      int m_active_layer;
       bool m_unsaved;
 
       Cairo::RefPtr<Cairo::Surface> m_tileset_surface;

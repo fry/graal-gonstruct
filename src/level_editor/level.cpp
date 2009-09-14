@@ -125,7 +125,6 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       int layer = read<int>(file);
       std::string data = read<std::string>(file);
 
-      std::cout << "reading layer: " << layer << std::endl;
       Graal::tile_buf& tiles = level->create_tiles(layer, true, false);
 
       for (int i = 0; i < width * 2; i +=2) {
