@@ -14,6 +14,7 @@
 #include "preferences_display.hpp"
 #include "copy_cache.hpp"
 #include "tile_objects_display.hpp"
+#include "toolbar_tools_display.hpp"
 
 namespace Graal {
   namespace level_editor {
@@ -55,6 +56,9 @@ namespace Graal {
       tileset_map_type tilesets;
       filesystem fs;
       boost::shared_ptr<basic_cache> copy_cache;
+
+      typedef sigc::signal<void, level_display&> signal_switch_level_display_type;
+      signal_switch_level_display_type& signal_switch_level_display();
     protected:
       class tab_label: public Gtk::HBox {
       public:
@@ -78,8 +82,9 @@ namespace Graal {
       npc_list m_npc_list;
       tileset_list m_tileset_list;
       preferences_display m_prefs_display;
+      toolbar_tools_display* m_tools;
+      tile_objects_display m_tile_objects;
 
-      Gtk::Button m_button_new_npc;
       Gtk::Statusbar m_status_bar;
       Gtk::Label m_status;
 
@@ -107,32 +112,23 @@ namespace Graal {
       void on_action_paste();
       void on_action_delete();
       void on_action_screenshot();
-      void on_new_npc_clicked();
       void on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display);
       void on_switch_page(GtkNotebookPage* page, guint page_num);
       void on_preferences_changed(preferences_display::preference_changes c);
-      void on_hide_npcs_toggled();
-      void on_hide_signs_toggled();
-      void on_hide_links_toggled();
-      void on_layer_changed();
 
       bool close_all_levels();
       std::auto_ptr<level_display> create_level_display();
 
       boost::shared_ptr<level> m_level;
-      
-      tile_objects_display m_tile_objects;
 
       Gtk::Notebook m_nb_levels;
       Gtk::Notebook m_nb_toolset;
 
-      Gtk::CheckButton m_hide_npcs, m_hide_signs, m_hide_links;
-
       Glib::RefPtr<Gtk::ActionGroup> m_level_actions;
       Glib::RefPtr<Gtk::UIManager> m_ui;
       //Glib::RefPtr<Gdk::Pixbuf> m_logo;
-
-      Gtk::SpinButton m_spin_layer;
+    private:
+      signal_switch_level_display_type m_signal_switch_level_display;
     };
   }
 }

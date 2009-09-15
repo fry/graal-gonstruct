@@ -66,6 +66,7 @@ src_files = Split("""
   tileset.cpp
   tileset_display.cpp
   tileset_list.cpp
+  toolbar_tools_display.cpp
   undo_buffer.cpp
   undo_diffs.cpp
   window.cpp""")

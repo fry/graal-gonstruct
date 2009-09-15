@@ -29,8 +29,7 @@ namespace Graal {
       }
 
       tileset add_tileset(const std::string& name, const std::string& prefix, int x, int y, bool main = false) {
-        tileset_list_type::iterator iter, end;
-        end = tilesets.end();
+        tileset_list_type::iterator iter, end = tilesets.end();
         for (iter = tilesets.begin(); iter != end; iter++) {
           if (iter->name == name &&
               iter->prefix == prefix &&

@@ -133,9 +133,7 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs), m_link_list(*this),
   m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
-  m_prefs_display(_prefs),
-  m_hide_npcs("Hide NPCs"), m_hide_signs("Hide signs"), m_hide_links("Hide links"),
-  m_tile_objects(_prefs) {
+  m_prefs_display(_prefs), m_tile_objects(_prefs) {
 
   set_title(std::string("Gonstruct ") + config::version_string);
 
@@ -252,31 +250,9 @@ level_editor::window::window(preferences& _prefs)
   tileset_scrolled.add(display_tileset);
   tileset_scrolled.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
   m_nb_toolset.append_page(tileset_scrolled, "Tileset");
-  // tools
-  Gtk::VBox& tools = *Gtk::manage(new Gtk::VBox());
-  m_button_new_npc.set_label("New NPC");
-  m_button_new_npc.signal_clicked().connect(
-      sigc::mem_fun(this, &window::on_new_npc_clicked));
-  tools.pack_start(m_button_new_npc, Gtk::PACK_SHRINK);
-
-  m_hide_npcs.signal_toggled().connect_notify(
-      sigc::mem_fun(this, &window::on_hide_npcs_toggled));
-  tools.pack_start(m_hide_npcs, Gtk::PACK_SHRINK);
-
-  m_hide_signs.signal_toggled().connect_notify(
-      sigc::mem_fun(this, &window::on_hide_signs_toggled));
-  tools.pack_start(m_hide_signs, Gtk::PACK_SHRINK);
-
-  m_hide_links.signal_toggled().connect_notify(
-      sigc::mem_fun(this, &window::on_hide_links_toggled));
-  tools.pack_start(m_hide_links, Gtk::PACK_SHRINK);
-
-  // Layer selection
-  m_spin_layer.signal_changed().connect_notify(
-      sigc::mem_fun(this, &window::on_layer_changed));
-  tools.pack_start(m_spin_layer, Gtk::PACK_SHRINK);
-
-  m_nb_toolset.append_page(tools, "Tools");
+  // tools TODO: need to construct it here because it requires the level_display switch signal
+  m_tools = Gtk::manage(new toolbar_tools_display(*this, _prefs));
+  m_nb_toolset.append_page(*m_tools, "Tools");
   // tile objects
   m_nb_toolset.append_page(m_tile_objects, "Tile Objects");
   //m_status_bar.pack_start(m_status, Gtk::PACK_SHRINK);
@@ -340,12 +316,8 @@ void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::Surface>
 
 void level_editor::window::set_level_buttons(bool enabled) {
   m_level_actions->set_sensitive(enabled);
-  m_button_new_npc.set_sensitive(enabled && !m_hide_npcs.get_active());
-  m_hide_npcs.set_sensitive(enabled);
-  m_hide_signs.set_sensitive(enabled);
-  m_hide_links.set_sensitive(enabled);
   m_tile_objects.set_sensitive(enabled);
-  m_spin_layer.set_sensitive(enabled);
+  m_tools->set_sensitive(enabled);
 }
 
 void level_editor::window::set_default_tile(int tile_index) {
@@ -370,9 +342,8 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
   level_display* display = get_nth_level_display(page_num);
   display_tileset.update_tileset(display->get_level_path().leaf());
-  m_spin_layer.set_range(0, display->get_level()->get_layer_count() - 1);
-  m_spin_layer.set_value(0);
-  m_spin_layer.set_increments(1, 1);
+
+  m_signal_switch_level_display(*display);
 
   if (m_nb_levels.get_n_pages() > 0) {
     m_link_list.get();
@@ -587,10 +558,6 @@ void level_editor::window::on_action_create_link() {
       current->queue_draw();
     }
   }
-}
-
-void level_editor::window::on_new_npc_clicked() {
-  get_current_level_display()->drag_new_npc();
 }
 
 void level_editor::window::on_action_new() {
@@ -817,32 +784,6 @@ void level_editor::window::set_status(const std::string& text) {
   m_status_bar.push(text);
 }
 
-void level_editor::window::on_hide_npcs_toggled() {
-  m_preferences.hide_npcs = m_hide_npcs.get_active();
-  m_button_new_npc.set_sensitive(!m_preferences.hide_npcs);
-  level_display& display = *get_current_level_display();
-  if (display.npc_selected())
-    display.clear_selection();
-  display.queue_draw();
-}
-
-void level_editor::window::on_hide_signs_toggled() {
-  m_preferences.hide_signs = m_hide_signs.get_active();
-  get_current_level_display()->queue_draw();
-}
-
-void level_editor::window::on_hide_links_toggled() {
-  m_preferences.hide_links = m_hide_links.get_active();
-  get_current_level_display()->queue_draw();
-}
-
-void level_editor::window::on_layer_changed() {
-  level_display* display = get_current_level_display();
-  int layer = m_spin_layer.get_value_as_int();
-
-  display->set_active_layer(layer);
-}
-
 tile_buf level_editor::window::get_current_tile_selection() {
   level_display& disp = *get_current_level_display();
   tile_buf buf(disp.selection);
@@ -854,4 +795,8 @@ tile_buf level_editor::window::get_current_tile_selection() {
   }
 
   return tile_buf();
+}
+
+level_editor::window::signal_switch_level_display_type& level_editor::window::signal_switch_level_display() {
+  return m_signal_switch_level_display;
 }
