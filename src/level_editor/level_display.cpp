@@ -124,7 +124,7 @@ void level_editor::level_display::update_selection() {
 
   for (int x = 0; x < selection.get_width(); ++x) {
     for (int y = 0; y < selection.get_height(); ++y) {
-      update_tile(cr, selection.get_tile(x, y), x, y);
+      basic_tiles_display::update_tile(cr, selection.get_tile(x, y), x, y);
     }
   }
 }
