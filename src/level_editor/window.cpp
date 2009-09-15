@@ -247,6 +247,9 @@ level_editor::window::window(preferences& _prefs)
   // toolset
   // tileset
   Gtk::ScrolledWindow& tileset_scrolled = *Gtk::manage(new Gtk::ScrolledWindow());
+  Gdk::Color color;
+  color.set_rgb_p(1, 0.6, 0.9);
+  display_tileset.modify_bg(Gtk::STATE_NORMAL, color);
   tileset_scrolled.add(display_tileset);
   tileset_scrolled.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
   m_nb_toolset.append_page(tileset_scrolled, "Tileset");

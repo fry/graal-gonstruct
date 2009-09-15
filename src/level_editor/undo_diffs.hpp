@@ -14,10 +14,11 @@ namespace Graal {
 
     class tile_diff : public basic_diff {
     public:
-      tile_diff(int x, int y, tile_buf& tiles);
+      tile_diff(int x, int y, tile_buf& tiles, int layer);
       virtual basic_diff* apply(Graal::level_editor::level_display& target);
 
     private:
+      int m_layer;
       int m_x, m_y;
       tile_buf m_tiles;
     };

@@ -102,6 +102,8 @@ namespace Graal {
           bool show_selection_border = true, bool show_selection = true,
           bool show_npcs = true, bool show_links = true, bool show_signs = true);
     protected:
+      // Overloaded for layer drawing
+      virtual void update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile, int x, int y);
       virtual bool on_expose_event(GdkEventExpose* event);
       void on_button_pressed(GdkEventButton* event);
       void on_button_released(GdkEventButton* event);

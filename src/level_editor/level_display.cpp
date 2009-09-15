@@ -67,12 +67,8 @@ void level_editor::level_display::set_default_tile(int tile_index) {
 }
 
 void level_editor::level_display::set_active_layer(int layer) {
-  bool changed = m_active_layer != layer;
-
   if (m_level->tiles_exist(layer)) {
     m_active_layer = layer;
-    if (changed)
-      update_all();
   }
 }
 
@@ -192,7 +188,7 @@ void level_editor::level_display::save_selection() {
   }
 
   // destroy buf
-  add_undo_diff(new tile_diff(sx + offset_left, sy + offset_top, buf));
+  add_undo_diff(new tile_diff(sx + offset_left, sy + offset_top, buf, m_active_layer));
 }
 
 void level_editor::level_display::delete_selection() {
@@ -656,7 +652,7 @@ void level_editor::level_display::lift_selection() {
   }
 
   // destroy buf
-  add_undo_diff(new tile_diff(sx + offset_left, sy + offset_right, buf));
+  add_undo_diff(new tile_diff(sx + offset_left, sy + offset_right, buf, m_active_layer));
 
   update_selection();
 }
@@ -901,11 +897,20 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
 
     buffer.get_tile(tx, ty).index = fill_index;
   }
-  add_undo_diff(new tile_diff(start_x, start_y, buffer));
+  add_undo_diff(new tile_diff(start_x, start_y, buffer, m_active_layer));
   update_all();
   queue_draw();
 }
 
 void level_editor::level_display::on_mouse_leave(GdkEventCrossing* event) {
   m_signal_status_update("");
+}
+
+void level_editor::level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile,
+                                              int x, int y) {
+  int layer_count = m_level->get_layer_count();
+  for (int i = 0; i < 2; i ++) {
+    tile_buf& tiles = m_level->get_tiles(i);
+    basic_tiles_display::update_tile(ct, tiles.get_tile(x, y), x, y);
+  }
 }

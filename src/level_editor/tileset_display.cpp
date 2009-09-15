@@ -78,8 +78,8 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
   Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(m_surface);
   // first, draw an opaque background so that alpha transparency does not
   // propagate through the tileset display into the level_display buffer
-  cr->set_source_rgb(1, 0.6, 0.9);
-  cr->paint();
+  /*cr->set_source_rgb(1, 0.6, 0.9);
+  cr->paint();*/
   cr->set_source(main, 0, 0);
   cr->paint();
 

@@ -57,6 +57,7 @@ void level_editor::toolbar_tools_display::on_layer_changed() {
 
   display->set_active_layer(layer);
 }
+
 void level_editor::toolbar_tools_display::on_switch_level_display(level_display& display) {
   m_spin_layer.set_range(0, display.get_level()->get_layer_count() - 1);
   m_spin_layer.set_value(0);
