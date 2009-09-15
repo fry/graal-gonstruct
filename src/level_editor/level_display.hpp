@@ -16,6 +16,7 @@ namespace Graal {
   namespace level_editor {
     class level_display: public basic_tiles_display {
     public:
+      typedef std::vector<bool> layer_visibility_list_type;
       level_display(preferences& _prefs, image_cache& cache, int default_tile_index);
       virtual ~level_display() {}
 
@@ -101,6 +102,9 @@ namespace Graal {
       Cairo::RefPtr<Cairo::Surface> render_level(
           bool show_selection_border = true, bool show_selection = true,
           bool show_npcs = true, bool show_links = true, bool show_signs = true);
+
+      void set_layer_visibility(int layer, bool visible);
+      bool get_layer_visibility(int layer);
     protected:
       // Overloaded for layer drawing
       virtual void update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile, int x, int y);
@@ -129,11 +133,11 @@ namespace Graal {
       // mouse offset from the selection origin
       int m_drag_mouse_x, m_drag_mouse_y;
 
+      layer_visibility_list_type m_layer_visibility;
     private:
       int m_active_layer;
       bool m_unsaved;
 
-      Cairo::RefPtr<Cairo::Surface> m_tileset_surface;
       int m_default_tile_index;
 
       image_cache& m_image_cache;

@@ -204,10 +204,10 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
   // write tiles
   for (int layer = 0; layer < level->get_layer_count(); layer ++) {
     const Graal::tile_buf& tiles = level->get_tiles(layer);
-    for (int y = 0; y < level->get_height(); y ++) {
+    for (int y = 0; y < tiles.get_height(); y ++) {
       std::string data;
       stream << "BOARD" << s << 0 << s << y << s << level->get_width() << s << layer; // x, y, width, layer
-      for (int x = 0; x < level->get_width(); x ++) {
+      for (int x = 0; x < tiles.get_width(); x ++) {
         Graal::tile tile = tiles.get_tile(x, y);
         data += helper::format_base64(tile.index);      
       }

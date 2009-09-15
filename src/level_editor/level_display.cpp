@@ -82,6 +82,12 @@ void level_editor::level_display::set_level(Graal::level* _level) {
   m_level.reset(_level);
   selected_npc = m_level->npcs.end();
 
+  // Show all layers initially
+  int layer_count = m_level->get_layer_count();
+  for (int i = 0; i < layer_count; i ++) {
+    set_layer_visibility(i, true);
+  }
+
   set_surface_buffers();
   update_all();
 }
@@ -908,9 +914,46 @@ void level_editor::level_display::on_mouse_leave(GdkEventCrossing* event) {
 
 void level_editor::level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile,
                                               int x, int y) {
-  int layer_count = m_level->get_layer_count();
-  for (int i = 0; i < 2; i ++) {
-    tile_buf& tiles = m_level->get_tiles(i);
-    basic_tiles_display::update_tile(ct, tiles.get_tile(x, y), x, y);
-  }
+  if (!m_tileset_surface)
+    return;
+
+  ct->save();
+    ct->translate(x * m_tile_width, y * m_tile_height);
+    ct->rectangle(0, 0, m_tile_width, m_tile_height);
+    ct->clip();
+
+    // draw background color first
+    ct->set_source_rgb(1, 0.6, 0.9);
+    ct->paint();
+
+    int layer_count = m_level->get_layer_count();
+    for (int i = 0; i < layer_count; i ++) {
+      if (m_layer_visibility[i]) {
+        tile_buf& tiles = m_level->get_tiles(i);
+        int tile_index = tiles.get_tile(x, y).index;
+
+        const int tile_x = -(m_tile_width * helper::get_tile_x(tile_index));
+        const int tile_y = -(m_tile_height * helper::get_tile_y(tile_index));
+        ct->set_source(
+          m_tileset_surface,
+          tile_x,
+          tile_y
+        );
+        ct->paint();
+      }
+    }
+  ct->restore();
+}
+
+void level_editor::level_display::set_layer_visibility(int layer, bool visible) {
+  if (layer >= m_layer_visibility.size())
+    m_layer_visibility.resize(layer + 1, false);
+  m_layer_visibility[layer] = visible;
+
+  update_all();
+}
+
+bool level_editor::level_display::get_layer_visibility(int layer) {
+  if (layer < m_layer_visibility.size())
+    return m_layer_visibility[layer];
 }
