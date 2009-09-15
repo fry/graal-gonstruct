@@ -3,3 +3,7 @@
 - try to refresh cache when a file is not found
 - search the level directory for files when a file is not found
 - moving NPCs in 0.5 increments (dragging while pressing CTRL?)
+
+- tile grid
+- shade unselected layers
+- put each layer on its own surface

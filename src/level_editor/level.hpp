@@ -110,6 +110,9 @@ namespace Graal {
     const tile_buf& get_tiles(int layer = 0) const;
     bool tiles_exist(int layer = 0);
 
+    void insert_layer(int index);
+    void delete_layer(int index);
+
     int get_layer_count() const;
 
     layers_list_type layers;

@@ -10,11 +10,11 @@ Graal::level::level(int fill_tile): m_unique_npc_id_counter(0), m_fill_tile(fill
   create_tiles(0);
 }
 
-inline int Graal::level::get_width() const {
+int Graal::level::get_width() const {
   return 64;
 }
 
-inline int Graal::level::get_height() const {
+int Graal::level::get_height() const {
   return 64;
 }
 
@@ -46,7 +46,7 @@ void Graal::level::delete_npc(int id) {
 }
 
 Graal::tile_buf& Graal::level::create_tiles(int layer, bool fill, bool overwrite) {
-  if (!tiles_exist(layer)) {
+  if (get_layer_count() < layer + 1) {
     layers.resize(layer + 1);
   } else if (!overwrite) {
     return layers[layer];
@@ -82,8 +82,17 @@ const Graal::tile_buf& Graal::level::get_tiles(int layer) const {
   return layers[layer];
 }
 
-inline int Graal::level::get_layer_count() const {
+int Graal::level::get_layer_count() const {
   return layers.size();
+}
+
+void Graal::level::insert_layer(int index) {
+  layers.insert(layers.begin() + index, Graal::tile_buf());
+  create_tiles(index, true, true);
+}
+
+void Graal::level::delete_layer(int index) {
+  layers.erase(layers.begin() + index);
 }
 
 namespace {
