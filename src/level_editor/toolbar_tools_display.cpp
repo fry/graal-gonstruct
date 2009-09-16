@@ -108,6 +108,7 @@ void level_editor::toolbar_tools_display::on_add_layer() {
   level_display& display = *m_window.get_current_level_display();
   display.get_level()->insert_layer(layer + 1);
   on_switch_level_display(display);
+  display.set_layer_visibility(layer + 1, true);
   display.update_all();
 
   m_spin_layer.set_value(layer + 1);
