@@ -15,6 +15,8 @@ void preferences::load(const boost::filesystem::path& path) {
     throw std::runtime_error("Can't read " + path.string());
   }
 
+  m_values.clear();
+
   std::string line, key, value;
   while (stream.good()) {
     std::getline(stream, line);
@@ -48,6 +50,7 @@ void preferences::save(const boost::filesystem::path& path) {
     throw std::runtime_error("Can't write " + path.string());
   }
 
+  m_values.clear();
   serialize();
   value_map_type::iterator iter, end;
   end = m_values.end();
