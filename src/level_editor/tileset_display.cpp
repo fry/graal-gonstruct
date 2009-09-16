@@ -48,6 +48,7 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
   level_editor::tileset_list_type::iterator iter, end;
   end = m_preferences.tilesets.end();
   main_iter = m_preferences.tilesets.end();
+
   for (iter = m_preferences.tilesets.begin();
        iter != end;
        iter ++) {
@@ -55,6 +56,7 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
     if (level_name.find(iter->prefix) != std::string::npos) {
       if (iter->main) {
         main_iter = iter;
+        break;
       }
     }
   }
@@ -67,7 +69,6 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
       "tileset list that matches the current level."
     );
   } else {
-    //std::cout << "loading tileset " << main_iter->name << std::endl;
     main = m_image_cache.get_image(main_iter->name);
   }
   //std::cout << "creating surface" << std::endl;
@@ -86,7 +87,7 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
        iter != end;
        iter ++) {
     // prefix matches level name
-    if (level_name.find(iter->prefix) != std::string::npos && iter != main_iter) {
+    if (level_name.find(iter->prefix) != std::string::npos && !iter->main) {
       Cairo::RefPtr<Cairo::ImageSurface> ts = m_image_cache.get_image(iter->name);
       // Ignore other matching main tilesets
       if (!iter->main) {
