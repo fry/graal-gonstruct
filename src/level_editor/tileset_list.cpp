@@ -140,13 +140,13 @@ void level_editor::tileset_list::on_edit_clicked() {
     dialog.get(_tileset);
     if (dialog.run() == Gtk::RESPONSE_OK) {
       std::string old_prefix = _tileset.prefix;
+      std::string old_name = _tileset.name;
       // save tileset
       dialog.set(_tileset);
-      if (old_prefix != _tileset.prefix) {
-        // update levels with the previous prefix and new levels
+      // update levels with the previous prefix and new levels
+      if (old_prefix != _tileset.prefix)
         m_window.update_matching_level_displays(old_prefix);
-        m_window.update_matching_level_displays(_tileset.prefix);
-      }
+      m_window.update_matching_level_displays(_tileset.prefix);
     }
 
     get();

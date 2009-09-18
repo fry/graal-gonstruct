@@ -52,7 +52,7 @@ mkdir -p installer/lib/gtk-2.0/2.10.0/immodules || exit
 cp bin/gtk-query-immodules-2.0.exe installer/bin || exit
 
 mkdir -p installer/lib/gtk-2.0/2.10.0/loaders || exit
-# cp -R lib/gtk-2.0/2.10.0/loaders installer/lib/gtk-2.0/2.10.0 || exit
+cp -R lib/gtk-2.0/2.10.0/loaders installer/lib/gtk-2.0/2.10.0 || exit
 cp bin/gdk-pixbuf-query-loaders.exe installer/bin || exit
 
 echo "Copying themes..." || exit
@@ -81,7 +81,7 @@ strip installer/bin/*.dll || exit
 strip installer/bin/*.exe || exit
 strip installer/lib/gtk-2.0/2.10.0/engines/*.dll || exit
 #strip installer/lib/gtk-2.0/2.10.0/immodules/*.dll || exit
-#strip installer/lib/gtk-2.0/2.10.0/loaders/*.dll || exit
+strip installer/lib/gtk-2.0/2.10.0/loaders/*.dll || exit
 # copy unstrippable DLLs again...
 cp bin/libxml2.dll installer/bin || exit
 cp bin/intl.dll installer/bin || exit
