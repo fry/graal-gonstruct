@@ -54,6 +54,7 @@ src_files = Split("""
   helper.cpp
   image_cache.cpp
   image_data.cpp
+  layers_control.cpp
   level.cpp
   level_display.cpp
   link_list.cpp

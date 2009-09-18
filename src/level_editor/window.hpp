@@ -14,10 +14,11 @@
 #include "preferences_display.hpp"
 #include "copy_cache.hpp"
 #include "tile_objects_display.hpp"
-#include "toolbar_tools_display.hpp"
 
 namespace Graal {
   namespace level_editor {
+    class toolbar_tools_display;
+    class layers_control;
 
     class window: public Gtk::Window {
     public:
@@ -83,6 +84,7 @@ namespace Graal {
       tileset_list m_tileset_list;
       preferences_display m_prefs_display;
       toolbar_tools_display* m_tools;
+      layers_control* m_layers_control;
       tile_objects_display m_tile_objects;
 
       Gtk::Statusbar m_status_bar;

@@ -1,6 +1,8 @@
 #include "window.hpp"
 #include "preferences_display.hpp"
 #include "config.hpp"
+#include "toolbar_tools_display.hpp"
+#include "layers_control.hpp"
 
 #include <iostream>
 #include <memory>
@@ -228,11 +230,16 @@ level_editor::window::window(preferences& _prefs)
   Gtk::Widget* menu = m_ui->get_widget("/MenuBar");
   vbox_main->pack_start(*menu, Gtk::PACK_SHRINK);
 
-  // toolbar + edit area
+  // toolbar + edit area + layers control
   Gtk::Toolbar* toolbar =
     static_cast<Gtk::Toolbar*>(m_ui->get_widget("/ToolBar"));
   toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
-  vbox_main->pack_start(*toolbar, Gtk::PACK_SHRINK);
+  // TODO: need to create layers_control here because it uses this in the constructor
+  m_layers_control = Gtk::manage(new layers_control(*this, m_preferences));
+  Gtk::HBox& hbox_toolbar = *Gtk::manage(new Gtk::HBox());
+  hbox_toolbar.pack_start(*toolbar, Gtk::PACK_EXPAND_WIDGET);
+  hbox_toolbar.pack_start(*m_layers_control, Gtk::PACK_SHRINK);
+  vbox_main->pack_start(hbox_toolbar, Gtk::PACK_SHRINK);
   // hpane with level + side panel
   m_nb_levels.signal_switch_page().connect_notify(
       sigc::mem_fun(this, &window::on_switch_page), true); // after is important
@@ -321,6 +328,7 @@ void level_editor::window::set_level_buttons(bool enabled) {
   m_level_actions->set_sensitive(enabled);
   m_tile_objects.set_sensitive(enabled);
   m_tools->set_sensitive(enabled);
+  m_layers_control->set_sensitive(enabled);
 }
 
 void level_editor::window::set_default_tile(int tile_index) {
