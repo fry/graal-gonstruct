@@ -1,5 +1,4 @@
 ; Thanks to the Glom guys from whom I stole this!
-; TODO use configure script to set version
 [Setup]
 AppName=Gonstruct
 AppVerName=Gonstruct %(version_string)s
