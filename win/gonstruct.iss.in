@@ -78,7 +78,7 @@ Source: "bin\gtk-query-immodules-2.0.exe"; DestDir: "{app}\bin"; Components: mai
 
 Source: "lib\gtk-2.0\2.10.0\engines\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\engines"; Components: main
 
-;Source: "lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\loaders"; Components: main
+Source: "lib\gtk-2.0\2.10.0\loaders\*"; DestDir: "{app}\lib\gtk-2.0\2.10.0\loaders"; Components: main
 Source: "bin\gdk-pixbuf-query-loaders.exe"; DestDir: "{app}\bin"; Components: main; Flags: deleteafterinstall;
 
 Source: "share\themes\MS-Windows\*"; DestDir: "{app}\share\themes\MS-Windows"; Flags: recursesubdirs; Components: main
