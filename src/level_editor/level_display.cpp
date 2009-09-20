@@ -841,20 +841,20 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
     std::pair<int, int> current_node = queue.front(); queue.pop();
     changed_tiles.push_back(current_node);
 
-    int tx = current_node.first;
-    int ty = current_node.second;
+    int cx = current_node.first;
+    int cy = current_node.second;
 
     // Determine bounding box
-    if (tx < start_x) start_x = tx;
-    if (ty < start_y) start_y = ty;
-    if (tx > end_x) end_x = tx;
-    if (ty > end_y) end_y = ty;
+    if (cx < start_x) start_x = cx;
+    if (cy < start_y) start_y = cy;
+    if (cx > end_x) end_x = cx;
+    if (cy > end_y) end_y = cy;
 
-    //std::cout << "fill " << tx << ", " << ty << ": " << fill_index << " = " << fill_with_index << std::endl;
+    //std::cout << "fill " << cx << ", " << cy << ": " << fill_index << " = " << fill_with_index << std::endl;
     for (int i = 0; i < 4; i ++) {
       // continue for all adjacent tiles that have the same index as the current tile
-      int current_tx = tx + vec_x[i];
-      int current_ty = ty + vec_y[i];
+      int current_tx = cx + vec_x[i];
+      int current_ty = cy + vec_y[i];
 
       if (current_tx >= 0 && current_tx < m_level->get_width() &&
           current_ty >= 0 && current_ty < m_level->get_height()) {
@@ -888,10 +888,10 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
   // and lay over changed tiles
   std::list<std::pair<int, int> >::iterator it, end = changed_tiles.end();
   for (it = changed_tiles.begin(); it != end; ++it) {
-    int tx = it->first - start_x;
-    int ty = it->second - start_y;
+    const int cx = it->first - start_x;
+    const int cy = it->second - start_y;
 
-    buffer.get_tile(tx, ty).index = fill_index;
+    buffer.get_tile(cx, cy).index = fill_index;
   }
   add_undo_diff(new tile_diff(start_x, start_y, buffer, m_active_layer));
   queue_draw();
