@@ -817,12 +817,15 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
   static int vec_x[] = {-1, 0, 1, 0};
   static int vec_y[] = { 0, -1, 0, 1};
 
+  Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(m_surface);
+
   // the index of the tiles to fill
   tile& start_tile = get_tile_buf().get_tile(tx, ty);
   int fill_index = start_tile.index;
   if (fill_with_index == fill_index)
     return;
   start_tile.index = fill_with_index;
+  update_tile(context, start_tile, tx, ty);
 
   std::queue<std::pair<int, int> > queue;
   queue.push(std::pair<int, int>(tx, ty));
@@ -859,6 +862,7 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
         if (adjacent_tile.index == fill_index) {
           queue.push(std::pair<int, int>(current_tx, current_ty));
           adjacent_tile.index = fill_with_index;
+          update_tile(context, adjacent_tile, current_tx, current_ty);
         }
       }
     }
@@ -890,7 +894,6 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
     buffer.get_tile(tx, ty).index = fill_index;
   }
   add_undo_diff(new tile_diff(start_x, start_y, buffer, m_active_layer));
-  update_all();
   queue_draw();
 }
 
