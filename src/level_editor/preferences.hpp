@@ -18,6 +18,7 @@ namespace Graal {
       std::string graal_dir;
       tileset_list_type tilesets;
       bool selection_border_while_dragging;
+      bool selection_background;
       bool sticky_tile_selection;
       bool hide_npcs, hide_signs, hide_links;
       int default_tile;

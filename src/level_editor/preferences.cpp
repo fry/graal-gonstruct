@@ -32,6 +32,9 @@ void level_editor::preferences::serialize() {
   m_values["selection_border_while_dragging"]
     = selection_border_while_dragging ? "true" : "false";
 
+  m_values["selection_background"]
+    = selection_background ? "true" : "false";
+
   m_values["sticky_tile_selection"]
     = sticky_tile_selection ? "true" : "false";
 
@@ -69,6 +72,11 @@ void level_editor::preferences::deserialize() {
   iter = m_values.find("selection_border_while_dragging");
   if (iter != m_values.end()) {
     selection_border_while_dragging = (iter->second == "true");
+  }
+
+  iter = m_values.find("selection_background");
+  if (iter != m_values.end()) {
+    selection_background = (iter->second == "true");
   }
 
   iter = m_values.find("sticky_tile_selection");

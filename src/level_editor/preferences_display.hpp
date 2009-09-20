@@ -13,6 +13,7 @@ namespace Graal {
       static const int SHOW_SELECTION_WHILE_DRAGGING_CHANGED = 1 << 1;
       static const int REMEMBER_DEFAULT_TILE_CHANGED         = 1 << 2;
       static const int STICKY_TILE_SELECTION                 = 1 << 3;
+      static const int SELECTION_BACKGROUND_CHANGED          = 1 << 4;
 
       typedef int preference_changes;
 
@@ -34,6 +35,7 @@ namespace Graal {
 
       Gtk::FileChooserButton m_pref_graaldir;
       Gtk::CheckButton       m_pref_selection_border_while_dragging;
+      Gtk::CheckButton       m_pref_selection_background;
       Gtk::CheckButton       m_pref_remember_default_tile;
       Gtk::CheckButton       m_pref_sticky_tile_selection;
     };

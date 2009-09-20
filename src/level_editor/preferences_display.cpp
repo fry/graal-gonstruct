@@ -10,13 +10,15 @@ preferences_display::preferences_display(preferences& prefs)
                       Gtk::FILE_CHOOSER_ACTION_SELECT_FOLDER),
       m_pref_selection_border_while_dragging(
           "Show selection border while dragging"),
+      m_pref_selection_background(
+          "Show translucent background to selection"),
       m_pref_remember_default_tile("Remember default tile"),
       m_pref_sticky_tile_selection("Sticky tile selection in tileset") {
   update_controls();
 
   set_border_width(16);
 
-  Gtk::Table& entries = *Gtk::manage(new Gtk::Table(1, 4));
+  Gtk::Table& entries = *Gtk::manage(new Gtk::Table(1, 5));
   entries.set_col_spacing(0, 8);
 
   entries.attach(
@@ -32,11 +34,15 @@ preferences_display::preferences_display(preferences& prefs)
     Gtk::EXPAND | Gtk::FILL,
     Gtk::SHRINK | Gtk::FILL);
 
-  entries.attach(m_pref_remember_default_tile, 0, 2, 2, 3,
+  entries.attach(m_pref_selection_background, 0, 2, 2, 3,
     Gtk::EXPAND | Gtk::FILL,
     Gtk::SHRINK | Gtk::FILL);
 
-  entries.attach(m_pref_sticky_tile_selection, 0, 2, 3, 4,
+  entries.attach(m_pref_remember_default_tile, 0, 2, 3, 4,
+    Gtk::EXPAND | Gtk::FILL,
+    Gtk::SHRINK | Gtk::FILL);
+
+  entries.attach(m_pref_sticky_tile_selection, 0, 2, 4, 5,
     Gtk::EXPAND | Gtk::FILL,
     Gtk::SHRINK | Gtk::FILL);
 
@@ -54,6 +60,8 @@ void preferences_display::update_controls() {
     m_pref_graaldir.set_filename(Glib::filename_to_utf8(m_prefs.graal_dir));
   m_pref_selection_border_while_dragging.set_active(
       m_prefs.selection_border_while_dragging);
+  m_pref_selection_background.set_active(
+      m_prefs.selection_background);
   m_pref_remember_default_tile.set_active(
       m_prefs.default_tile != -1);
   m_pref_sticky_tile_selection.set_active(
@@ -123,6 +131,15 @@ void preferences_display::apply() {
     m_prefs.selection_border_while_dragging =
       new_selection_border_while_dragging;
     changes |= SHOW_SELECTION_WHILE_DRAGGING_CHANGED;
+  }
+
+  bool new_selection_background =
+    m_pref_selection_background.get_active();
+  if (m_prefs.selection_background
+      != new_selection_background) {
+    m_prefs.selection_background =
+      new_selection_background;
+    changes |= SELECTION_BACKGROUND_CHANGED;
   }
 
   bool new_remember_default_tile =

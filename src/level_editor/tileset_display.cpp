@@ -133,9 +133,13 @@ bool level_editor::tileset_display::on_expose_event(GdkEventExpose* event) {
       cr->rectangle(x, y, w, h);
       // TODO: move selection color somewhere else (preferences?)
       cr->set_source_rgb(0.7, 1, 1);
-      cr->stroke_preserve();
-      cr->set_source_rgba(0.7, 1, 0, 0.2);
-      cr->fill();
+      if (m_preferences.selection_background) {
+        cr->stroke_preserve();
+        cr->set_source_rgba(0.7, 1, 0, 0.2);
+        cr->fill();
+      } else {
+        cr->stroke();
+      }
     cr->restore();
   }
 
