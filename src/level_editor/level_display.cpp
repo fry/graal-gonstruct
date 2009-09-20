@@ -830,8 +830,8 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
   std::list<std::pair<int, int> > changed_tiles;
   int start_x = m_level->get_width();
   int start_y = m_level->get_height();
-  int width = 0;
-  int height = 0;
+  int end_x = -1;
+  int end_y = -1;
   
   tile_buf& tiles = get_tile_buf();
   while (!queue.empty()) {
@@ -841,13 +841,11 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
     int tx = current_node.first;
     int ty = current_node.second;
 
-    // Determine start x/y
-    if (tx < start_x) {
-      start_x = tx;
-    }
-    if (ty < start_y) {
-      start_y = ty;
-    }
+    // Determine bounding box
+    if (tx < start_x) start_x = tx;
+    if (ty < start_y) start_y = ty;
+    if (tx > end_x) end_x = tx;
+    if (ty > end_y) end_y = ty;
 
     //std::cout << "fill " << tx << ", " << ty << ": " << fill_index << " = " << fill_with_index << std::endl;
     for (int i = 0; i < 4; i ++) {
@@ -866,21 +864,8 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
     }
   }
 
-  // determine width/height
-  std::list<std::pair<int, int> >::iterator it, end = changed_tiles.end();
-  for (it = changed_tiles.begin(); it != end; ++it) {
-    int tx = it->first;
-    int ty = it->second;
-
-    int current_width = tx - start_x + 1;
-    int current_height = ty - start_y + 1;
-    if (current_width > width) {
-      width = current_width;
-    }
-    if (current_height > height) {
-      height = current_height;
-    }
-  }
+  const int width  = end_x - start_x + 1;
+  const int height = end_y - start_y + 1;
 
   // create diff
   tile_buf buffer;
@@ -897,6 +882,7 @@ void level_editor::level_display::flood_fill(int tx, int ty, int fill_with_index
   }
 
   // and lay over changed tiles
+  std::list<std::pair<int, int> >::iterator it, end = changed_tiles.end();
   for (it = changed_tiles.begin(); it != end; ++it) {
     int tx = it->first - start_x;
     int ty = it->second - start_y;
