@@ -313,7 +313,8 @@ level_editor::window::window(preferences& _prefs)
 }
 
 level_editor::window::~window() {
-  m_preferences.default_tile = default_tile.get_tile();
+  if (m_preferences.default_tile != -1)
+    m_preferences.default_tile = default_tile.get_tile();
 }
 
 void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::Surface>& surface) {
