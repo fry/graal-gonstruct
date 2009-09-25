@@ -75,6 +75,9 @@ namespace {
     "      <separator/>"
     "      <menuitem action='NPCs'/>"
     "      <menuitem action='Tilesets'/>"
+#ifdef WIN32
+    "      <menuitem action='Play'/>"
+#endif
     "      <menuitem action='Screenshot'/>"
     "    </menu>"
     "    <menu action='HelpMenu'>"
@@ -95,6 +98,9 @@ namespace {
     "    <toolitem action='NPCs'/>"
     "    <toolitem action='Tilesets'/>"
     "    <separator/>"
+#ifdef WIN32
+    "    <toolitem action='Play'/>"
+#endif
     "    <toolitem action='Preferences'/>"
     "  </toolbar>"
     "</ui>"
@@ -190,6 +196,10 @@ level_editor::window::window(preferences& _prefs)
                           Gtk::Stock::SELECT_COLOR, "Tilesets",
                           "Show a list of tilesets."),
       sigc::mem_fun(*this, &window::on_action_tilesets));
+#ifdef WIN32
+  m_level_actions->add(Gtk::Action::create("Play", Gtk::Stock::EXECUTE),
+      sigc::mem_fun(*this, &window::on_action_play));
+#endif
   m_level_actions->add(
       Gtk::Action::create("Screenshot",
                           Gtk::Stock::ZOOM_FIT, "Screenshot",
@@ -460,6 +470,35 @@ void level_editor::window::on_action_screenshot() {
     surface->write_to_png(dialog.get_filename());
   }
 }
+
+#ifdef WIN32
+void level_editor::window::on_action_play() {
+  if (save_current_page()) {
+    std::string path = get_current_level_display()->get_level_path().string();
+    g_assert(!path.empty());
+    std::string cmd = m_preferences.graal_dir + "/graaleditor.exe";
+    char play_arg[] = "-play";
+    gchar* argv[] = { &cmd[0], &path[0], play_arg, 0 };
+    GError* error = 0;
+    gdk_spawn_on_screen(
+        get_screen()->gobj(),
+        m_preferences.graal_dir.c_str(),
+        argv,
+        0, // envp
+        (GSpawnFlags) (G_SPAWN_STDOUT_TO_DEV_NULL
+                       | G_SPAWN_STDERR_TO_DEV_NULL),
+        0, // setup func
+        0, // user data
+        0, // pid ptr
+        &error);
+    if (error) {
+      Glib::ustring message(error->message);
+      g_error_free(error);
+      display_error(message);
+    }
+  }
+}
+#endif // WIN32
 
 void level_editor::window::on_action_prefs() {
   m_prefs_display.update_controls();

@@ -105,6 +105,9 @@ namespace Graal {
       void on_action_signs();
       void on_action_npcs();
       void on_action_tilesets();
+#ifdef WIN32
+      void on_action_play();
+#endif
       void on_action_prefs();
       void on_action_about();
       void on_action_undo();
