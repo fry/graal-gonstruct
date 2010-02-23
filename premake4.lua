@@ -1,26 +1,6 @@
--- Captures output of a command
-function os.capture(cmd, raw)
-  local f = assert(io.popen(cmd, 'r'))
-  local s = assert(f:read('*a'))
-  f:close()
-  if raw then return s end
-  s = string.gsub(s, '^%s+', '')
-  s = string.gsub(s, '%s+$', '')
-  s = string.gsub(s, '[\n\r]+', ' ')
-  return s
-end
+dofile "utility.lua"
 
-function pkg_config(packages)
-  packages = table.concat(packages, ' ')
-
-  configuration "vs*"
-    buildoptions { os.capture("pkg-config --cflags --msvc-syntax " .. packages) }
-    linkoptions { os.capture("pkg-config --libs --msvc-syntax " .. packages) }
-
-  configuration { "gmake" }
-    buildoptions { os.capture("pkg-config --cflags " .. packages) }
-    linkoptions { os.capture("pkg-config --libs " .. packages) }
-end
+VERSION = "0.1.8"
 
 solution "Gonstruct"
   configurations { "Debug", "Release" }
@@ -56,7 +36,22 @@ solution "Gonstruct"
     configuration { "vs2008" }
       buildoptions { "/wd4250" }
 
-if _ACTION == "clean" then
-  os.rmdir("bin")
-  os.rmdir("build")
-end
+newaction {
+  trigger = "clean",
+  description = "Removes all build-related folders and files",
+  execute = function()
+    os.rmdir("bin")
+    os.rmdir("build")
+  end
+}
+
+newaction {
+  trigger = "embed",
+  description = "Serializes config data (such as version number) and embeds image data",
+  execute = function()
+    print "Building config.cpp"
+    config_file("src/level_editor/config.cpp.in", "src/level_editor/config.cpp", {
+      version_string = VERSION
+    })
+  end
+}
