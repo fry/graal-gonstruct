@@ -103,8 +103,8 @@ namespace Graal {
           bool show_selection_border = true, bool show_selection = true,
           bool show_npcs = true, bool show_links = true, bool show_signs = true);
 
-      void set_layer_visibility(int layer, bool visible);
-      bool get_layer_visibility(int layer);
+      void set_layer_visibility(std::size_t layer, bool visible);
+      bool get_layer_visibility(std::size_t layer);
     protected:
       // Overloaded for layer drawing
       virtual void update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile, int x, int y);

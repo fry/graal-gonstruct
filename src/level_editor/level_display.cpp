@@ -938,7 +938,7 @@ void level_editor::level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct,
   ct->restore();
 }
 
-void level_editor::level_display::set_layer_visibility(int layer, bool visible) {
+void level_editor::level_display::set_layer_visibility(std::size_t layer, bool visible) {
   if (layer >= m_layer_visibility.size())
     m_layer_visibility.resize(layer + 1, false);
   m_layer_visibility[layer] = visible;
@@ -946,7 +946,8 @@ void level_editor::level_display::set_layer_visibility(int layer, bool visible) 
   update_all();
 }
 
-bool level_editor::level_display::get_layer_visibility(int layer) {
+bool level_editor::level_display::get_layer_visibility(std::size_t layer) {
   if (layer < m_layer_visibility.size())
     return m_layer_visibility[layer];
+  return false;
 }

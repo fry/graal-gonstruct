@@ -35,7 +35,7 @@ std::string helper::strip(const std::string& str) {
 
 std::size_t helper::parse_base64(const std::string& str) {
   std::size_t num = 0;
-  for (int i = 0; i < str.length(); ++i) {
+  for (std::size_t i = 0; i < str.length(); ++i) {
     std::size_t pos = BASE64.find(str[i]);
     if (pos == std::string::npos) {
       throw std::runtime_error("BASE64: invalid format");
