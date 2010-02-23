@@ -36,7 +36,7 @@ namespace Graal {
       void grab_selection();
 
       void load_level(const boost::filesystem::path& file_path);
-      void set_level(Graal::level* _level);
+      void set_level(Graal::level* _level, bool update = true);
       void new_level(int fill_tile);
       const boost::filesystem::path& get_level_path() const {
         return m_level_path;
@@ -103,7 +103,7 @@ namespace Graal {
           bool show_selection_border = true, bool show_selection = true,
           bool show_npcs = true, bool show_links = true, bool show_signs = true);
 
-      void set_layer_visibility(std::size_t layer, bool visible);
+      void set_layer_visibility(std::size_t layer, bool visible, bool update = true);
       bool get_layer_visibility(std::size_t layer);
     protected:
       // Overloaded for layer drawing

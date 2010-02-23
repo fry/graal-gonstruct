@@ -24,11 +24,11 @@ namespace Graal {
     public:
       typedef std::map<std::string, tileset> tileset_map_type;
 
-      void load_level(const boost::filesystem::path& file_path);
+      void load_level(const boost::filesystem::path& file_path, bool activate = true);
       level_display* get_nth_level_display(int n);
       level_display* get_current_level_display();
       void set_current_page(const level_display& display);
-      void create_new_page(level_display& display, const std::string& name);
+      void create_new_page(level_display& display, const std::string& name, bool activate = true);
 
       void update_matching_level_displays(const std::string& prefix);
       void on_tileset_update(const Cairo::RefPtr<Cairo::Surface>& surface);
@@ -132,6 +132,9 @@ namespace Graal {
       Glib::RefPtr<Gtk::ActionGroup> m_level_actions;
       Glib::RefPtr<Gtk::UIManager> m_ui;
       //Glib::RefPtr<Gdk::Pixbuf> m_logo;
+
+      // True if we're in the middle of opening level[s] and don't want update_all spam
+      bool m_opening_levels;
     private:
       signal_switch_level_display_type m_signal_switch_level_display;
     };

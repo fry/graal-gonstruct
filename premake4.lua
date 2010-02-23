@@ -109,16 +109,17 @@ solution "gonstruct"
 
   configuration "Debug"
     defines { "DEBUG" }
-    flags { "Symbols" }
+    flags { "Symbols", "ExtraWarnings" }
     targetdir "bin/debug"
-  
+    buildoptions { "-pg" }
+    linkoptions { "-pg" }
+
   configuration "Release"
     defines { "NDEBUG" }
     flags { "Optimize", "OptimizeSpeed" }
     targetdir "bin/release"
   
   location "build"
-
   project "core"
     kind "StaticLib"
     language "C++"

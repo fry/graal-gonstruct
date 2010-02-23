@@ -11,9 +11,17 @@ namespace Graal {
   namespace helper {
     static const std::string BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-    int get_tile_x(int index);
-    int get_tile_y(int index);
-    int get_tile_index(int x, int y);
+    inline int get_tile_x(int index) {
+      return index % 16 + index/512 * 16;
+    }
+
+    inline int get_tile_y(int index) {
+      return index / 16 - index/512 * 32;
+    }
+
+    inline int get_tile_index(int x, int y) {
+      return x / 16 * 512 + x % 16 + y * 16;
+    }
 
     std::string strip(const std::string& str);
     
@@ -29,8 +37,8 @@ namespace Graal {
       return true;
     }
 
-    template<typename T>
-    T bound_by(T val, T lower_bound, T upper_bound) {
+    template<typename T> 
+    inline T bound_by(T val, T lower_bound, T upper_bound) {
       return std::max(lower_bound, std::min(upper_bound, val));
     }
 

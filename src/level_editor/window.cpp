@@ -141,7 +141,7 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs), m_link_list(*this),
   m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
-  m_prefs_display(_prefs), m_tile_objects(_prefs) {
+  m_prefs_display(_prefs), m_tile_objects(_prefs), m_opening_levels(false) {
 
   set_title(std::string("Gonstruct ") + config::version_string);
 
@@ -363,7 +363,9 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 // change tileset to the level's one when the page changes
 void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
   level_display* display = get_nth_level_display(page_num);
-  display_tileset.update_tileset(display->get_level_path().leaf());
+  if (!m_opening_levels) {
+    display_tileset.update_tileset(display->get_level_path().leaf());
+  }
 
   m_signal_switch_level_display(*display);
 
@@ -642,12 +644,16 @@ void level_editor::window::on_action_open() {
 
   if (dialog.run() == Gtk::RESPONSE_OK) {
     std::list<Glib::ustring> files(dialog.get_filenames());
-    for (std::list<Glib::ustring>::const_iterator iter = files.begin();
-         iter != files.end();
-         ++iter) {
+    std::list<Glib::ustring>::const_iterator iter, end = files.end();
+    for (iter = files.begin();
+         iter != end;) {
       boost::filesystem::path path(*iter);
+      ++iter;
+
+      m_opening_levels = iter != end;
       try {
-        load_level(path);
+        // Only activate the last page to load
+        load_level(path, !m_opening_levels);
       } catch (const std::exception& e) {
         display_error(e.what());
       }
@@ -709,11 +715,12 @@ void level_editor::window::on_action_quit() {
   hide();
 }
 
-void level_editor::window::load_level(const boost::filesystem::path& file_path) {
+void level_editor::window::load_level(const boost::filesystem::path& file_path, bool activate) {
   // check whether the level is already loaded
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
     if (get_nth_level_display(i)->get_level_path() == file_path) {
-      m_nb_levels.set_current_page(i);
+      if (activate)
+        m_nb_levels.set_current_page(i);
       return;
     }
   }
@@ -722,14 +729,14 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path) 
     std::auto_ptr<level_display> display(create_level_display());
     //display_tileset.update_tileset(file_path.leaf());
     display->load_level(file_path);
-    create_new_page(*Gtk::manage(display.release()), file_path.leaf());
+    create_new_page(*Gtk::manage(display.release()), file_path.leaf(), activate);
     set_level_buttons(true);
   } catch (const std::exception& e) {
     display_error(e.what());
   }
 }
 
-void level_editor::window::create_new_page(level_display& display, const std::string& name) {
+void level_editor::window::create_new_page(level_display& display, const std::string& name, bool activate) {
   
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
@@ -748,7 +755,8 @@ void level_editor::window::create_new_page(level_display& display, const std::st
   m_nb_levels.append_page(*scrolled, *label);
   m_nb_levels.set_tab_reorderable(*scrolled, true);
   m_nb_levels.show_all_children();
-  m_nb_levels.set_current_page(m_nb_levels.get_n_pages() - 1);
+  if (activate)
+    m_nb_levels.set_current_page(m_nb_levels.get_n_pages() - 1);
 }
 
 void level_editor::window::set_current_page(const level_display& display) {

@@ -24,9 +24,12 @@ void level_editor::basic_tiles_display::update_all() {
     return;
 
   Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(m_surface);
-  for (int x = 0; x < get_tile_buf().get_width(); ++x) {
-    for (int y = 0; y < get_tile_buf().get_height(); ++y) {
-      update_tile(context, x, y);
+  tile_buf& buf = get_tile_buf();
+  const int width = buf.get_width();
+  const int height = buf.get_height();
+  for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
+      update_tile(context, buf.get_tile(x, y), x, y);
     }
   }
 

@@ -20,6 +20,8 @@ namespace Graal {
 
   class tile_buf {
   public:
+    typedef std::vector<tile> tiles_list_type;
+
     tile_buf() : width(0), height(0) {}
 
     int get_width() const { return width; }
@@ -48,11 +50,12 @@ namespace Graal {
     bool empty() {
       return tiles.empty();
     }
+
+    tiles_list_type tiles;
   private:
     int width;
     int height;
 
-    std::vector<tile> tiles;
   };
 
   class link {

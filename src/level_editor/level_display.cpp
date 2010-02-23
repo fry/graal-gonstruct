@@ -74,22 +74,24 @@ void level_editor::level_display::set_active_layer(int layer) {
 
 void level_editor::level_display::load_level(const boost::filesystem::path& file_path) {
   m_level_path = file_path;
-  set_level(Graal::load_nw_level(file_path.string()));
+  set_level(Graal::load_nw_level(file_path.string()), false);
 }
 
 // Takes ownership of the pointer
-void level_editor::level_display::set_level(Graal::level* _level) {
+void level_editor::level_display::set_level(Graal::level* _level, bool update) {
   m_level.reset(_level);
   selected_npc = m_level->npcs.end();
 
   // Show all layers initially
   int layer_count = m_level->get_layer_count();
   for (int i = 0; i < layer_count; i ++) {
-    set_layer_visibility(i, true);
+    set_layer_visibility(i, true, false);
   }
 
   set_surface_buffers();
-  update_all();
+
+  if (update)
+    update_all();
 }
 
 void level_editor::level_display::new_level(int fill_tile = 0) {
@@ -938,12 +940,13 @@ void level_editor::level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct,
   ct->restore();
 }
 
-void level_editor::level_display::set_layer_visibility(std::size_t layer, bool visible) {
+void level_editor::level_display::set_layer_visibility(std::size_t layer, bool visible, bool update) {
   if (layer >= m_layer_visibility.size())
     m_layer_visibility.resize(layer + 1, false);
   m_layer_visibility[layer] = visible;
 
-  update_all();
+  if (update)
+    update_all();
 }
 
 bool level_editor::level_display::get_layer_visibility(std::size_t layer) {
