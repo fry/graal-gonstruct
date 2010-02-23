@@ -53,5 +53,67 @@ newaction {
     config_file("src/level_editor/config.cpp.in", "src/level_editor/config.cpp", {
       version_string = VERSION
     })
+    print "Building image_data"
+    build_image_data("dist/images/*", "src/level_editor/image_data")
   end
 }
+
+-- Embeds image data in a source file and generates a header
+function build_image_data(source, dest)
+  print("  creating " .. dest .. ".cpp")
+  out_cpp = io.open(dest .. ".cpp", "w+b")
+  out_cpp:write([[
+namespace Graal {
+  namespace level_editor {
+    namespace image_data {
+]])
+
+  images = {}
+  for _, image in pairs(os.matchfiles(source)) do
+    data = escape_file(image)
+    var_name = path.getbasename(image):gsub("[^%w]", "_")
+    table.insert(images, var_name)
+    
+    out_cpp:write(string.format("      const char %s[] =\n", var_name))
+    out_cpp:write(string.format("\"%s\";\n", data))
+  end
+  
+  out_cpp:write("      const char* images[] = {\n")
+  for _, image in pairs(images) do
+    out_cpp:write(
+      string.format(
+        "        \"internal/%s.png\", %s, %s + sizeof(%s) - 1,\n",
+        image, image, image, image))
+  end
+  
+  out_cpp:write([[
+        0, 0, 0
+      };
+    }
+  }
+}
+]])
+  out_cpp:close()
+  
+  print("  creating " .. dest .. ".hpp")
+  out_hpp = io.open(dest .. ".hpp", "w+b")
+  out_hpp:write([[
+#pragma once
+namespace Graal {
+  namespace level_editor {
+    namespace image_data {
+]])
+
+  for _, image in pairs(images) do
+    out_hpp:write(string.format("      extern const char %s[];\n", image))
+  end
+  
+  out_hpp:write("      extern const char* images[];\n")
+  out_hpp:write([[
+    }
+  }
+}
+]])
+
+  out_hpp:close()
+end

@@ -34,8 +34,11 @@ function pkg_config(packages)
     linkoptions { os.capture("pkg-config --libs " .. packages) }
 end
 
-function io.readfile(source)
-  local f = io.open(source, "r")
+function io.readfile(source, mode)
+  if not mode then
+    mode = "r"
+  end
+  local f = io.open(source, mode)
   local s = f:read("*a")
   f:close()
   return s
@@ -47,8 +50,20 @@ function io.writefile(dest, content)
   f:close()
 end
 
+-- Applies python_format on source's content and saves the result to dest
 function config_file(source, dest, dict)
   local s = io.readfile(source)
   s = python_format(s, dict)
   io.writefile(dest, s)
+end
+
+-- Converts non-printable characters from a file to octals
+function escape_file(source)
+  function escape(s)
+    return string.format("\\%03o", string.byte(s))
+  end
+
+  local s = io.readfile(source, "rb")
+  s = string.gsub(s, "[^%w]", escape)
+  return s
 end
