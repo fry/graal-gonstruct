@@ -1,40 +1,5 @@
 dofile "utility.lua"
-
-VERSION = "0.1.8"
-
-solution "Gonstruct"
-  configurations { "Debug", "Release" }
-
-  configuration "Debug"
-    defines { "DEBUG" }
-    flags { "Symbols" }
-    targetdir "bin/debug"
-  
-  configuration "Release"
-    defines { "NDEBUG" }
-    flags { "Optimize", "OptimizeSpeed" }
-    targetdir "bin/release"
-  
-  location "build"
-
-  project "core"
-    kind "StaticLib"
-    language "C++"
-    files { "src/core/*.hpp", "src/core/*.cpp" }
-
-  project "Gonstruct"
-    kind "WindowedApp"
-    language "C++"
-    files { "src/level_editor/*.hpp", "src/level_editor/*.cpp" }
-    includedirs { "src" }
-    links { "core", "boost_filesystem-mt", "boost_system-mt" }
-    
-    -- GTKmm through pkg-config
-    pkg_config { "gtkmm-2.4", "gtksourceview-2.0" }
-    
-    -- Disable excessive GTKmm warnings
-    configuration { "vs2008" }
-      buildoptions { "/wd4250" }
+dofile "config.lua"
 
 newaction {
   trigger = "clean",
@@ -49,12 +14,32 @@ newaction {
   trigger = "embed",
   description = "Serializes config data (such as version number) and embeds image data",
   execute = function()
-    print "Building config.cpp"
-    config_file("src/level_editor/config.cpp.in", "src/level_editor/config.cpp", {
+    local config = {
       version_string = VERSION
-    })
+    }
+
+    print "Building config.cpp"
+    config_file("src/level_editor/config.cpp.in", "src/level_editor/config.cpp", config)
     print "Building image_data"
     build_image_data("dist/images/*", "src/level_editor/image_data")
+    if os.get() == "windows" then
+      print "Building ISS script"
+      config_file("win/gonstruct.iss.in", "win/gonstruct.iss", config)
+    end
+  end
+}
+
+newaction {
+  trigger = "dist",
+  description = "Collects all required files for distribution in dist (release only)",
+  execute = function()
+    if os.get() == "windows" then
+      print "Copying gonstruct.exe"
+      os.copyfile("bin/release/gonstruct.exe", "dist/gonstruct.exe")
+    else
+      print "Copying gonstruct"
+      os.copyfile("bin/release/gonstruct", "dist/gonstruct")
+    end
   end
 }
 
@@ -117,3 +102,43 @@ namespace Graal {
 
   out_hpp:close()
 end
+
+
+solution "gonstruct"
+  configurations { "Debug", "Release" }
+
+  configuration "Debug"
+    defines { "DEBUG" }
+    flags { "Symbols" }
+    targetdir "bin/debug"
+  
+  configuration "Release"
+    defines { "NDEBUG" }
+    flags { "Optimize", "OptimizeSpeed" }
+    targetdir "bin/release"
+  
+  location "build"
+
+  project "core"
+    kind "StaticLib"
+    language "C++"
+    files { "src/core/*.hpp", "src/core/*.cpp" }
+
+  project "gonstruct"
+    kind "WindowedApp"
+    language "C++"
+    files { "src/level_editor/*.hpp", "src/level_editor/*.cpp" }
+    includedirs { "src" }
+    links { "core", "boost_filesystem-mt", "boost_system-mt" }
+
+    configuration "windows"
+      -- Create resource file with application icon
+      prelinkcommands { "cd ..; windres -i win/gonstruct.rc -o build/resource.o" }
+      linkoptions { "resource.o" }
+
+    -- GTKmm through pkg-config
+    pkg_config { "gtkmm-2.4", "gtksourceview-2.0" }
+    
+    -- Disable excessive GTKmm warnings
+    configuration { "vs2008" }
+      buildoptions { "/wd4250" }
