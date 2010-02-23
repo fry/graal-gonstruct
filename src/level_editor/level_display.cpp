@@ -60,6 +60,9 @@ level_editor::level_display::level_display(
   m_active_layer = 0;
 
   m_unsaved = false;
+
+  m_pattern_above = Cairo::SolidPattern::create_rgba(1, 1, 1, 0.5);
+  m_pattern_below = Cairo::SolidPattern::create_rgba(0, 0, 0, 0.5);
 }
 
 void level_editor::level_display::set_default_tile(int tile_index) {
@@ -69,6 +72,7 @@ void level_editor::level_display::set_default_tile(int tile_index) {
 void level_editor::level_display::set_active_layer(int layer) {
   if (m_level->tiles_exist(layer)) {
     m_active_layer = layer;
+    update_all();
   }
 }
 
@@ -934,7 +938,16 @@ void level_editor::level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct,
           tile_x,
           tile_y
         );
-        ct->paint();
+
+        if (i > m_active_layer) {
+          ct->mask(m_pattern_above);
+        } else if (i < m_active_layer) {
+          ct->paint();
+          ct->set_source(m_pattern_below);
+          ct->paint();
+        } else {
+          ct->paint();
+        }
       }
     }
   ct->restore();

@@ -116,7 +116,7 @@ solution "gonstruct"
 
   configuration "Release"
     defines { "NDEBUG" }
-    flags { "Optimize", "OptimizeSpeed" }
+    flags { "Optimize", "OptimizeSpeed", "FloatFast" }
     targetdir "bin/release"
   
   location "build"

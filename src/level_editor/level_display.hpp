@@ -146,6 +146,10 @@ namespace Graal {
       signal_title_changed_type m_signal_title_changed;
       signal_unsaved_status_changed_type m_signal_unsaved_status_changed;
       signal_status_update_type m_signal_status_update;
+
+      // Patterns for drawing of transparent/darkened layers
+      Cairo::RefPtr<Cairo::SolidPattern> m_pattern_above;
+      Cairo::RefPtr<Cairo::SolidPattern> m_pattern_below;
     };
   }
 }
