@@ -61,7 +61,7 @@ void ogl_tiles_display::draw_all() {
   }
 }
 
-void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
+void ogl_tiles_display::draw_tile(tile& _tile, int x, int y, int z) {
   // The position of the actual tile inside the tileset
   const int tx = helper::get_tile_x(_tile.index);
   const int ty = helper::get_tile_y(_tile.index);
@@ -73,7 +73,7 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
   float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
 
   glLoadIdentity();
-  glTranslatef(x * m_tile_width, y * m_tile_height, 0);
+  glTranslatef(x * m_tile_width, y * m_tile_height, z);
   glBegin(GL_QUADS);
     // Top left
     glTexCoord2f(x1, y1);

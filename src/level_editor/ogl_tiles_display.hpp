@@ -34,7 +34,7 @@ protected:
   virtual bool on_expose_event(GdkEventExpose* event);
   virtual bool on_idle();
   virtual bool on_configure_event(GdkEventConfigure* event);
-  virtual void draw_tile(tile& _tile, int x, int y);
+  virtual void draw_tile(tile& _tile, int x, int y, int z = 0);
   virtual void draw_all();
 
   void load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface);
