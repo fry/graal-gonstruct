@@ -111,8 +111,6 @@ solution "gonstruct"
     defines { "DEBUG" }
     flags { "Symbols", "ExtraWarnings" }
     targetdir "bin/debug"
-    buildoptions { "-pg" }
-    linkoptions { "-pg" }
 
   configuration "Release"
     defines { "NDEBUG" }
@@ -132,14 +130,32 @@ solution "gonstruct"
     includedirs { "src" }
     links { "core", "boost_filesystem-mt", "boost_system-mt" }
 
+    excludes { "src/level_editor/level_display.cpp" }
+    files { "src/gtkogltest/glew.c" }
+    defines { "GLEW_STATIC" }
+    includedirs { "src/gtkogltest" }
+
+    -- GTKmm through pkg-config
+    pkg_config { "gtkmm-2.4", "gtksourceview-2.0", "gtkglextmm-1.2" }
+
     configuration "windows"
       -- Create resource file with application icon
       prelinkcommands { "cd ..; windres -i win/gonstruct.rc -o build/resource.o" }
       linkoptions { "resource.o" }
-
-    -- GTKmm through pkg-config
-    pkg_config { "gtkmm-2.4", "gtksourceview-2.0" }
     
     -- Disable excessive GTKmm warnings
     configuration { "vs2008" }
       buildoptions { "/wd4250" }
+
+  project "gtkogltest"
+    kind "ConsoleApp"
+    language "C++"
+    files {  "src/gtkogltest/*.hpp", "src/gtkogltest/*.cpp", "src/gtkogltest/glew.c",
+             "src/level_editor/ogl_*", "src/level_editor/level.*",
+             "src/level_editor/*" }
+    excludes { "src/level_editor/main.cpp", "src/level_editor/level_display.cpp" }
+    defines { "GLEW_STATIC" }
+    links { "core", "boost_filesystem-mt", "boost_system-mt" }
+    includedirs { "src/gtkogltest", "src/level_editor", "src" }
+    -- GTKmm through pkg-config
+    pkg_config { "gtkmm-2.4", "gtkglextmm-1.2", "gtksourceview-2.0" }
