@@ -3,6 +3,9 @@
 
 using namespace Graal::level_editor;
 
+Glib::Timer g_timer;
+unsigned int g_frames;
+
 ogl_tiles_display::ogl_tiles_display():
   m_tileset(0), m_tile_width(16), m_tile_height(16) {
   Glib::RefPtr<Gdk::GL::Config> glconfig =
@@ -11,6 +14,8 @@ ogl_tiles_display::ogl_tiles_display():
                             Gdk::GL::MODE_DOUBLE);
   set_gl_capability(glconfig);
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
+
+  g_frames = 0;
 }
 
 bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
@@ -46,6 +51,7 @@ void ogl_tiles_display::on_realize() {
   glwindow->gl_end();
 
   m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
+  g_timer.start();
 }
 
 void ogl_tiles_display::draw_all() {
@@ -151,6 +157,18 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
 
   glwindow->gl_end();
 
+  // Display FPS
+  // TODO: temporary
+  g_frames ++;
+
+  double seconds = g_timer.elapsed();
+  if (seconds > 2) {
+    std::cout.setf(std::ios::fixed, std::ios::floatfield);
+    std::cout.precision(3);
+    std::cout << "FPS: " << g_frames/seconds << std::endl;
+    g_timer.reset();
+    g_frames = 0;
+  }
   return true;
 }
 

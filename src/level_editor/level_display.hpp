@@ -9,6 +9,7 @@
 #include "undo_buffer.hpp"
 #include "image_cache.hpp"
 #include "ogl_tiles_display.hpp"
+#include "ogl_texture_cache.hpp"
 
 namespace Graal {
 namespace level_editor {
@@ -140,6 +141,7 @@ private:
   int m_default_tile_index;
 
   image_cache& m_image_cache;
+  ogl_texture_cache m_texture_cache;
 
   signal_default_tile_changed_type m_signal_default_tile_changed;
   signal_title_changed_type m_signal_title_changed;

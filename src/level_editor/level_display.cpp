@@ -26,7 +26,8 @@ level_display::level_display(
   int default_tile_index)
     : m_preferences(_prefs),
       m_default_tile_index(default_tile_index),
-      m_image_cache(cache) {
+      m_image_cache(cache),
+      m_texture_cache(cache) {
   add_events(Gdk::BUTTON_PRESS_MASK
              | Gdk::BUTTON_RELEASE_MASK
              | Gdk::BUTTON_MOTION_MASK
@@ -840,6 +841,31 @@ void level_display::draw_selection() {
 }
 
 void level_display::draw_misc() {
+  // NPCs
+  if (!m_preferences.hide_npcs) {
+    Graal::level::npc_list_type::iterator npc_iter, npc_end = m_level->npcs.end();
+    for (npc_iter = m_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
+      const int x = npc_iter->x * m_tile_width;
+      const int y = npc_iter->y * m_tile_height;
+      const std::string& npc_image_file = npc_iter->image;
+      Cairo::RefPtr<Cairo::ImageSurface>& npc_img = m_image_cache.get_image(npc_image_file);
+      const int width = npc_img->get_width();
+      const int height = npc_img->get_height();
+
+      glBindTexture(GL_TEXTURE_2D, m_texture_cache.get_texture(npc_image_file));
+      glBegin(GL_QUADS);
+        glTexCoord2f(0, 0);
+        glVertex2f(x, y);
+        glTexCoord2f(1, 0);
+        glVertex2f(x+width, y);
+        glTexCoord2f(1, 1);
+        glVertex2f(x+width, y+height);
+        glTexCoord2f(0, 1);
+        glVertex2f(x, y+height);
+      glEnd();
+    }
+  }
+
   // Signs
   if (!m_preferences.hide_signs) {
     Graal::level::sign_list_type::iterator sign_iter, sign_end = m_level->signs.end();
