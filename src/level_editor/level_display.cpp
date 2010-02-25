@@ -807,7 +807,7 @@ void level_display::draw_selection() {
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(m_select_x, m_select_y, 0);
-
+    glColor4f(1, 1, 1, 1);
     // Draw selection from its tile_buf
     const int width = selection.get_width();
     const int height = selection.get_height();
