@@ -49,6 +49,7 @@ void start_editor(int argc, char* argv[],
 
 int main(int argc, char* argv[]) {
   Gtk::Main kit(argc, argv);
+  Gtk::GL::init(argc, argv);
 
   Graal::level_editor::preferences prefs;
 

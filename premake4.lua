@@ -124,13 +124,12 @@ solution "gonstruct"
     files { "src/core/*.hpp", "src/core/*.cpp" }
 
   project "gonstruct"
-    kind "WindowedApp"
+    kind "ConsoleApp"
     language "C++"
     files { "src/level_editor/*.hpp", "src/level_editor/*.cpp" }
     includedirs { "src" }
     links { "core", "boost_filesystem-mt", "boost_system-mt" }
 
-    excludes { "src/level_editor/level_display.cpp" }
     files { "src/gtkogltest/glew.c" }
     defines { "GLEW_STATIC" }
     includedirs { "src/gtkogltest" }

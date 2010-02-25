@@ -843,6 +843,7 @@ void level_display::draw_selection() {
 void level_display::draw_misc() {
   // NPCs
   if (!m_preferences.hide_npcs) {
+    glColor3f(1, 1, 1);
     Graal::level::npc_list_type::iterator npc_iter, npc_end = m_level->npcs.end();
     for (npc_iter = m_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
       const int x = npc_iter->x * m_tile_width;

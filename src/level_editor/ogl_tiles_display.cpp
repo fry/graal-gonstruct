@@ -40,16 +40,24 @@ ogl_tiles_display::ogl_tiles_display():
                             Gdk::GL::MODE_DEPTH  |
                             Gdk::GL::MODE_DOUBLE);
   set_gl_capability(glconfig);
+
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
 
   g_frames = 0;
 }
 
 bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
+  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
+
+  if (!glwindow->gl_begin(get_gl_context()))
+    return false;
+
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, get_width(), get_height(), 0, -1, 1);
   glViewport(0, 0, get_width(), get_height());
+
+  glwindow->gl_end();
 
   return true;
 }
@@ -58,7 +66,8 @@ void ogl_tiles_display::on_realize() {
   Gtk::GL::DrawingArea::on_realize();
   Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
 
-  glwindow->gl_begin(get_gl_context());
+  if (!glwindow->gl_begin(get_gl_context()))
+    return;
 
   glDisable(GL_LIGHTING);
   glDisable(GL_CULL_FACE);
@@ -82,7 +91,6 @@ void ogl_tiles_display::on_realize() {
 
   glwindow->gl_end();
 
-  m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
   g_timer.start();
 }
 
@@ -141,17 +149,15 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
 
   if (m_new_tileset) {
-    std::cout << "set tileset" << std::endl;
     load_tileset(m_new_tileset);
     m_new_tileset.clear();
   }
 
-  if (!m_tileset) {
-    std::cout << "no tileset" << std::endl;
+  if (!m_tileset)
     return false;
-  }
 
-  glwindow->gl_begin(get_gl_context());
+  if (!glwindow->gl_begin(get_gl_context()))
+    return false;
 
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -178,16 +184,47 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   if (seconds > 2) {
     std::cout.setf(std::ios::fixed, std::ios::floatfield);
     std::cout.precision(3);
-    std::cout << "FPS: " << g_frames/seconds << std::endl;
+    std::cout << this << "| FPS: " << g_frames/seconds << std::endl;
     g_timer.reset();
     g_frames = 0;
   }
   return true;
 }
 
+bool ogl_tiles_display::on_map_event(GdkEventAny* event) {
+  if (!m_connection_idle.connected()) {
+    m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
+  }
+
+  return true;
+}
+
+bool ogl_tiles_display::on_unmap_event(GdkEventAny* event) {
+  if (m_connection_idle.connected()) {
+    m_connection_idle.disconnect();
+  }
+
+  return true;
+}
+
+bool ogl_tiles_display::on_visibility_notify_event(GdkEventVisibility* event) {
+  if (event->state == GDK_VISIBILITY_FULLY_OBSCURED) {
+    if (m_connection_idle.connected())
+      m_connection_idle.disconnect();
+  } else {
+    if (!m_connection_idle.connected()) {
+      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
+    }
+  }
+
+  return true;
+}
+
 bool ogl_tiles_display::on_idle() {
-  get_window()->invalidate_rect(get_allocation(), false);
-  get_window()->process_updates(false);
+  if (get_window()->is_visible()) {
+    get_window()->invalidate_rect(get_allocation(), false);
+    get_window()->process_updates(false);
+  }
 
   return true;
 }

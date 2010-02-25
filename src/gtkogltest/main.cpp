@@ -27,9 +27,6 @@ int main(int argc, char** argv) {
   std::cout << "OpenGL extension version - "
             << major << "." << minor << std::endl;
 
-  // Try double-buffered visual
-
-
   Graal::level_editor::preferences prefs;
 
   boost::filesystem::path preferences_path;
@@ -46,20 +43,28 @@ int main(int argc, char** argv) {
   Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create_from_png("D:\\Programme\\Graal4\\levels\\tiles\\pics1.png");
   //Cairo::RefPtr<Cairo::ImageSurface> surf = Cairo::ImageSurface::create_from_png("D:\\Programme\\Graal4\\pics1layers.png");
   display.set_tileset_surface(surf);
-  /*Graal::tile_buf buf;
-  buf.resize(64, 64);
-  display.set_tile_buf(buf);*/
   display.load_level("D:\\Programme\\Graal4\\work\\#gscript\\fry_test.nw");
   //display.load_level("D:\\Programme\\Graal4\\work\\#gscript\\world_e07.nw");
   //display.load_level("D:\\Programme\\Graal4\\layers\\layers.nw");
 
+  Graal::level_editor::level_display display2(prefs, cache);
+  display2.set_tileset_surface(surf);
+  display2.load_level("D:\\Programme\\Graal4\\work\\#gscript\\world_e07.nw");
+
   Gtk::Window wnd;
   wnd.set_reallocate_redraws(true);
+  
   Gtk::ScrolledWindow scroll;
   scroll.add(display);
-  Gtk::VBox vbox;
-  wnd.add(vbox);
-  vbox.pack_start(scroll);
+  Gtk::ScrolledWindow scroll2;
+  scroll2.add(display2);
+
+  Gtk::Notebook nb;
+  wnd.add(nb);
+
+  nb.append_page(scroll);
+  nb.append_page(scroll2);
+
   wnd.show_all();
   kit.run(wnd);
   return 0;
