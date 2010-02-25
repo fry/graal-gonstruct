@@ -31,6 +31,8 @@ public:
 
   virtual tile_buf& get_tile_buf() { return m_tile_buf; }
   void set_tile_buf(tile_buf& buf);
+
+  void set_rendering(bool enabled);
 protected:
   virtual void on_realize();
   virtual bool on_expose_event(GdkEventExpose* event);

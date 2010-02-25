@@ -3,8 +3,10 @@
 
 using namespace Graal::level_editor;
 
-Glib::Timer g_timer;
-unsigned int g_frames;
+#ifdef DEBUG
+  Glib::Timer g_timer;
+  unsigned int g_frames;
+#endif
 
 unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
   glEnable(GL_TEXTURE_2D);
@@ -55,6 +57,7 @@ bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, get_width(), get_height(), 0, -1, 1);
+
   glViewport(0, 0, get_width(), get_height());
 
   glwindow->gl_end();
@@ -69,6 +72,7 @@ void ogl_tiles_display::on_realize() {
   if (!glwindow->gl_begin(get_gl_context()))
     return;
 
+  glewInit();
   glDisable(GL_LIGHTING);
   glDisable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
@@ -84,14 +88,16 @@ void ogl_tiles_display::on_realize() {
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   glOrtho(0, get_width(), get_height(), 0, -1, 1);
+  glViewport(0, 0, get_width(), get_height());
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glewInit();
 
   glwindow->gl_end();
 
-  g_timer.start();
+  #ifdef DEBUG
+    g_timer.start();
+  #endif
 }
 
 void ogl_tiles_display::draw_all() {
@@ -150,16 +156,18 @@ void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface
 bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
 
+  if (!glwindow->gl_begin(get_gl_context())) {
+    return false;
+  }
+
   if (m_new_tileset) {
     load_tileset(m_new_tileset);
     m_new_tileset.clear();
   }
 
-  if (!m_tileset)
+  if (!m_tileset) {
     return false;
-
-  if (!glwindow->gl_begin(get_gl_context()))
-    return false;
+  }
 
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -176,57 +184,55 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
 
   glwindow->gl_end();
 
-  // Display FPS
-  // TODO: temporary
-  g_frames ++;
+  #ifdef DEBUG
+    // Display FPS
+    // TODO: temporary
+    g_frames ++;
 
-  double seconds = g_timer.elapsed();
-  if (seconds > 2) {
-    std::cout.setf(std::ios::fixed, std::ios::floatfield);
-    std::cout.precision(3);
-    std::cout << this << "| FPS: " << g_frames/seconds << std::endl;
-    g_timer.reset();
-    g_frames = 0;
-  }
-  return true;
+    double seconds = g_timer.elapsed();
+    if (seconds > 2) {
+      std::cout.setf(std::ios::fixed, std::ios::floatfield);
+      std::cout.precision(3);
+      std::cout << this << "| FPS: " << g_frames/seconds << std::endl;
+      g_timer.reset();
+      g_frames = 0;
+    }
+    return true;
+  #endif
 }
 
 bool ogl_tiles_display::on_map_event(GdkEventAny* event) {
-  if (!m_connection_idle.connected()) {
-    m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
-  }
+  set_rendering(true);
 
   return true;
 }
 
 bool ogl_tiles_display::on_unmap_event(GdkEventAny* event) {
-  if (m_connection_idle.connected()) {
-    m_connection_idle.disconnect();
-  }
+  set_rendering(false);
 
   return true;
 }
 
 bool ogl_tiles_display::on_visibility_notify_event(GdkEventVisibility* event) {
-  if (event->state == GDK_VISIBILITY_FULLY_OBSCURED) {
-    if (m_connection_idle.connected())
-      m_connection_idle.disconnect();
-  } else {
-    if (!m_connection_idle.connected()) {
-      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
-    }
-  }
-
+  // Disable rendering if we are completely obscured, doesn't seem to happen under windows.
+  set_rendering(event->state == GDK_VISIBILITY_FULLY_OBSCURED);
   return true;
 }
 
 bool ogl_tiles_display::on_idle() {
-  if (get_window()->is_visible()) {
-    get_window()->invalidate_rect(get_allocation(), false);
-    get_window()->process_updates(false);
-  }
+  get_window()->invalidate_rect(get_allocation(), false);
+  get_window()->process_updates(false);
 
   return true;
+}
+
+void ogl_tiles_display::set_rendering(bool enabled) {
+  if (enabled) {
+    if (!m_connection_idle.connected())
+      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
+  } else if (m_connection_idle.connected()) {
+    m_connection_idle.disconnect();
+  }
 }
 
 void ogl_tiles_display::set_tile_size(int tile_width, int tile_height) {
@@ -246,8 +252,6 @@ void ogl_tiles_display::set_surface_buffers() {
     buf.get_width() * m_tile_width,
     buf.get_height() * m_tile_height
   );
-
-  glViewport(0, 0, get_width(), get_height());
 }
 
 void ogl_tiles_display::clear() {
