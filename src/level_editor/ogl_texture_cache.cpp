@@ -1,37 +1,11 @@
 #include "ogl_texture_cache.hpp"
+#include "ogl_tiles_display.hpp"
 
 #include <GL/glew.h>
 #include <gtkmm.h>
 #include <gtkglmm.h>
 
 using namespace Graal::level_editor;
-
-unsigned int load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id = 0) {
-  glEnable(GL_TEXTURE_2D);
-
-  if (!id) {
-    glGenTextures(1, &id);
-
-    if (!id)
-      throw std::runtime_error("Failed to allocate OpenGL texture");
-  }
-
-  glBindTexture(GL_TEXTURE_2D, id);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-  glTexImage2D(GL_TEXTURE_2D,
-    0, GL_RGBA,
-    surface->get_width(), surface->get_height(),
-    0, GL_BGRA, GL_UNSIGNED_BYTE,
-    surface->get_data());
-
-  return id;
-}
 
 ogl_texture_cache::ogl_texture_cache(image_cache& cache): m_image_cache(cache) {
   cache.signal_cache_update().connect(

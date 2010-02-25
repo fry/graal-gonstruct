@@ -15,6 +15,8 @@
 namespace Graal {
 namespace level_editor {
 
+unsigned int load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id = 0);
+
 class ogl_tiles_display: public Gtk::GL::DrawingArea {
 public:
   ogl_tiles_display();

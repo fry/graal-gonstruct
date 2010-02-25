@@ -6,6 +6,33 @@ using namespace Graal::level_editor;
 Glib::Timer g_timer;
 unsigned int g_frames;
 
+unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
+  glEnable(GL_TEXTURE_2D);
+
+  if (!id) {
+    glGenTextures(1, &id);
+
+    if (!id)
+      throw std::runtime_error("Failed to allocate OpenGL texture");
+  }
+
+  glBindTexture(GL_TEXTURE_2D, id);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+  glTexImage2D(GL_TEXTURE_2D,
+    0, GL_RGBA,
+    surface->get_width(), surface->get_height(),
+    0, GL_BGRA, GL_UNSIGNED_BYTE,
+    surface->get_data());
+
+  return id;
+}
+
 ogl_tiles_display::ogl_tiles_display():
   m_tileset(0), m_tile_width(16), m_tile_height(16) {
   Glib::RefPtr<Gdk::GL::Config> glconfig =
@@ -19,6 +46,11 @@ ogl_tiles_display::ogl_tiles_display():
 }
 
 bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  glOrtho(0, get_width(), get_height(), 0, -1, 1);
+  glViewport(0, 0, get_width(), get_height());
+
   return true;
 }
 
@@ -42,7 +74,7 @@ void ogl_tiles_display::on_realize() {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0, get_width(), get_height(), 0, -100, 100);
+  glOrtho(0, get_width(), get_height(), 0, -1, 1);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
@@ -99,26 +131,7 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
 void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface) {
   glEnable(GL_TEXTURE_2D);
 
-  if (!m_tileset) {
-    glGenTextures(1, &m_tileset);
-
-    if (!m_tileset)
-      throw std::runtime_error("Failed to allocate OpenGL texture");
-  }
-
-  glBindTexture(GL_TEXTURE_2D, m_tileset);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-  glTexImage2D(GL_TEXTURE_2D,
-    0, GL_RGBA,
-    surface->get_width(), surface->get_height(),
-    0, GL_BGRA, GL_UNSIGNED_BYTE,
-    surface->get_data());
+  m_tileset = load_texture_from_surface(surface, m_tileset);
 
   m_tileset_width = surface->get_width();
   m_tileset_height = surface->get_height();
@@ -197,9 +210,7 @@ void ogl_tiles_display::set_surface_buffers() {
     buf.get_height() * m_tile_height
   );
 
-  glViewport(0, 0,
-    buf.get_width() * m_tile_width,
-    buf.get_height() * m_tile_height);
+  glViewport(0, 0, get_width(), get_height());
 }
 
 void ogl_tiles_display::clear() {
