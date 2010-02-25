@@ -779,17 +779,18 @@ void level_display::draw_tiles() {
 
 void level_display::draw_selection() {
   if (!selection.empty()) {
-    std::cout << "selection: " << selection.get_width() << "x" << selection.get_height() << std::endl;
-    std::cout << "pos: " << m_select_x << "," << m_select_y << std::endl;
-
     bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
+
+    // Draw at selection position
+    glLoadIdentity();
     glTranslatef(m_select_x, m_select_y, 0);
 
+    // Draw selection from its tile_buf
     const int width = selection.get_width();
     const int height = selection.get_height();
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
-        draw_tile(selection.get_tile(x, y), x, y, 99);
+        draw_tile(selection.get_tile(x, y), x, y, m_active_layer + 1);
       }
     }
   }

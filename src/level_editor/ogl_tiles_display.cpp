@@ -38,7 +38,7 @@ void ogl_tiles_display::on_realize() {
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0, get_width(), get_height(), 0, -1, 1);
+  glOrtho(0, get_width(), get_height(), 0, -100, 100);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
