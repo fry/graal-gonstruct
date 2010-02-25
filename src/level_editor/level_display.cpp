@@ -772,7 +772,10 @@ void level_display::draw_rectangle(float x, float y, float width, float height, 
 }
 
 void level_display::draw_tiles() {
-// Draw each layer
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, m_tileset);
+
+  // Draw each layer
   int layer_count = m_level->get_layer_count();
   for (int i = 0; i < layer_count; i ++) {
     // If it's visible
@@ -800,6 +803,8 @@ void level_display::draw_tiles() {
       }
     }
   }
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 
@@ -810,6 +815,8 @@ void level_display::draw_selection() {
     glLoadIdentity();
     glTranslatef(m_select_x, m_select_y, 0);
     glColor4f(1, 1, 1, 1);
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, m_tileset);
     // Draw selection from its tile_buf
     const int width = selection.get_width();
     const int height = selection.get_height();
@@ -818,6 +825,7 @@ void level_display::draw_selection() {
         draw_tile(selection.get_tile(x, y), x, y);
       }
     }
+    glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
   }
 
@@ -865,6 +873,7 @@ void level_display::draw_misc() {
         glTexCoord2f(0, 1);
         glVertex2f(x, y+height);
       glEnd();
+      glBindTexture(GL_TEXTURE_2D, 0);
     }
   }
 

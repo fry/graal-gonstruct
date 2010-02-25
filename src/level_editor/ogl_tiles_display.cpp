@@ -95,6 +95,8 @@ void ogl_tiles_display::on_realize() {
 }
 
 void ogl_tiles_display::draw_all() {
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, m_tileset);
   tile_buf& buf = get_tile_buf();
   const int width = buf.get_width();
   const int height = buf.get_height();
@@ -163,10 +165,8 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, m_tileset);
 
-  // Draw all tiles
+  // Draw everything
   draw_all();
 
   if (glwindow->is_double_buffered())
