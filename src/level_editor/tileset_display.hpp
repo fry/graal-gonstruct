@@ -28,7 +28,7 @@ namespace Graal {
       typedef sigc::signal<void, int> signal_default_tile_changed_type;
       signal_default_tile_changed_type& signal_default_tile_changed();
 
-      typedef sigc::signal<void, const Cairo::RefPtr<Cairo::Surface>&> signal_tileset_updated_type;
+      typedef sigc::signal<void, const Cairo::RefPtr<Cairo::ImageSurface>&> signal_tileset_updated_type;
       signal_tileset_updated_type& signal_tileset_updated();
 
       typedef sigc::signal<void, tile_buf&, int, int> signal_tiles_selected_type;

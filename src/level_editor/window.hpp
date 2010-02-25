@@ -31,7 +31,7 @@ namespace Graal {
       void create_new_page(level_display& display, const std::string& name, bool activate = true);
 
       void update_matching_level_displays(const std::string& prefix);
-      void on_tileset_update(const Cairo::RefPtr<Cairo::Surface>& surface);
+      void on_tileset_update(const Cairo::RefPtr<Cairo::ImageSurface>& surface);
 
       boost::shared_ptr<level>& get_current_level();
       void display_error(const Glib::ustring& message);

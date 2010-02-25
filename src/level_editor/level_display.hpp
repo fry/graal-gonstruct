@@ -16,7 +16,7 @@ namespace level_editor {
 class level_display: public ogl_tiles_display {
 public:
   typedef std::vector<bool> layer_visibility_list_type;
-  level_display(preferences& _prefs, image_cache& cache, int default_tile_index);
+  level_display(preferences& _prefs, image_cache& cache, int default_tile_index = 0);
   virtual ~level_display() {}
 
   void set_default_tile(int tile_index);
@@ -103,6 +103,10 @@ public:
   void set_layer_visibility(std::size_t layer, bool visible);
   bool get_layer_visibility(std::size_t layer);
 protected:
+  void draw_tiles();
+  void draw_selection();
+  void draw_misc();
+  virtual void draw_all();
   //virtual bool on_expose_event(GdkEventExpose* event);
   void on_button_pressed(GdkEventButton* event);
   void on_button_released(GdkEventButton* event);

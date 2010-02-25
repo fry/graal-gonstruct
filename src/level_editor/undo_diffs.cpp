@@ -25,7 +25,6 @@ level_editor::basic_diff* level_editor::tile_diff::apply(
       t = m_tiles.get_tile(x, y);
     }
   }
-  target.update_tiles(m_x, m_y, m_tiles.get_width(), m_tiles.get_height());
 
   return new tile_diff(m_x, m_y, buf, m_layer);
 }

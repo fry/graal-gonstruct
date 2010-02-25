@@ -66,7 +66,6 @@ void level_editor::layers_control::on_add_layer() {
   level_display& display = *m_window.get_current_level_display();
   display.get_level()->insert_layer(layer + 1);
   display.set_layer_visibility(layer + 1, true);
-  display.update_all();
 
   m_spin_layer.set_value(layer + 1);
   on_switch_level_display(display);
@@ -79,5 +78,4 @@ void level_editor::layers_control::on_delete_layer() {
   m_spin_layer.set_value(layer - 1);
   display.get_level()->delete_layer(layer);
   on_switch_level_display(display);
-  display.update_all();
 }

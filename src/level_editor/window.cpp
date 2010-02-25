@@ -7,6 +7,8 @@
 #include <iostream>
 #include <memory>
 
+#undef DELETE
+
 using namespace Graal;
 
 namespace {
@@ -327,7 +329,7 @@ level_editor::window::~window() {
     m_preferences.default_tile = default_tile.get_tile();
 }
 
-void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::Surface>& surface) {
+void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::ImageSurface>& surface) {
   m_tile_objects.set_tileset_surface(surface);
   default_tile.set_tileset_surface(surface);
   if (m_nb_levels.get_n_pages() > 0) {

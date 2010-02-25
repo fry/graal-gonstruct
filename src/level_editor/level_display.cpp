@@ -217,125 +217,9 @@ Cairo::RefPtr<Cairo::Surface> level_display::render_level(
       get_height()
     );
 
-  /*Cairo::RefPtr<Cairo::Context> cr = Cairo::Context::create(surface);
-
-  // Draw tiles
-  cr->set_source(m_surface, 0, 0);
-  cr->paint();
-
-  // Draw selection tiles
-  if (!selection.empty() && show_selection) {
-    cr->save();
-      cr->translate(m_select_x, m_select_y);
-      cr->set_source(m_selection_surface, 0, 0);
-      cr->paint();
-    cr->restore();
-  }
-
-  // Draw npcs
-  if (show_npcs) {
-    Graal::level::npc_list_type::iterator npc_iter, npc_end = m_level->npcs.end();
-    for (npc_iter = m_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
-      cr->save();
-        cr->translate(npc_iter->x * m_tile_width, npc_iter->y * m_tile_height);
-        cr->set_source(m_image_cache.get_image(npc_iter->image), 0, 0);
-        cr->paint();
-      cr->restore();
-    }
-  }
-
-  // Draw links
-  if (show_links) {
-    Graal::level::link_list_type::iterator link_iter, link_end = m_level->links.end();
-    for (link_iter = m_level->links.begin(); link_iter != link_end; link_iter ++) {
-      cr->save();
-        cr->rectangle(link_iter->x * m_tile_width, link_iter->y * m_tile_height,
-          link_iter->width * m_tile_width,
-          link_iter->height * m_tile_height
-        );
-
-        // TODO: move selection color somewhere else (preferences?)
-        cr->set_source_rgb(1, 1, 0.4);
-        cr->stroke_preserve();
-        cr->set_source_rgba(1, 1, 0.4, 0.2);
-        cr->fill();
-      cr->restore();
-    }
-  }
-
-  // Draw signs
-  if (show_signs) {
-    Graal::level::sign_list_type::iterator sign_iter, sign_end = m_level->signs.end();
-    for (sign_iter = m_level->signs.begin(); sign_iter != sign_end; sign_iter ++) {
-      cr->save();
-        cr->rectangle(sign_iter->x * m_tile_width, sign_iter->y * m_tile_height,
-          2 * m_tile_width,
-          1 * m_tile_height
-        );
-
-        // TODO: move selection color somewhere else (preferences?)
-        cr->set_source_rgb(1, 0, 0);
-        cr->stroke_preserve();
-        cr->set_source_rgba(1, 0, 0, 0.2);
-        cr->fill();
-      cr->restore();
-    }
-  }
-
-  // Show selection rectangle when we are selecting or there's a selection and
-  // we are not currently dragging except when the relevant preference is set
-  if (show_selection_border && 
-      (m_selecting || m_select_width*m_select_height != 0 || npc_selected())) {
-    // reload selection width/height for npcs
-    // TODO: use signals
-    if (npc_selected()) {
-      Cairo::RefPtr<Cairo::ImageSurface> img =
-          m_image_cache.get_image(selected_npc->image);
-      m_select_width = img->get_width();
-      m_select_height = img->get_height();
-    }
-    cr->save();
-      cr->rectangle(m_select_x, m_select_y,
-        m_select_width,
-        m_select_height
-      );
-
-      // TODO: move selection color somewhere else (preferences?)
-      cr->set_source_rgb(0.7, 1, 1);
-      if (m_preferences.selection_background) {
-        cr->stroke_preserve();
-        cr->set_source_rgba(0.7, 1, 0, 0.2);
-        cr->fill();
-      } else {
-        cr->stroke();
-      }
-    cr->restore();
-  }*/
 
   return surface;
 }
-
-/*bool level_display::on_expose_event(GdkEventExpose* event) {
-  Glib::RefPtr<Gdk::Window> window = get_window();
-
-  if (!window || !m_surface)
-    return true;
-
-  Cairo::RefPtr<Cairo::Surface> surface = render_level(
-      !m_dragging || m_preferences.selection_border_while_dragging, true,
-      !m_preferences.hide_npcs,
-      !m_preferences.hide_links,
-      !m_preferences.hide_signs);
-
-  Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
-  cr->rectangle(event->area.x, event->area.y, event->area.width, event->area.height);
-  cr->clip();
-
-  cr->set_source(surface, 0, 0);
-  cr->paint();
-
-  return true;
-}*/
 
 void level_display::on_button_motion(GdkEventMotion* event) {
   int x, y;
@@ -849,49 +733,6 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
 void level_display::on_mouse_leave(GdkEventCrossing* event) {
   m_signal_status_update("");
 }
-/*
-void level_display::update_tile(Cairo::RefPtr<Cairo::Context>& ct, const tile& _tile,
-                                              int x, int y) {
-  if (!m_tileset_surface)
-    return;
-
-  ct->save();
-    ct->translate(x * m_tile_width, y * m_tile_height);
-    ct->rectangle(0, 0, m_tile_width, m_tile_height);
-    ct->clip();
-
-    // draw background color first
-    ct->set_source_rgb(1, 0.6, 0.9);
-    ct->paint();
-
-    int layer_count = m_level->get_layer_count();
-    for (int i = 0; i < layer_count; i ++) {
-      if (m_layer_visibility[i]) {
-        tile_buf& tiles = m_level->get_tiles(i);
-        int tile_index = tiles.get_tile(x, y).index;
-
-        const int tile_x = -(m_tile_width * helper::get_tile_x(tile_index));
-        const int tile_y = -(m_tile_height * helper::get_tile_y(tile_index));
-        ct->set_source(
-          m_tileset_surface,
-          tile_x,
-          tile_y
-        );
-
-        if (i > m_active_layer) {
-          ct->mask(m_pattern_above);
-        } else if (i < m_active_layer) {
-          ct->paint();
-          ct->set_source(m_pattern_below);
-          ct->paint();
-        } else {
-          ct->paint();
-        }
-      }
-    }
-  ct->restore();
-}
-*/
 
 void level_display::set_layer_visibility(std::size_t layer, bool visible) {
   if (layer >= m_layer_visibility.size())
@@ -903,4 +744,63 @@ bool level_display::get_layer_visibility(std::size_t layer) {
   if (layer < m_layer_visibility.size())
     return m_layer_visibility[layer];
   return false;
+}
+
+void level_display::draw_tiles() {
+// Draw each layer
+  int layer_count = m_level->get_layer_count();
+  for (int i = 0; i < layer_count; i ++) {
+    // If it's visible
+    if (m_layer_visibility[i]) {
+      // With its own set of tiles
+      tile_buf& tiles = m_level->get_tiles(i);
+      const int width = tiles.get_width();
+      const int height = tiles.get_height();
+
+      // Draw layers below the current darker, above transparent
+      if (i > m_active_layer) {
+        int level_diff = std::abs(m_active_layer - i);
+        glColor4f(1, 1, 1, std::pow(0.5, level_diff));
+      } else if (i < m_active_layer) {
+        glColor4f(0.5, 0.5, 0.5, 1);
+      } else {
+        glColor4f(1, 1, 1, 1);
+      }
+
+      for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
+          draw_tile(tiles.get_tile(x, y), x, y, i);
+        }
+      }
+    }
+  }
+}
+
+
+void level_display::draw_selection() {
+  if (!selection.empty()) {
+    std::cout << "selection: " << selection.get_width() << "x" << selection.get_height() << std::endl;
+    std::cout << "pos: " << m_select_x << "," << m_select_y << std::endl;
+
+    bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
+    glTranslatef(m_select_x, m_select_y, 0);
+
+    const int width = selection.get_width();
+    const int height = selection.get_height();
+    for (int x = 0; x < width; ++x) {
+      for (int y = 0; y < height; ++y) {
+        draw_tile(selection.get_tile(x, y), x, y, 99);
+      }
+    }
+  }
+}
+
+void level_display::draw_misc() {
+}
+
+void level_display::draw_all() {
+  draw_tiles();
+  draw_misc();
+
+  draw_selection();
 }

@@ -33,8 +33,8 @@ void ogl_tiles_display::on_realize() {
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    
-  glViewport(0, 0, get_width(), get_height());
+  
+  set_surface_buffers();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -72,7 +72,7 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y, int z) {
   float y1 = (float)(ty*m_tile_height)/m_tileset_height;
   float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
 
-  glLoadIdentity();
+  glPushMatrix();
   glTranslatef(x * m_tile_width, y * m_tile_height, z);
   glBegin(GL_QUADS);
     // Top left
@@ -88,6 +88,7 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y, int z) {
     glTexCoord2f(x1, y2);
     glVertex2f(0, m_tile_height);
   glEnd();
+  glPopMatrix();
 }
 
 void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface) {
@@ -178,6 +179,10 @@ void ogl_tiles_display::set_surface_buffers() {
     buf.get_width() * m_tile_width,
     buf.get_height() * m_tile_height
   );
+
+  glViewport(0, 0,
+    buf.get_width() * m_tile_width,
+    buf.get_height() * m_tile_height);
 }
 
 void ogl_tiles_display::clear() {

@@ -151,9 +151,9 @@ solution "gonstruct"
     kind "ConsoleApp"
     language "C++"
     files {  "src/gtkogltest/*.hpp", "src/gtkogltest/*.cpp", "src/gtkogltest/glew.c",
-             "src/level_editor/ogl_*", "src/level_editor/level.*",
+             "src/level_editor/ogl_tiles*", "src/level_editor/level.*",
              "src/level_editor/*" }
-    excludes { "src/level_editor/main.cpp", "src/level_editor/level_display.cpp" }
+    excludes { "src/level_editor/main.cpp"}
     defines { "GLEW_STATIC" }
     links { "core", "boost_filesystem-mt", "boost_system-mt" }
     includedirs { "src/gtkogltest", "src/level_editor", "src" }
