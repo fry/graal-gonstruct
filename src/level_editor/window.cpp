@@ -7,6 +7,7 @@
 #include <iostream>
 #include <memory>
 
+// So we can use Gtk::Stock::DELETE. gtkglext seems to define it (?)
 #undef DELETE
 
 using namespace Graal;
@@ -428,6 +429,10 @@ bool level_editor::window::close_all_levels() {
         return true;
       }
     }
+
+    // explicitly delete the display here to prevent invalid GdkWindows in its on_idle function
+    // since unmap_event doesn't get called on Windows
+    delete &disp;
   }
   
   return false;
@@ -779,6 +784,11 @@ void level_editor::window::on_close_level_clicked(Gtk::ScrolledWindow& scrolled,
   }
 
   m_nb_levels.remove(scrolled);
+
+  // explicitly delete the display here to prevent invalid GdkWindows in its on_idle function
+  // since unmap_event doesn't get called on Windows
+  delete &display;
+
   if (m_nb_levels.get_n_pages() <= 0) {
     set_level_buttons(false);
 
