@@ -27,9 +27,8 @@ void ogl_tiles_display::on_realize() {
   glDisable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
 
-  glEnable(GL_DEPTH_TEST);
+  glDisable(GL_DEPTH_TEST);
   glClearColor(0.0, 0.0, 1.0, 1.0);
-  glClearDepth(1.0);
 
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -61,7 +60,7 @@ void ogl_tiles_display::draw_all() {
   }
 }
 
-void ogl_tiles_display::draw_tile(tile& _tile, int x, int y, int z) {
+void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
   // The position of the actual tile inside the tileset
   const int tx = helper::get_tile_x(_tile.index);
   const int ty = helper::get_tile_y(_tile.index);
@@ -73,7 +72,7 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y, int z) {
   float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
 
   glPushMatrix();
-  glTranslatef(x * m_tile_width, y * m_tile_height, z);
+  glTranslatef(x * m_tile_width, y * m_tile_height, 0);
   glBegin(GL_QUADS);
     // Top left
     glTexCoord2f(x1, y1);
@@ -135,7 +134,7 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
 
   glwindow->gl_begin(get_gl_context());
 
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glClear(GL_COLOR_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();

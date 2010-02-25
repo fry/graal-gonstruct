@@ -748,25 +748,25 @@ bool level_display::get_layer_visibility(std::size_t layer) {
 
 void level_display::draw_rectangle(float x, float y, float width, float height, float r, float g, float b, float a, bool fill) {
   glDisable(GL_TEXTURE_2D);
-  glColor3f(r, g, b);
-  float z = 99;
-  glLineWidth(2);
-  glBegin(GL_LINE_LOOP);
-    glVertex3f(x, y, z);
-    glVertex3f(x + width, y, z);
-    glVertex3f(x + width, y + height, z);
-    glVertex3f(x, y + height, z);
-  glEnd();
 
   if (fill) {
     glColor4f(r, g, b, a);
     glBegin(GL_QUADS);
-      glVertex3f(x, y, z);
-      glVertex3f(x + width, y, z);
-      glVertex3f(x + width, y + height, z);
-      glVertex3f(x, y + height, z);
+      glVertex2f(x, y);
+      glVertex2f(x + width, y);
+      glVertex2f(x + width, y + height);
+      glVertex2f(x, y + height);
     glEnd();
   }
+
+  glColor3f(r, g, b);
+  glLineWidth(2);
+  glBegin(GL_LINE_LOOP);
+    glVertex2f(x, y);
+    glVertex2f(x + width, y);
+    glVertex2f(x + width, y + height);
+    glVertex2f(x, y + height);
+  glEnd();
   glEnable(GL_TEXTURE_2D);
 }
 
@@ -793,7 +793,7 @@ void level_display::draw_tiles() {
 
       for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
-          draw_tile(tiles.get_tile(x, y), x, y, i);
+          draw_tile(tiles.get_tile(x, y), x, y);
         }
       }
     }
@@ -803,8 +803,6 @@ void level_display::draw_tiles() {
 
 void level_display::draw_selection() {
   if (!selection.empty()) {
-    bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
-
     // Draw at selection position
     glPushMatrix();
     glLoadIdentity();
@@ -815,7 +813,7 @@ void level_display::draw_selection() {
     const int height = selection.get_height();
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
-        draw_tile(selection.get_tile(x, y), x, y, m_active_layer + 1);
+        draw_tile(selection.get_tile(x, y), x, y);
       }
     }
     glPopMatrix();
@@ -823,7 +821,8 @@ void level_display::draw_selection() {
 
   // Show selection rectangle when we are selecting or there's a selection and
   // we are not currently dragging except when the relevant preference is set
-  if (m_selecting || m_select_width*m_select_height != 0 || npc_selected()) {
+  bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
+  if (show_border && (m_selecting || m_select_width*m_select_height != 0 || npc_selected())) {
     // reload selection width/height for npcs
     if (npc_selected()) {
       Cairo::RefPtr<Cairo::ImageSurface> img =
@@ -841,6 +840,29 @@ void level_display::draw_selection() {
 }
 
 void level_display::draw_misc() {
+  // Signs
+  if (!m_preferences.hide_signs) {
+    Graal::level::sign_list_type::iterator sign_iter, sign_end = m_level->signs.end();
+    for (sign_iter = m_level->signs.begin(); sign_iter != sign_end; sign_iter ++) {
+      draw_rectangle(
+        sign_iter->x * m_tile_width, sign_iter->y * m_tile_height,
+        2 * m_tile_width, 1 * m_tile_height, // Signs are by default 2x1 tiles big
+        1, 0, 0, 0.2,
+        true);
+    }
+  }
+
+  // Links
+  if (!m_preferences.hide_links) {
+    Graal::level::link_list_type::iterator link_iter, link_end = m_level->links.end();
+    for (link_iter = m_level->links.begin(); link_iter != link_end; link_iter ++) {
+      draw_rectangle(
+        link_iter->x * m_tile_width, link_iter->y * m_tile_height,
+        link_iter->width * m_tile_width, link_iter->height * m_tile_height,
+        1, 1, 0.4, 0.2,
+        true);
+    }
+  }
 }
 
 void level_display::draw_all() {
