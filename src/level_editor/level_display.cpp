@@ -746,6 +746,30 @@ bool level_display::get_layer_visibility(std::size_t layer) {
   return false;
 }
 
+void level_display::draw_rectangle(float x, float y, float width, float height, float r, float g, float b, float a, bool fill) {
+  glDisable(GL_TEXTURE_2D);
+  glColor3f(r, g, b);
+  float z = 99;
+  glLineWidth(2);
+  glBegin(GL_LINE_LOOP);
+    glVertex3f(x, y, z);
+    glVertex3f(x + width, y, z);
+    glVertex3f(x + width, y + height, z);
+    glVertex3f(x, y + height, z);
+  glEnd();
+
+  if (fill) {
+    glColor4f(r, g, b, a);
+    glBegin(GL_QUADS);
+      glVertex3f(x, y, z);
+      glVertex3f(x + width, y, z);
+      glVertex3f(x + width, y + height, z);
+      glVertex3f(x, y + height, z);
+    glEnd();
+  }
+  glEnable(GL_TEXTURE_2D);
+}
+
 void level_display::draw_tiles() {
 // Draw each layer
   int layer_count = m_level->get_layer_count();
@@ -782,6 +806,7 @@ void level_display::draw_selection() {
     bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
 
     // Draw at selection position
+    glPushMatrix();
     glLoadIdentity();
     glTranslatef(m_select_x, m_select_y, 0);
 
@@ -793,6 +818,25 @@ void level_display::draw_selection() {
         draw_tile(selection.get_tile(x, y), x, y, m_active_layer + 1);
       }
     }
+    glPopMatrix();
+  }
+
+  // Show selection rectangle when we are selecting or there's a selection and
+  // we are not currently dragging except when the relevant preference is set
+  if (m_selecting || m_select_width*m_select_height != 0 || npc_selected()) {
+    // reload selection width/height for npcs
+    if (npc_selected()) {
+      Cairo::RefPtr<Cairo::ImageSurface> img =
+          m_image_cache.get_image(selected_npc->image);
+      m_select_width = img->get_width();
+      m_select_height = img->get_height();
+    }
+
+    draw_rectangle(
+      m_select_x, m_select_y,
+      m_select_width, m_select_height,
+      0.7, 1, 1, 0.2,
+      m_preferences.selection_background);
   }
 }
 

@@ -107,6 +107,8 @@ protected:
   void draw_selection();
   void draw_misc();
   virtual void draw_all();
+
+  void draw_rectangle(float x, float y, float width, float height, float r, float g, float b, float a = 1.0, bool fill = false);
   //virtual bool on_expose_event(GdkEventExpose* event);
   void on_button_pressed(GdkEventButton* event);
   void on_button_released(GdkEventButton* event);
