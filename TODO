@@ -5,5 +5,6 @@
 - moving NPCs in 0.5 increments (dragging while pressing CTRL?)
 
 - tile grid
-- shade unselected layers
-- put each layer on its own surface
+
+- hotkeys for layer switching
+- better layer interface in general
