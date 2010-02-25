@@ -21,6 +21,7 @@ namespace Graal {
       bool selection_background;
       bool sticky_tile_selection;
       bool hide_npcs, hide_signs, hide_links;
+      bool fade_layers;
       int default_tile;
 
       tile_objects_type tile_object_groups;

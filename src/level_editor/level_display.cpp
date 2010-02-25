@@ -783,13 +783,14 @@ void level_display::draw_tiles() {
       const int height = tiles.get_height();
 
       // Draw layers below the current darker, above transparent
-      if (i > m_active_layer) {
-        int level_diff = std::abs(m_active_layer - i);
-        glColor4f(1, 1, 1, std::pow(0.5, level_diff));
-      } else if (i < m_active_layer) {
-        glColor4f(0.5, 0.5, 0.5, 1);
-      } else {
-        glColor4f(1, 1, 1, 1);
+      glColor4f(1, 1, 1, 1);
+      if (m_preferences.fade_layers) {
+        if (i > m_active_layer) {
+          int level_diff = std::abs(m_active_layer - i);
+          glColor4f(1, 1, 1, std::pow(0.5, level_diff));
+        } else if (i < m_active_layer) {
+          glColor4f(0.5, 0.5, 0.5, 1);
+        }
       }
 
       for (int x = 0; x < width; ++x) {

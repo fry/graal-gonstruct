@@ -38,6 +38,9 @@ void level_editor::preferences::serialize() {
   m_values["sticky_tile_selection"]
     = sticky_tile_selection ? "true" : "false";
 
+  m_values["fade_layers"]
+    = fade_layers ? "true" : "false";
+
   if (default_tile == -1) {
     m_values.erase("default_tile");
   } else {
@@ -82,6 +85,11 @@ void level_editor::preferences::deserialize() {
   iter = m_values.find("sticky_tile_selection");
   if (iter != m_values.end()) {
     sticky_tile_selection = (iter->second == "true");
+  }
+
+  iter = m_values.find("fade_layers");
+  if (iter != m_values.end()) {
+    fade_layers = (iter->second == "true");
   }
 
   hide_npcs = false;
