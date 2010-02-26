@@ -147,9 +147,10 @@ solution "gonstruct"
     includedirs { "src" }
     links { "core", "boost_filesystem-mt", "boost_system-mt" }
 
-    files { "src/gtkogltest/glew.c" }
+    -- Glew extension management
+    files { "src/glew/*" }
     defines { "GLEW_STATIC" }
-    includedirs { "src/gtkogltest" }
+    includedirs { "src/glew" }
 
     -- GTKmm through pkg-config
     pkg_config { "gtkmm-2.4", "gtksourceview-2.0", "gtkglextmm-1.2" }
@@ -162,16 +163,3 @@ solution "gonstruct"
     -- Disable excessive GTKmm warnings
     configuration { "vs2008" }
       buildoptions { "/wd4250" }
-
-  project "gtkogltest"
-    kind "ConsoleApp"
-    language "C++"
-    files {  "src/gtkogltest/*.hpp", "src/gtkogltest/*.cpp", "src/gtkogltest/glew.c",
-             "src/level_editor/ogl_tiles*", "src/level_editor/level.*",
-             "src/level_editor/*" }
-    excludes { "src/level_editor/main.cpp"}
-    defines { "GLEW_STATIC" }
-    links { "core", "boost_filesystem-mt", "boost_system-mt" }
-    includedirs { "src/gtkogltest", "src/level_editor", "src" }
-    -- GTKmm through pkg-config
-    pkg_config { "gtkmm-2.4", "gtkglextmm-1.2", "gtksourceview-2.0" }
