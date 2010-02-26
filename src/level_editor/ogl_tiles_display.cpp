@@ -221,7 +221,7 @@ bool ogl_tiles_display::on_visibility_notify_event(GdkEventVisibility* event) {
 
 bool ogl_tiles_display::on_idle() {
   get_window()->invalidate_rect(get_allocation(), false);
-  get_window()->process_updates(false);
+  //get_window()->process_updates(false);
 
   return true;
 }
@@ -229,7 +229,7 @@ bool ogl_tiles_display::on_idle() {
 void ogl_tiles_display::set_rendering(bool enabled) {
   if (enabled) {
     if (!m_connection_idle.connected())
-      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), GDK_PRIORITY_REDRAW);
+      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), G_PRIORITY_LOW + 101);
   } else if (m_connection_idle.connected()) {
     m_connection_idle.disconnect();
   }

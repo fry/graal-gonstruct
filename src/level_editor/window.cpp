@@ -649,6 +649,10 @@ void level_editor::window::on_action_open() {
   all_filter.set_name("All files");
   dialog.add_filter(all_filter);
 
+  // Disable rendering because it appears to cause problems with the dialog
+  level_display& current_display = *get_current_level_display();
+  //current_display.set_rendering(false);
+
   if (dialog.run() == Gtk::RESPONSE_OK) {
     std::list<Glib::ustring> files(dialog.get_filenames());
     std::list<Glib::ustring>::const_iterator iter, end = files.end();
@@ -666,6 +670,8 @@ void level_editor::window::on_action_open() {
       }
     }
   }
+
+  //current_display.set_rendering(true);
 }
 
 void level_editor::window::on_action_save() {
