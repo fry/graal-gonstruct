@@ -42,6 +42,8 @@ cp bin/libtiff3.dll installer/bin || exit
 cp bin/libxml2.dll installer/bin || exit
 cp bin/zlib1.dll installer/bin || exit
 cp bin/libgiomm-2.4-1.dll installer/bin || exit
+cp bin/libgdkglextmm-win32-1.2-0.dll installer/bin || exit
+cp bin/libgtkglextmm-win32-1.2-0.dll installer/bin || exit
 
 echo "Copying modules..."
 mkdir -p installer/lib/gtk-2.0/2.10.0/engines || exit
