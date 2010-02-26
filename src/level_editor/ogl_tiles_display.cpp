@@ -5,7 +5,7 @@ using namespace Graal::level_editor;
 
 #ifdef DEBUG
   Glib::Timer g_timer;
-  unsigned int g_frames;
+  unsigned int g_frames = 0;
 #endif
 
 unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
@@ -38,14 +38,11 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
 ogl_tiles_display::ogl_tiles_display():
   m_tileset(0), m_tile_width(16), m_tile_height(16) {
   Glib::RefPtr<Gdk::GL::Config> glconfig =
-    Gdk::GL::Config::create(Gdk::GL::MODE_RGB    |
-                            Gdk::GL::MODE_DEPTH  |
+    Gdk::GL::Config::create(Gdk::GL::MODE_RGB |
                             Gdk::GL::MODE_DOUBLE);
   set_gl_capability(glconfig);
 
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
-
-  g_frames = 0;
 }
 
 bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {

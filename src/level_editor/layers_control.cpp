@@ -50,7 +50,8 @@ void level_editor::layers_control::on_switch_level_display(level_display& displa
   //m_spin_layer.set_value(0);
   m_spin_layer.set_increments(1, 1);
 
-  int layer = m_spin_layer.get_value_as_int();
+  int layer = display.get_active_layer();
+  m_spin_layer.set_value(layer);
   m_layer_visible.set_active(display.get_layer_visibility(layer));
 
   m_button_delete_layer.set_sensitive(layer_count > 1);

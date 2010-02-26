@@ -95,6 +95,7 @@ public:
   bool get_unsaved();
 
   void set_active_layer(int layer);
+  int get_active_layer() { return m_active_layer; };
 
   virtual tile_buf& get_tile_buf();
   Cairo::RefPtr<Cairo::Surface> render_level(
