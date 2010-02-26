@@ -212,7 +212,7 @@ bool ogl_tiles_display::on_unmap_event(GdkEventAny* event) {
 
 bool ogl_tiles_display::on_visibility_notify_event(GdkEventVisibility* event) {
   // Disable rendering if we are completely obscured, doesn't seem to happen under windows.
-  set_rendering(event->state == GDK_VISIBILITY_FULLY_OBSCURED);
+  set_rendering(event->state != GDK_VISIBILITY_FULLY_OBSCURED);
   return true;
 }
 
