@@ -2,19 +2,21 @@
 ________________________________________________________________
 
 0.2.0:
+  * 26.02.10 - Display the correct active layer in the layers control when
+               switching level tabs
   + 25.02.10 - Level rendering has been ported to pure OpenGL and should be
-               much faster now.
+               much faster now
   + 25.02.10 - Inactive layer fading has been added and can be toggled on and
                off in the Tools tab. It makes layers above the active one
                transparent and those below darker so it becomes easier to
-               distinguish between multiple layers.
+               distinguish between multiple layers
   * 23.02.10 - Optimized loading speed of levels in general. Should be much
-               faster now, especially when loading multiple levels.
+               faster now, especially when loading multiple levels
   * 20.09.09 - Added preference to disable translucent selection backgrounds.
 0.1.7:
   * 16.09.09 - Several fixes to tilesets saving and drawing. Only draw the first found
-               main tileset now.
-  * 16.09.09 - Added layer functionality. It can be found in the Tools category.
+               main tileset now
+  * 16.09.09 - Added layer functionality. It can be found in the Tools category
   * 09.05.09 - Mac fixes
 0.1.6
   * 09.09.08 - NPC selection fixes
