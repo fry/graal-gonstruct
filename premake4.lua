@@ -134,6 +134,10 @@ solution "gonstruct"
     flags { "Optimize", "OptimizeSpeed", "FloatFast" }
     targetdir "bin/release"
   
+  configuration "macosx"
+    includedirs { "/opt/local/include" }
+    libdirs { "/opt/local/libraries" }
+
   location "build"
   project "core"
     kind "StaticLib"
