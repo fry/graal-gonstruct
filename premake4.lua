@@ -43,6 +43,23 @@ newaction {
   end
 }
 
+newaction {
+  trigger = "images",
+  description = "Convert the SVG images to PNGs with inkscape",
+  execute = function()
+    function build_image(source, dest)
+      os.execute(string.format("inkscape --without-gui --export-png=\"%s\" \"%s\"", source, dest))
+    end
+    
+    print "Building images..."
+    for _, image in pairs(os.matchfiles("src/level_editor/*.svg")) do
+      dest = path.getbasename(image) .. ".png"
+      print("  building " .. dest)
+      build_image(image, dest)
+    end
+  end
+}
+
 -- Embeds image data in a source file and generates a header
 function build_image_data(source, dest)
   print("  creating " .. dest .. ".cpp")
@@ -124,7 +141,7 @@ solution "gonstruct"
     files { "src/core/*.hpp", "src/core/*.cpp" }
 
   project "gonstruct"
-    kind "ConsoleApp"
+    kind "WindowedApp"
     language "C++"
     files { "src/level_editor/*.hpp", "src/level_editor/*.cpp" }
     includedirs { "src" }
