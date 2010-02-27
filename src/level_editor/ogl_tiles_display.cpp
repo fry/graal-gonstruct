@@ -36,7 +36,8 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
 }
 
 ogl_tiles_display::ogl_tiles_display():
-  m_tileset(0), m_tile_width(16), m_tile_height(16) {
+  m_tileset(0), m_tile_width(16), m_tile_height(16),
+  m_interval(1000.0 / 60.0) {
   Glib::RefPtr<Gdk::GL::Config> glconfig =
     Gdk::GL::Config::create(Gdk::GL::MODE_RGB |
                             Gdk::GL::MODE_DOUBLE);
@@ -174,10 +175,7 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   // Draw everything
   draw_all();
 
-  if (glwindow->is_double_buffered())
-    glwindow->swap_buffers();
-  else
-    glFlush();
+  glwindow->swap_buffers();
 
   glwindow->gl_end();
 
@@ -225,8 +223,9 @@ bool ogl_tiles_display::on_idle() {
 
 void ogl_tiles_display::set_rendering(bool enabled) {
   if (enabled) {
-    if (!m_connection_idle.connected())
-      m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), G_PRIORITY_LOW + 101);
+    if (!m_connection_idle.connected()) {
+      m_connection_idle = Glib::signal_timeout().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), m_interval);
+    }
   } else if (m_connection_idle.connected()) {
     m_connection_idle.disconnect();
   }
@@ -259,4 +258,8 @@ void ogl_tiles_display::clear() {
 void ogl_tiles_display::set_tile_buf(tile_buf& buf) {
   m_tile_buf.swap(buf);
   set_surface_buffers();
+}
+
+void ogl_tiles_display::set_interval(float ms) {
+  m_interval = ms;
 }

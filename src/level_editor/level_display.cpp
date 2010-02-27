@@ -62,6 +62,9 @@ level_display::level_display(
   m_active_layer = 0;
 
   m_unsaved = false;
+
+  // Default 60 FPS, TODO: put in preferences
+  set_interval(1000.0 / 60.0);
 }
 
 void level_display::set_default_tile(int tile_index) {
