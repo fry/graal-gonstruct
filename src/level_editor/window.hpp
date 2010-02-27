@@ -128,6 +128,10 @@ namespace Graal {
 
       Gtk::Notebook m_nb_levels;
       Gtk::Notebook m_nb_toolset;
+      
+      // FileChooserDialogs to use
+      Gtk::FileChooserDialog m_fc_open;
+      Gtk::FileChooserDialog m_fc_save;
 
       Glib::RefPtr<Gtk::ActionGroup> m_level_actions;
       Glib::RefPtr<Gtk::UIManager> m_ui;

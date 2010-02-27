@@ -144,7 +144,8 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs), m_link_list(*this),
   m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
-  m_prefs_display(_prefs), m_tile_objects(_prefs), m_opening_levels(false) {
+  m_prefs_display(_prefs), m_tile_objects(_prefs), m_opening_levels(false),
+  m_fc_open(*this, "Open Level"), m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE) {
 
   set_title(std::string("Gonstruct ") + config::version_string);
 
@@ -311,7 +312,30 @@ level_editor::window::window(preferences& _prefs)
 
   default_tile.set_tile(m_preferences.default_tile);
 
-  //m_logo = Gdk::Pixbuf::create_from_file("images/logo.png");
+  // FileChooserDialog open level
+  m_fc_open.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+  m_fc_open.add_button("Open", Gtk::RESPONSE_OK);
+  m_fc_open.set_select_multiple(true);
+
+  Gtk::FileFilter nw_filter;
+  nw_filter.add_pattern("*.nw");
+  nw_filter.set_name("Graal Level (*.nw)");
+  m_fc_open.add_filter(nw_filter);
+  m_fc_open.set_filter(nw_filter);
+
+  Gtk::FileFilter all_filter;
+  all_filter.add_pattern("*");
+  all_filter.set_name("All Files");
+  m_fc_open.add_filter(all_filter);
+
+  // FileChooserDialog save as
+  m_fc_save.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
+  m_fc_save.add_button("Save", Gtk::RESPONSE_OK);
+
+  m_fc_save.add_filter(nw_filter);
+  m_fc_save.set_filter(nw_filter);
+  m_fc_save.set_do_overwrite_confirmation(true);
+
   set_level_buttons(false);
 
   // TODO: no
@@ -631,27 +655,10 @@ void level_editor::window::on_action_new() {
 }
 
 void level_editor::window::on_action_open() {
-  Gtk::FileChooserDialog dialog(*this, "Open level");
-  dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-  dialog.add_button("Open", Gtk::RESPONSE_OK);
-  dialog.set_select_multiple(true);
-
-  Gtk::FileFilter nw_filter;
-  nw_filter.add_pattern("*.nw");
-  nw_filter.set_name("Graal Level (*.nw)");
-  dialog.add_filter(nw_filter);
-
-  Gtk::FileFilter all_filter;
-  all_filter.add_pattern("*");
-  all_filter.set_name("All files");
-  dialog.add_filter(all_filter);
-
-  // Disable rendering because it appears to cause problems with the dialog
   level_display& current_display = *get_current_level_display();
-  //current_display.set_rendering(false);
 
-  if (dialog.run() == Gtk::RESPONSE_OK) {
-    std::list<Glib::ustring> files(dialog.get_filenames());
+  if (m_fc_open.run() == Gtk::RESPONSE_OK) {
+    std::list<Glib::ustring> files(m_fc_open.get_filenames());
     std::list<Glib::ustring>::const_iterator iter, end = files.end();
     for (iter = files.begin();
          iter != end;) {
@@ -667,8 +674,8 @@ void level_editor::window::on_action_open() {
       }
     }
   }
-
-  //current_display.set_rendering(true);
+  
+  m_fc_open.hide();
 }
 
 void level_editor::window::on_action_save() {
@@ -680,30 +687,22 @@ void level_editor::window::on_action_save_as() {
 }
 
 bool level_editor::window::save_current_page_as() {
-  Gtk::FileChooserDialog dialog(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE);
-  dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-  dialog.add_button("Save", Gtk::RESPONSE_OK);
-
   level_display* disp = get_current_level_display();
   boost::filesystem::path path = disp->get_level_path();
   if (path.empty())
-    dialog.set_current_name("new.nw");
+    m_fc_save.set_current_name("new.nw");
   else
-    dialog.set_filename(path.string());
+    m_fc_save.set_filename(path.string());
 
-  Gtk::FileFilter filter;
-  filter.add_pattern("*.nw");
-  filter.set_name("Graal Level (*.nw)");
-  dialog.add_filter(filter);
-  dialog.set_do_overwrite_confirmation(true);
   
-  if (dialog.run() == Gtk::RESPONSE_OK) {
-    std::string path = dialog.get_filename();
+  if (m_fc_save.run() == Gtk::RESPONSE_OK) {
+    std::string path = m_fc_save.get_filename();
     level_display* disp = get_current_level_display();
     disp->save_level(path);
-
+    m_fc_save.hide();
     return true;
   } else {
+    m_fc_save.hide();
     return false;
   }
 }
