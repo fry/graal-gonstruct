@@ -75,9 +75,6 @@ level_display::level_display(
   m_texcoord_buffer = 0;
 
   m_unsaved = false;
-
-  // Default 60 FPS, TODO: put in preferences
-  set_interval(1000.0 / 60.0);
 }
 
 void level_display::set_default_tile(int tile_index) {
@@ -87,6 +84,7 @@ void level_display::set_default_tile(int tile_index) {
 void level_display::set_active_layer(int layer) {
   if (m_level->tiles_exist(layer)) {
     m_active_layer = layer;
+    invalidate();
   }
 }
 
@@ -128,22 +126,6 @@ void level_display::save_level(
     const boost::filesystem::path& path) {
   set_level_path(path);
   save_level();
-}
-
-void level_display::update_selection() {
-  /*m_selection_surface = Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
-    m_select_width,
-    m_select_height
-  );
-
-  Cairo::RefPtr<Cairo::Context> cr =
-    Cairo::Context::create(m_selection_surface);
-
-  for (int x = 0; x < selection.get_width(); ++x) {
-    for (int y = 0; y < selection.get_height(); ++y) {
-      basic_tiles_display::update_tile(cr, selection.get_tile(x, y), x, y);
-    }
-  }*/
 }
 
 void level_display::save_selection() {
@@ -205,6 +187,8 @@ void level_display::clear_selection() {
   m_selecting = false;
   m_dragging = false;
   m_select_width = m_select_height = 0;
+  
+  invalidate();
 }
 
 bool level_display::in_selection(int x, int y) {
@@ -219,6 +203,8 @@ void level_display::set_selection(const Graal::npc& npc) {
   m_select_y = npc.y * m_tile_height;
   m_select_width = surface->get_width();
   m_select_height = surface->get_height();
+  
+  invalidate();
 }
 
 tile_buf& level_display::get_tile_buf() {
@@ -301,6 +287,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
   } else {
     get_window()->set_cursor();
   }
+
+  invalidate();
 }
 
 void level_display::on_button_pressed(GdkEventButton* event) {
@@ -327,7 +315,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         
         set_selection(*selected_npc);
 
-        return;
+        return invalidate();
       }
 
       // set default tile
@@ -344,7 +332,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       if (event->button == 3 && !npc_selected()) {
         delete_selection();
       }
-      return;
+      return invalidate();
     }
 
     if (!m_preferences.hide_npcs) {
@@ -416,7 +404,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       // prevent selecting out of bounds
       if (x > m_level->get_width() * m_tile_width ||
           y > m_level->get_height() * m_tile_height)
-        return;
+        return invalidate();
 
       // otherwise select tiles only with left mouse button
       if (!npc_selected() && event->button == 1) {   
@@ -430,6 +418,8 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       }
     }
   }
+  
+  invalidate();
 }
 
 
@@ -515,8 +505,6 @@ void level_display::lift_selection() {
 
   // destroy buf
   add_undo_diff(new tile_diff(sx + offset_left, sy + offset_right, buf, m_active_layer));
-
-  update_selection();
 }
 
 void level_display::grab_selection() {
@@ -557,7 +545,6 @@ void level_display::drag_selection(tile_buf& tiles,
   m_select_height = selection.get_height() * m_tile_height;
 
   m_dragging = true;
-  update_selection();
 }
 
 // npc
@@ -596,8 +583,6 @@ void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
   selected_npc->y = to_tiles_y(m_select_y);
 
   m_dragging = true;
-
-  update_selection();
 }
 
 void level_display::undo() {

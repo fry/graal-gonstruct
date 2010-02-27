@@ -31,16 +31,11 @@ public:
   virtual tile_buf& get_tile_buf() { return m_tile_buf; }
   void set_tile_buf(tile_buf& buf);
 
-  void set_rendering(bool enabled);
-  void set_interval(float interval);
+  void invalidate();
 protected:
   virtual void on_realize();
   virtual bool on_expose_event(GdkEventExpose* event);
-  virtual bool on_idle();
   virtual bool on_configure_event(GdkEventConfigure* event);
-  virtual bool on_map_event(GdkEventAny* event);
-  virtual bool on_unmap_event(GdkEventAny* event);
-  virtual bool on_visibility_notify_event(GdkEventVisibility* event);
 
   virtual void draw_tile(tile& _tile, int x, int y);
   virtual void draw_all();

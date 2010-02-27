@@ -59,6 +59,8 @@ bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
   glViewport(0, 0, get_width(), get_height());
 
   glwindow->gl_end();
+  
+  invalidate();
 
   return true;
 }
@@ -150,6 +152,8 @@ void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface
 
   m_tileset_width = surface->get_width();
   m_tileset_height = surface->get_height();
+  
+  invalidate();
 }
 
 bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
@@ -197,50 +201,22 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   #endif
 }
 
-bool ogl_tiles_display::on_map_event(GdkEventAny* event) {
-  set_rendering(true);
-
-  return true;
-}
-
-bool ogl_tiles_display::on_unmap_event(GdkEventAny* event) {
-  set_rendering(false);
-
-  return true;
-}
-
-bool ogl_tiles_display::on_visibility_notify_event(GdkEventVisibility* event) {
-  // Disable rendering if we are completely obscured, doesn't seem to happen under windows.
-  set_rendering(event->state != GDK_VISIBILITY_FULLY_OBSCURED);
-  return true;
-}
-
-bool ogl_tiles_display::on_idle() {
-  get_window()->invalidate_rect(get_allocation(), false);
-  //get_window()->process_updates(false);
-
-  return true;
-}
-
-void ogl_tiles_display::set_rendering(bool enabled) {
-  if (enabled) {
-    if (!m_connection_idle.connected()) {
-      m_connection_idle = Glib::signal_timeout().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), m_interval);
-      //m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), G_PRIORITY_LOW + 101);
-    }
-  } else if (m_connection_idle.connected()) {
-    m_connection_idle.disconnect();
-  }
+void ogl_tiles_display::invalidate() {
+  queue_draw();
+  //get_window()->invalidate_rect(get_allocation(), false);
 }
 
 void ogl_tiles_display::set_tile_size(int tile_width, int tile_height) {
   m_tile_width = tile_width;
   m_tile_height = tile_height;
+  
+  invalidate();
 }
 
 void ogl_tiles_display::set_tileset_surface(
     const Cairo::RefPtr<Cairo::ImageSurface>& surface) {
   m_new_tileset = surface;
+  invalidate();
 }
 
 void ogl_tiles_display::set_surface_buffers() {
@@ -250,6 +226,8 @@ void ogl_tiles_display::set_surface_buffers() {
     buf.get_width() * m_tile_width,
     buf.get_height() * m_tile_height
   );
+  
+  invalidate();
 }
 
 void ogl_tiles_display::clear() {
@@ -260,8 +238,4 @@ void ogl_tiles_display::clear() {
 void ogl_tiles_display::set_tile_buf(tile_buf& buf) {
   m_tile_buf.swap(buf);
   set_surface_buffers();
-}
-
-void ogl_tiles_display::set_interval(float ms) {
-  m_interval = ms;
 }

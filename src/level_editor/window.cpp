@@ -447,7 +447,6 @@ bool level_editor::window::close_all_levels() {
     level_display& disp(*get_nth_level_display(i));
     if (disp.get_unsaved()) {
       if (confirm_changes(*this, disp)) {
-        disp.set_rendering(false);
         m_nb_levels.remove_page(i);
         i = i - 1;
       } else {
@@ -785,10 +784,6 @@ void level_editor::window::on_close_level_clicked(Gtk::ScrolledWindow& scrolled,
   }
 
   m_nb_levels.remove(scrolled);
-
-  // explicitly delete the display here to prevent invalid GdkWindows in its on_idle function
-  // since unmap_event doesn't get called on Windows
-  display.set_rendering(false);
 
   if (m_nb_levels.get_n_pages() <= 0) {
     set_level_buttons(false);
