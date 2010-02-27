@@ -37,9 +37,11 @@ void start_editor(int argc, char* argv[],
     return;
   }
 
+  // Load passed level arguments
   if (argc > 1) {
     for (int i = 1; i < argc; i ++) {
-      editor->load_level(argv[i]);
+      if (argv[i][0] != '-')
+        editor->load_level(argv[i]);
     }
   }
 
