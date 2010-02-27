@@ -53,4 +53,5 @@ void level_editor::toolbar_tools_display::on_new_npc_clicked() {
 
 void level_editor::toolbar_tools_display::on_fade_layers_toggled() {
   m_preferences.fade_layers = m_fade_layers.get_active();
+  m_window.get_current_level_display()->invalidate();
 }
