@@ -105,11 +105,13 @@ void ogl_tiles_display::draw_all() {
   const int width = buf.get_width();
   const int height = buf.get_height();
 
+  glBegin(GL_QUADS);
   for (int x = 0; x < width; ++x) {
     for (int y = 0; y < height; ++y) {
       draw_tile(buf.get_tile(x, y), x, y);
     }
   }
+  glEnd();
 }
 
 void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
@@ -118,28 +120,27 @@ void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
   const int ty = helper::get_tile_y(_tile.index);
 
   // Build texture coordinates
+  int dx = x * m_tile_width;
+  int dy = y * m_tile_height;
   float x1 = (float)(tx * m_tile_width)/m_tileset_width;
   float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
   float y1 = (float)(ty*m_tile_height)/m_tileset_height;
   float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
 
-  glPushMatrix();
-  glTranslatef(x * m_tile_width, y * m_tile_height, 0);
-  glBegin(GL_QUADS);
+  //glBegin(GL_QUADS);
     // Top left
     glTexCoord2f(x1, y1);
-    glVertex2f(0, 0);
+    glVertex2f(dx, dy);
     // Top right
     glTexCoord2f(x2, y1);
-    glVertex2f(m_tile_width, 0);
+    glVertex2f(dx + m_tile_width, dy);
     // Bottom right
     glTexCoord2f(x2, y2);
-    glVertex2f(m_tile_width, m_tile_height);
+    glVertex2f(dx + m_tile_width, dy + m_tile_height);
     // Bottom left
     glTexCoord2f(x1, y2);
-    glVertex2f(0, m_tile_height);
-  glEnd();
-  glPopMatrix();
+    glVertex2f(dx, dy + m_tile_height);
+  //glEnd();
 }
 
 void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface) {
@@ -225,6 +226,7 @@ void ogl_tiles_display::set_rendering(bool enabled) {
   if (enabled) {
     if (!m_connection_idle.connected()) {
       m_connection_idle = Glib::signal_timeout().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), m_interval);
+      //m_connection_idle = Glib::signal_idle().connect(sigc::mem_fun(*this, &ogl_tiles_display::on_idle), G_PRIORITY_LOW + 101);
     }
   } else if (m_connection_idle.connected()) {
     m_connection_idle.disconnect();

@@ -780,6 +780,7 @@ void level_display::draw_tiles() {
 
   // Draw each layer
   int layer_count = m_level->get_layer_count();
+  glBegin(GL_QUADS);
   for (int i = 0; i < layer_count; i ++) {
     // If it's visible
     if (m_layer_visibility[i]) {
@@ -806,6 +807,7 @@ void level_display::draw_tiles() {
       }
     }
   }
+  glEnd();
 
   glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -823,11 +825,13 @@ void level_display::draw_selection() {
     // Draw selection from its tile_buf
     const int width = selection.get_width();
     const int height = selection.get_height();
+    glBegin(GL_QUADS);
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
         draw_tile(selection.get_tile(x, y), x, y);
       }
     }
+    glEnd();
     glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
   }
