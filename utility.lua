@@ -25,9 +25,11 @@ end
 function pkg_config(packages)
   packages = table.concat(packages, ' ')
 
-  configuration "vs*"
-    buildoptions { os.capture("pkg-config --cflags --msvc-syntax " .. packages) }
-    linkoptions { os.capture("pkg-config --libs --msvc-syntax " .. packages) }
+  if os.get() == "windows" then
+    configuration "vs*"
+      buildoptions { os.capture("pkg-config --cflags --msvc-syntax " .. packages) }
+      linkoptions { os.capture("pkg-config --libs --msvc-syntax " .. packages) }
+  end
 
   configuration { "gmake" }
     buildoptions { os.capture("pkg-config --cflags " .. packages) }
