@@ -72,6 +72,9 @@ Source: "bin\libgtksourceview-2.0-0.dll"; DestDir: "{app}\bin"; Components: main
 ; gtkglextmm
 Source: "bin\libgdkglextmm-win32-1.2-0.dll"; DestDir:"{app}\bin"; Components: main
 Source: "bin\libgtkglextmm-win32-1.2-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgdkglext-win32-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+Source: "bin\libgtkglext-win32-1.0-0.dll"; DestDir:"{app}\bin"; Components: main
+
 
 ; Gonstruct executable
 Source: "bin\gonstruct.exe"; DestDir: "{app}\bin"; Components: main

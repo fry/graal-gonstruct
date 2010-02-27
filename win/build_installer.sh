@@ -44,6 +44,8 @@ cp bin/zlib1.dll installer/bin || exit
 cp bin/libgiomm-2.4-1.dll installer/bin || exit
 cp bin/libgdkglextmm-win32-1.2-0.dll installer/bin || exit
 cp bin/libgtkglextmm-win32-1.2-0.dll installer/bin || exit
+cp bin/libgtkglext-win32-1.0-0.dll installer/bin || exit
+cp bin/libgdkglext-win32-1.0-0.dll installer/bin || exit
 
 echo "Copying modules..."
 mkdir -p installer/lib/gtk-2.0/2.10.0/engines || exit
@@ -79,7 +81,7 @@ cp gonstruct.iss installer || exit
 cp querymodules.bat installer || exit
 
 echo "Stripping DLLs.."
-strip installer/bin/*.dll || exit
+strip installer/bin/*.dll || exits  
 strip installer/bin/*.exe || exit
 strip installer/lib/gtk-2.0/2.10.0/engines/*.dll || exit
 #strip installer/lib/gtk-2.0/2.10.0/immodules/*.dll || exit
