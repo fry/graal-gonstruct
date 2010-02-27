@@ -644,8 +644,7 @@ void level_editor::window::on_action_create_link() {
 void level_editor::window::on_action_new() {
   try {
     std::auto_ptr<level_display> display(create_level_display());
-    // update tileset here to make sure the level connected to the tileset
-    //display_tileset.update_tileset("");
+
     display->new_level(default_tile.get_tile());
     create_new_page(*Gtk::manage((display.release())), "new");
     set_level_buttons(true);

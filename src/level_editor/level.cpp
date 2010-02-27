@@ -112,7 +112,7 @@ namespace {
 
 Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
-    throw std::runtime_error("load_nw_level() failed: File not found");
+    throw std::runtime_error("load_nw_level("+path.string()+") failed: File not found");
 
   std::ifstream file(path.string().c_str());
 

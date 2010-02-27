@@ -9,6 +9,16 @@
 using namespace Graal;
 using namespace Graal::level_editor;
 
+struct vertex_position {
+  vertex_position(int _x, int _y): x(_x), y(_y) {}
+  int x, y;
+};
+
+struct vertex_texcoord {
+  vertex_texcoord(float _u, float _v): u(_u), v(_v) {}
+  float u, v;
+};
+
 // Convert cursor position to tile. Round to nearest tile.
 inline int level_display::to_tiles_x(int x) {
   return (x + m_tile_width / 2) / m_tile_width;
@@ -60,6 +70,9 @@ level_display::level_display(
   m_select_height = 0;
 
   m_active_layer = 0;
+  
+  m_position_buffer = 0;
+  m_texcoord_buffer = 0;
 
   m_unsaved = false;
 
@@ -775,12 +788,24 @@ void level_display::draw_rectangle(float x, float y, float width, float height, 
 }
 
 void level_display::draw_tiles() {
+  if (!m_position_buffer || !m_texcoord_buffer)
+    setup_buffers();
+  // Each tile needs 4 vertices and 4 texcoords
+  const std::size_t size = m_level->get_width() * m_level->get_height() * 4;
+  std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
+
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, m_tileset);
 
+  // Bind VBOs
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+  glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
+  glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
+
   // Draw each layer
   int layer_count = m_level->get_layer_count();
-  glBegin(GL_QUADS);
   for (int i = 0; i < layer_count; i ++) {
     // If it's visible
     if (m_layer_visibility[i]) {
@@ -800,15 +825,41 @@ void level_display::draw_tiles() {
         }
       }
 
+      tcoords.clear();
+      // Build texture coordinates
       for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
-          draw_tile(tiles.get_tile(x, y), x, y);
+          tile& _tile = tiles.get_tile(x, y);
+
+          // The position of the actual tile inside the tileset
+          const int tx = helper::get_tile_x(_tile.index);
+          const int ty = helper::get_tile_y(_tile.index);
+
+          // Build texture coordinates
+          float x1 = (float)(tx * m_tile_width)/m_tileset_width;
+          float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
+          float y1 = (float)(ty*m_tile_height)/m_tileset_height;
+          float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
+          
+          tcoords.push_back(vertex_texcoord(x1, y1));
+          tcoords.push_back(vertex_texcoord(x2, y1));
+          tcoords.push_back(vertex_texcoord(x2, y2));
+          tcoords.push_back(vertex_texcoord(x1, y2));
         }
       }
+
+      // Upload texture coordinates and draw buffer
+      glBufferData(GL_ARRAY_BUFFER,
+                   tcoords.size() * sizeof(vertex_texcoord),
+                   &tcoords.front(),
+                   GL_STREAM_DRAW);
+      glTexCoordPointer(2, GL_FLOAT, 0, 0);
+      glDrawArrays(GL_QUADS, 0, size);
     }
   }
-  glEnd();
 
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
   glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -914,4 +965,37 @@ void level_display::draw_all() {
   draw_misc();
 
   draw_selection();
+}
+
+void level_display::setup_buffers() {
+  if (!m_position_buffer)
+    glGenBuffers(1, &m_position_buffer);
+  if (!m_texcoord_buffer)
+    glGenBuffers(1, &m_texcoord_buffer);
+
+  // Each tile needs 4 vertices and 4 texcoords
+  const int width = m_level->get_width();
+  const int height = m_level->get_height();
+  const std::size_t size = width * height * 4;
+
+  std::vector<vertex_position> positions; positions.reserve(size);
+
+  // fill with vertex positions
+  for (int x = 0; x < width; ++x) {
+    for (int y = 0; y < height; ++y) {
+      const int tx = x * m_tile_width;
+      const int ty = y * m_tile_height;
+      positions.push_back(vertex_position(tx, ty));
+      positions.push_back(vertex_position(tx + m_tile_width, ty));
+      positions.push_back(vertex_position(tx + m_tile_width, ty + m_tile_height));
+      positions.push_back(vertex_position(tx, ty + m_tile_height));
+    }
+  }
+
+  // Load the data into the VBO
+  glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+  glBufferData(GL_ARRAY_BUFFER,
+               size * sizeof(vertex_position),
+               &positions.front(),
+               GL_STATIC_DRAW);
 }
