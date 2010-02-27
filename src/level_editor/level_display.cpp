@@ -740,6 +740,7 @@ void level_display::set_layer_visibility(std::size_t layer, bool visible) {
   if (layer >= m_layer_visibility.size())
     m_layer_visibility.resize(layer + 1, false);
   m_layer_visibility[layer] = visible;
+  invalidate();
 }
 
 bool level_display::get_layer_visibility(std::size_t layer) {
