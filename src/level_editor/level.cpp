@@ -117,7 +117,6 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   std::ifstream file(path.string().c_str());
 
   std::string version = read_line(file);
-  std::cout << "Version: " << version << std::endl;
 
   if (version.find(NW_LEVEL_VERSION) != 0) {
     throw std::runtime_error("load_nw_level() failed: Version mismatch (" + version + " != " + NW_LEVEL_VERSION + ")");
