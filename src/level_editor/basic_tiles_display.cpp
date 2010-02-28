@@ -67,6 +67,9 @@ void level_editor::basic_tiles_display::update_tile(Cairo::RefPtr<Cairo::Context
     ct->rectangle(0, 0, m_tile_width, m_tile_height);
     ct->clip();
 
+    ct->set_source_rgb(1, 0.6, 0.9);
+    ct->paint();
+
     const int tile_x = -(m_tile_width * helper::get_tile_x(_tile.index));
     const int tile_y = -(m_tile_height * helper::get_tile_y(_tile.index));
     ct->set_source(
