@@ -22,35 +22,13 @@ namespace Graal {
       bool sticky_tile_selection;
       bool hide_npcs, hide_signs, hide_links;
       bool fade_layers;
+      bool remember_default_tile;
       int default_tile;
 
       tile_objects_type tile_object_groups;
 
-      tileset add_tileset(const std::string& name, const std::string& prefix) {
-        return add_tileset(name, prefix, 0, 0, true);
-      }
-
-      tileset add_tileset(const std::string& name, const std::string& prefix, int x, int y, bool main = false) {
-        tileset_list_type::iterator iter, end = tilesets.end();
-        for (iter = tilesets.begin(); iter != end; iter++) {
-          if (iter->name == name &&
-              iter->prefix == prefix &&
-              iter->x == x &&
-              iter->y == y &&
-              iter->main == main) {
-            return *iter;
-          }
-        }
-
-        tileset new_tileset;
-        new_tileset.name = name;
-        new_tileset.prefix = prefix;
-        new_tileset.x = x;
-        new_tileset.y = y;
-        new_tileset.main = main;
-        tilesets.push_back(new_tileset);
-        return tilesets.back();
-      }
+      tileset add_tileset(const std::string& name, const std::string& prefix);
+      tileset add_tileset(const std::string& name, const std::string& prefix, int x, int y, bool main = false);
 
       void load_tile_objects();
       void save_tile_objects(const std::string& group);

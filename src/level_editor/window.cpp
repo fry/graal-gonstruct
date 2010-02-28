@@ -310,7 +310,7 @@ level_editor::window::window(preferences& _prefs)
   fs.update_cache();
   std::cout << " done" << std::endl;
 
-  default_tile.set_tile(m_preferences.default_tile);
+  set_default_tile(m_preferences.default_tile);
 
   // FileChooserDialog open level
   m_fc_open.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
@@ -376,7 +376,10 @@ void level_editor::window::set_default_tile(int tile_index) {
     level_display& disp(*get_nth_level_display(i));
     disp.set_default_tile(tile_index);
   }
-  get_current_level_display()->clear_selection();
+
+  level_display* display = get_current_level_display();
+  if (display)
+    display->clear_selection();
 }
 
 void level_editor::window::display_error(const Glib::ustring& message) {
@@ -416,6 +419,14 @@ void level_editor::window::on_preferences_changed(
     }
 
     m_tile_objects.get();
+  }
+
+  if (c & preferences_display::REMEMBER_DEFAULT_TILE_CHANGED) {
+    if (m_preferences.default_tile == -1) {
+      set_default_tile(511); // grass tile
+    } else {
+      set_default_tile(m_preferences.default_tile);
+    }
   }
 }
 

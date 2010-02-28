@@ -24,10 +24,10 @@ level_editor::toolbar_tools_display::toolbar_tools_display(window& win, preferen
     sigc::mem_fun(this, &toolbar_tools_display::on_hide_links_toggled));
   pack_start(m_hide_links, Gtk::PACK_SHRINK);
 
+  m_fade_layers.set_active(m_preferences.fade_layers);
   m_fade_layers.signal_toggled().connect_notify(
     sigc::mem_fun(this, &toolbar_tools_display::on_fade_layers_toggled));
   pack_start(m_fade_layers, Gtk::PACK_SHRINK);
-  m_fade_layers.set_active(m_preferences.fade_layers);
 }
 
 void level_editor::toolbar_tools_display::on_hide_npcs_toggled() {

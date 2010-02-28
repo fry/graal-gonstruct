@@ -63,7 +63,7 @@ void preferences_display::update_controls() {
   m_pref_selection_background.set_active(
       m_prefs.selection_background);
   m_pref_remember_default_tile.set_active(
-      m_prefs.default_tile != -1);
+    m_prefs.default_tile != -1);
   m_pref_sticky_tile_selection.set_active(
       m_prefs.sticky_tile_selection);
 }
@@ -146,7 +146,7 @@ void preferences_display::apply() {
     m_pref_remember_default_tile.get_active();
   if ((m_prefs.default_tile != -1) != new_remember_default_tile) {
     if (new_remember_default_tile)
-      m_prefs.default_tile = 0; // does not matter, gets overwritten if not -1
+      m_prefs.default_tile = 511;
     else
       m_prefs.default_tile = -1;
     changes |= REMEMBER_DEFAULT_TILE_CHANGED;

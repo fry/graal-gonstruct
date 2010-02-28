@@ -7,7 +7,7 @@
 #include <boost/lexical_cast.hpp>
 #include <core/helper.h>
 
-using namespace Graal;
+using namespace Graal::level_editor;
 
 namespace {
   template <typename T>
@@ -24,7 +24,7 @@ namespace {
   }
 }
 
-void level_editor::preferences::serialize() {
+void preferences::serialize() {
   std::ostringstream str;
   
   m_values["graal_directory"] = graal_dir;
@@ -65,7 +65,7 @@ void level_editor::preferences::serialize() {
   }
 }
 
-void level_editor::preferences::deserialize() {
+void preferences::deserialize() {
   value_map_type::iterator iter, end = m_values.end();
 
   iter = m_values.find("graal_directory");
@@ -131,7 +131,7 @@ void level_editor::preferences::deserialize() {
   load_tile_objects();
 }
 
-void level_editor::preferences::load_tile_objects() {
+void preferences::load_tile_objects() {
   boost::filesystem::path tile_objects_path(
       boost::filesystem::path(graal_dir) / "tileobjects");
   if (graal_dir.empty() || !boost::filesystem::is_directory(tile_objects_path))
@@ -193,7 +193,7 @@ void level_editor::preferences::load_tile_objects() {
   }
 }
 
-void level_editor::preferences::save_tile_objects(const std::string& group) {
+void preferences::save_tile_objects(const std::string& group) {
   boost::filesystem::path tile_objects_path(
       boost::filesystem::path(graal_dir) / "tileobjects");
   if (graal_dir.empty() || !boost::filesystem::is_directory(tile_objects_path))
@@ -205,8 +205,8 @@ void level_editor::preferences::save_tile_objects(const std::string& group) {
   std::ofstream stream(group_file.string().c_str());
   stream << "GOBJSET01" << std::endl;
 
-  tile_object_group_type object_group = tile_object_groups[group];
-  tile_object_group_type::iterator it = object_group.begin(), end = object_group.end();
+  preferences::tile_object_group_type object_group = tile_object_groups[group];
+  preferences::tile_object_group_type::iterator it = object_group.begin(), end = object_group.end();
 
   for (; it != end; ++it) {
     tile_buf& buf = it->second;
@@ -222,4 +222,30 @@ void level_editor::preferences::save_tile_objects(const std::string& group) {
     }
     stream << "OBJECTEND" << std::endl;
   }
+}
+
+Graal::tileset preferences::add_tileset(const std::string& name, const std::string& prefix, int x, int y, bool main) {
+  tileset_list_type::iterator iter, end = tilesets.end();
+  for (iter = tilesets.begin(); iter != end; iter++) {
+    if (iter->name == name &&
+        iter->prefix == prefix &&
+        iter->x == x &&
+        iter->y == y &&
+        iter->main == main) {
+      return *iter;
+    }
+  }
+
+  tileset new_tileset;
+  new_tileset.name = name;
+  new_tileset.prefix = prefix;
+  new_tileset.x = x;
+  new_tileset.y = y;
+  new_tileset.main = main;
+  tilesets.push_back(new_tileset);
+  return tilesets.back();
+}
+
+Graal::tileset preferences::add_tileset(const std::string& name, const std::string& prefix) {
+  return add_tileset(name, prefix, 0, 0, true);
 }
