@@ -2,6 +2,12 @@
 ________________________________________________________________
 
 0.2.0:
+  - 28.02.10 - Screenshot level temporarily doesn't work
+  * 28.02.10 - Fix loading of levels with different line-endings
+  * 28.02.10 - Properly fill new layers with the correct default tile
+  * 28.02.10 - Properly reset default tile to grass when disabling
+               "remember default tile" option
+  * 27.02.10 - Open/Save level now defaults to the graal directory
   * 26.02.10 - Display the correct active layer in the layers control when
                switching level tabs
   + 25.02.10 - Level rendering has been ported to pure OpenGL and should be
@@ -12,7 +18,7 @@ ________________________________________________________________
                distinguish between multiple layers
   * 23.02.10 - Optimized loading speed of levels in general. Should be much
                faster now, especially when loading multiple levels
-  * 20.09.09 - Added preference to disable translucent selection backgrounds.
+  * 20.09.09 - Added preference to disable translucent selection backgrounds
 0.1.7:
   * 16.09.09 - Several fixes to tilesets saving and drawing. Only draw the first found
                main tileset now
