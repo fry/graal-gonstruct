@@ -5,9 +5,9 @@
 #include <boost/filesystem/path.hpp>
 #include <string>
 
-Graal::level::level(int fill_tile): m_unique_npc_id_counter(0), m_fill_tile(fill_tile) {
+Graal::level::level(int fill_tile): m_unique_npc_id_counter(0) {
   // Always create one layer
-  create_tiles(0);
+  create_tiles(0, fill_tile);
 }
 
 int Graal::level::get_width() const {
@@ -45,7 +45,7 @@ void Graal::level::delete_npc(int id) {
   npcs.erase(get_npc(id));
 }
 
-Graal::tile_buf& Graal::level::create_tiles(int layer, bool fill, bool overwrite) {
+Graal::tile_buf& Graal::level::create_tiles(int layer, int fill_tile, bool overwrite) {
   if (get_layer_count() < layer + 1) {
     layers.resize(layer + 1);
   } else if (!overwrite) {
@@ -55,10 +55,10 @@ Graal::tile_buf& Graal::level::create_tiles(int layer, bool fill, bool overwrite
   tile_buf& tiles = layers[layer];
   tiles.resize(get_width(), get_height());
 
-  if (fill) {
+  if (fill_tile > -1) {
     for (int x = 0; x < get_width(); x ++) {
       for (int y = 0; y < get_height(); y ++) {
-        tiles.get_tile(x, y).index = m_fill_tile;
+        tiles.get_tile(x, y).index = fill_tile;
       }
     }
   }
@@ -86,9 +86,9 @@ int Graal::level::get_layer_count() const {
   return layers.size();
 }
 
-void Graal::level::insert_layer(int index) {
+void Graal::level::insert_layer(int index, int fill_tile) {
   layers.insert(layers.begin() + index, Graal::tile_buf());
-  create_tiles(index, true, true);
+  create_tiles(index, fill_tile, true);
 }
 
 void Graal::level::delete_layer(int index) {
@@ -134,7 +134,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       int layer = read<int>(file);
       std::string data = read<std::string>(file);
 
-      Graal::tile_buf& tiles = level->create_tiles(layer, true, false);
+      Graal::tile_buf& tiles = level->create_tiles(layer, 0, false);
 
       for (int i = 0; i < width * 2; i +=2) {
         int tile_index = helper::parse_base64(data.substr(i, 2));

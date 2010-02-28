@@ -108,12 +108,12 @@ namespace Graal {
     level::npc_list_type::iterator get_npc(int id);
     void delete_npc(int id);
 
-    tile_buf& create_tiles(int layer = 0, bool fill = true, bool overwrite = false);
+    tile_buf& create_tiles(int layer = 0, int fill_tile = -1, bool overwrite = false);
     tile_buf& get_tiles(int layer = 0);
     const tile_buf& get_tiles(int layer = 0) const;
     bool tiles_exist(int layer = 0);
 
-    void insert_layer(int index);
+    void insert_layer(int index, int fill_tile = -1);
     void delete_layer(int index);
 
     int get_layer_count() const;
