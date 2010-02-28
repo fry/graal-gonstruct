@@ -106,7 +106,7 @@ namespace {
   inline std::string read_line(std::ifstream& stream) {
     std::string line;
     std::getline(stream, line);
-    return line;
+    return Graal::helper::strip(line, "\r\n");
   }
 }
 
@@ -117,7 +117,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   std::ifstream file(path.string().c_str());
 
   std::string version = read_line(file);
-  //std::cout << "Version: " << version << std::endl;
+  std::cout << "Version: " << version << std::endl;
 
   if (version.find(NW_LEVEL_VERSION) != 0) {
     throw std::runtime_error("load_nw_level() failed: Version mismatch (" + version + " != " + NW_LEVEL_VERSION + ")");
@@ -186,7 +186,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       std::string line;
       while (true) {
         line = read_line(file);
-        if (line == "NPCEND")
+        if (line == "NPCEND" || file.eof())
           break;
 
         npc.script += line;

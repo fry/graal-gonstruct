@@ -23,7 +23,7 @@ namespace Graal {
       return x / 16 * 512 + x % 16 + y * 16;
     }
 
-    std::string strip(const std::string& str);
+    std::string strip(const std::string& str, const char* ws = " \t");
     
     template<typename T>
     bool parse(const std::string& str, T& output) {

@@ -3,9 +3,7 @@
 
 using namespace Graal;
 
-std::string helper::strip(const std::string& str) {
-  const char* ws = " \t";
-  
+std::string helper::strip(const std::string& str, const char* ws) {
   std::string::size_type first, last, length;
   first = str.find_first_not_of(ws);
   last = str.find_last_not_of(ws);
