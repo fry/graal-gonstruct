@@ -316,6 +316,7 @@ level_editor::window::window(preferences& _prefs)
   m_fc_open.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
   m_fc_open.add_button("Open", Gtk::RESPONSE_OK);
   m_fc_open.set_select_multiple(true);
+  m_fc_open.set_current_folder(m_preferences.graal_dir);
 
   Gtk::FileFilter nw_filter;
   nw_filter.add_pattern("*.nw");
@@ -335,6 +336,7 @@ level_editor::window::window(preferences& _prefs)
   m_fc_save.add_filter(nw_filter);
   m_fc_save.set_filter(nw_filter);
   m_fc_save.set_do_overwrite_confirmation(true);
+  m_fc_save.set_current_folder(m_preferences.graal_dir);
 
   set_level_buttons(false);
 
@@ -370,6 +372,8 @@ void level_editor::window::set_level_buttons(bool enabled) {
 }
 
 void level_editor::window::set_default_tile(int tile_index) {
+  if (tile_index == -1)
+    tile_index = 511;
   default_tile.set_tile(tile_index);
 
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
@@ -422,11 +426,7 @@ void level_editor::window::on_preferences_changed(
   }
 
   if (c & preferences_display::REMEMBER_DEFAULT_TILE_CHANGED) {
-    if (m_preferences.default_tile == -1) {
-      set_default_tile(511); // grass tile
-    } else {
-      set_default_tile(m_preferences.default_tile);
-    }
+    set_default_tile(m_preferences.default_tile);
   }
 }
 
@@ -664,8 +664,6 @@ void level_editor::window::on_action_new() {
 }
 
 void level_editor::window::on_action_open() {
-  level_display& current_display = *get_current_level_display();
-
   if (m_fc_open.run() == Gtk::RESPONSE_OK) {
     std::list<Glib::ustring> files(m_fc_open.get_filenames());
     std::list<Glib::ustring>::const_iterator iter, end = files.end();
