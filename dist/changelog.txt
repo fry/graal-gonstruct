@@ -1,6 +1,13 @@
 * = fixed; + = new; - = removed; dates = DD.MM.YY
 ________________________________________________________________
 
+0.2.1:
+  * 01.03.10 - Prefer tilesets with longer prefixes when looking for a "main"
+               tileset
+  * 01.03.10 - Use no-img image instead of displaying an error when no "main"
+               tileset could be found
+  + 01.03.10 - Add "active" property for tilesets to the tileset list to
+               toggle between using that tileset or not
 0.2.0:
   - 28.02.10 - Screenshot level temporarily doesn't work
   * 28.02.10 - Fix loading of levels with different line-endings
