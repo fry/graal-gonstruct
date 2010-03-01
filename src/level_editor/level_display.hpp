@@ -98,7 +98,7 @@ public:
   int get_active_layer() { return m_active_layer; };
 
   virtual tile_buf& get_tile_buf();
-  Cairo::RefPtr<Cairo::Surface> render_level(
+  Cairo::RefPtr<Cairo::ImageSurface> render_level(
       bool show_selection_border = true, bool show_selection = true,
       bool show_npcs = true, bool show_links = true, bool show_signs = true);
 

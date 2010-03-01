@@ -212,15 +212,16 @@ tile_buf& level_display::get_tile_buf() {
   return m_level->get_tiles(m_active_layer);
 }
 
-Cairo::RefPtr<Cairo::Surface> level_display::render_level(
+Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level(
     bool show_selection_border, bool show_selection,
     bool show_npcs, bool show_links, bool show_signs) {
-  Cairo::RefPtr<Cairo::Surface> surface =
-    Cairo::ImageSurface::create(Cairo::FORMAT_ARGB32,
+
+  Cairo::RefPtr<Cairo::ImageSurface> surface =
+    Cairo::ImageSurface::create(
+      Cairo::FORMAT_ARGB32,
       get_width(),
       get_height()
     );
-
 
   return surface;
 }
@@ -236,6 +237,7 @@ void level_display::on_button_motion(GdkEventMotion* event) {
   const int ty = helper::bound_by(tile_y, 0, m_level->get_height() - 1);
 
   if (m_dragging) {
+    // Move selection
     const int delta_x = (to_tiles_x(x - m_drag_mouse_x) - to_tiles_x(m_select_x)) * m_tile_width;
     const int delta_y = (to_tiles_y(y - m_drag_mouse_y) - to_tiles_y(m_select_y)) * m_tile_height;
 
@@ -250,8 +252,10 @@ void level_display::on_button_motion(GdkEventMotion* event) {
 
     m_select_x = new_select_x;
     m_select_y = new_select_y;
-
+    
+    invalidate();
   } else if (m_selecting) {
+    // extend selection rectangle or
     // if you move the mouse when you have a npc selected, switch to dragging
     if (npc_selected()) {
       m_dragging = true;
@@ -261,8 +265,7 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_drag_start_x = selected_npc->x;
       m_drag_start_y = selected_npc->y;
     } else {
-
-      // the start tile needs to be limited to 0..63,
+      // the selection start tile needs to be limited to 0..63,
       // but in order to get correct width height these need to
       // go till 64
       m_select_width =
@@ -273,6 +276,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_drag_start_x = tx;
       m_drag_start_y = ty;
     }
+    
+    invalidate();
   }
 
   std::ostringstream str;
@@ -288,8 +293,6 @@ void level_display::on_button_motion(GdkEventMotion* event) {
   } else {
     get_window()->set_cursor();
   }
-
-  invalidate();
 }
 
 void level_display::on_button_pressed(GdkEventButton* event) {
@@ -431,7 +434,7 @@ void level_display::on_button_released(GdkEventButton* event) {
 
     // Stop dragging
     if (m_dragging) {
-      // if no new npc was dragged, added npc changed diff
+      // if no new npc was dragged, add npc changed diff
       const int tile_x = to_tiles_x(x);
       const int tile_y = to_tiles_y(y);
       if (!m_new_npc && npc_selected() && (m_drag_start_x != tile_x || m_drag_start_y != tile_y)) {
@@ -506,6 +509,7 @@ void level_display::lift_selection() {
 
   // destroy buf
   add_undo_diff(new tile_diff(sx + offset_left, sy + offset_right, buf, m_active_layer));
+  invalidate();
 }
 
 void level_display::grab_selection() {
@@ -546,6 +550,8 @@ void level_display::drag_selection(tile_buf& tiles,
   m_select_height = selection.get_height() * m_tile_height;
 
   m_dragging = true;
+  
+  invalidate();
 }
 
 // npc
@@ -584,6 +590,8 @@ void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
   selected_npc->y = to_tiles_y(m_select_y);
 
   m_dragging = true;
+  
+  invalidate();
 }
 
 void level_display::undo() {
@@ -596,6 +604,7 @@ void level_display::undo() {
 
   redo_buffer.push(undo_buffer.apply(*this));
   set_unsaved(true);
+  invalidate();
 }
 
 void level_display::redo() {
@@ -604,6 +613,7 @@ void level_display::redo() {
 
   undo_buffer.push(redo_buffer.apply(*this));
   set_unsaved(true);
+  invalidate();
 }
 
 void level_display::add_undo_diff(basic_diff* diff) {
@@ -730,7 +740,8 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
     buffer.get_tile(cx, cy).index = fill_index;
   }
   add_undo_diff(new tile_diff(start_x, start_y, buffer, m_active_layer));
-  queue_draw();
+  
+  invalidate();
 }
 
 void level_display::on_mouse_leave(GdkEventCrossing* event) {
@@ -802,7 +813,7 @@ void level_display::draw_tiles() {
       const int height = tiles.get_height();
 
       // Draw layers below the current darker, above transparent
-      glColor4f(1, 1, 1, 1);
+      glColor3f(1, 1, 1);
       if (m_preferences.fade_layers) {
         if (i > m_active_layer) {
           int level_diff = std::abs(m_active_layer - i);
