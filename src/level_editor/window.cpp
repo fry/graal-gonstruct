@@ -501,11 +501,7 @@ void level_editor::window::on_action_screenshot() {
   dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
 
   if (dialog.run() == Gtk::RESPONSE_OK) {
-    Cairo::RefPtr<Cairo::Surface> surface = get_current_level_display()->render_level(
-        false, false,
-        !m_preferences.hide_npcs,
-        !m_preferences.hide_links,
-        !m_preferences.hide_signs);
+    Cairo::RefPtr<Cairo::ImageSurface> surface = get_current_level_display()->render_level();
     // TODO: do utf8 magic here, too lazy
     surface->write_to_png(dialog.get_filename());
   }

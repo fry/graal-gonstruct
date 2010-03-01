@@ -212,18 +212,35 @@ tile_buf& level_display::get_tile_buf() {
   return m_level->get_tiles(m_active_layer);
 }
 
-Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level(
-    bool show_selection_border, bool show_selection,
-    bool show_npcs, bool show_links, bool show_signs) {
-
+Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level() {
+  // Create two buffers, one to read frame buffer content into
   Cairo::RefPtr<Cairo::ImageSurface> surface =
     Cairo::ImageSurface::create(
       Cairo::FORMAT_ARGB32,
       get_width(),
       get_height()
     );
+  // And one to y-flip the image into
+  Cairo::RefPtr<Cairo::ImageSurface> dest =
+    Cairo::ImageSurface::create(
+      Cairo::FORMAT_ARGB32,
+      get_width(),
+      get_height()
+    );
 
-  return surface;
+  // Read pixel data from OpenGL
+  glPixelStorei(GL_PACK_ALIGNMENT, 1);
+  glReadPixels(0, 0, get_width(), get_height(),
+               GL_BGRA, GL_UNSIGNED_BYTE,
+               surface->get_data());
+  
+  // Flip the image along the y-axis, since OpenGL's images are too
+  Cairo::RefPtr<Cairo::Context> ct = Cairo::Context::create(dest);
+  Cairo::Matrix flipy(1, 0, 0, -1, 0, get_height());
+  ct->transform(flipy);
+  ct->set_source(surface, 0, 0);
+  ct->paint();
+  return dest;
 }
 
 void level_display::on_button_motion(GdkEventMotion* event) {
