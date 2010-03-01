@@ -9,6 +9,7 @@
 using namespace Graal;
 using namespace Graal::level_editor;
 
+// VBO data structures
 struct vertex_position {
   vertex_position(int _x, int _y): x(_x), y(_y) {}
   int x, y;
@@ -954,6 +955,9 @@ void level_display::draw_all() {
 }
 
 void level_display::setup_buffers() {
+  if (!glewIsSupported("GL_ARB_vertex_buffer_object"))
+    throw std::runtime_error("Your graphics card doesn't support ARB_vertex_buffer_object, sorry.");
+  
   if (!m_position_buffer)
     glGenBuffers(1, &m_position_buffer);
   if (!m_texcoord_buffer)
