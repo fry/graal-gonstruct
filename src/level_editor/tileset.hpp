@@ -15,6 +15,7 @@ namespace Graal {
       int x, y;
 
       bool main;
+      bool active;
     };
   //}
 }

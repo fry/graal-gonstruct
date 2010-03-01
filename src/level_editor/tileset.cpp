@@ -7,4 +7,5 @@ tileset::tileset() {
   y = 0;
 
   main = false;
+  active = true;
 }

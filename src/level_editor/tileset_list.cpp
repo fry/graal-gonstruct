@@ -73,6 +73,12 @@ level_editor::tileset_list::tileset_list(window& _window, preferences& _preferen
   m_list_store = Gtk::ListStore::create(columns);
   m_tree_view.set_model(m_list_store);
 
+  // Add editable "active" column
+  m_tree_view.append_column("Active", columns.active);
+  Gtk::CellRendererToggle* renderer = dynamic_cast<Gtk::CellRendererToggle*>(m_tree_view.get_column_cell_renderer(0));
+  renderer->set_activatable(true);
+  renderer->signal_toggled().connect(sigc::mem_fun(
+    this, &tileset_list::on_active_toggled));
   m_tree_view.append_column("Image", columns.image);
   m_tree_view.append_column("Prefix", columns.prefix);
   m_tree_view.append_column("X", columns.x);
@@ -168,6 +174,21 @@ void level_editor::tileset_list::on_delete_clicked() {
   }
 }
 
+void level_editor::tileset_list::on_active_toggled(const Glib::ustring& path) {
+  Gtk::TreeModel::iterator iter = m_list_store->get_iter(path);
+  
+  if (iter) {
+    // Toggle the active state of the currently selected tileset
+    Gtk::TreeRow row = *iter;
+    tileset_list_type::iterator tileset_iter = row.get_value(columns.iter);
+
+    bool active = !tileset_iter->active;
+    tileset_iter->active = active;
+    row.set_value(columns.active, active);
+    m_window.update_matching_level_displays(tileset_iter->prefix);
+  }
+}
+
 // get tileset data from the level
 void level_editor::tileset_list::get() {
   m_list_store->clear();
@@ -179,6 +200,7 @@ void level_editor::tileset_list::get() {
        iter != end;
        iter ++) {
     Gtk::TreeModel::iterator row = m_list_store->append();
+    (*row)[columns.active] = iter->active;
     (*row)[columns.iter] = iter;
     (*row)[columns.prefix] = iter->prefix; // TODO: unicode
     (*row)[columns.image] = iter->name; // TODO: unicode

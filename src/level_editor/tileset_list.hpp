@@ -43,6 +43,7 @@ namespace Graal {
       void on_edit_clicked();
       void on_delete_clicked();
       void on_new_clicked();
+      void on_active_toggled(const Glib::ustring& path);
 
       window& m_window;
       preferences& m_preferences;
@@ -52,10 +53,11 @@ namespace Graal {
       class tileset_columns: public Gtk::TreeModelColumnRecord {
       public:
         tileset_columns() {
-          add(iter); add(image); add(prefix); add(main); add(x); add(y);
+          add(iter); add(active); add(image); add(prefix); add(main); add(x); add(y);
         }
 
         Gtk::TreeModelColumn<tileset_list_type::iterator> iter;
+        Gtk::TreeModelColumn<bool> active;
         Gtk::TreeModelColumn<Glib::ustring> image;
         Gtk::TreeModelColumn<Glib::ustring> prefix;
         Gtk::TreeModelColumn<bool> main;
