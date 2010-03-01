@@ -53,10 +53,10 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
        iter != end;
        iter ++) {
     // prefix matches level name
-    if (level_name.find(iter->prefix) != std::string::npos) {
-      if (iter->main) {
+    if (iter->main && level_name.find(iter->prefix) != std::string::npos) {
+      // prefer tilesets with a longer prefix
+      if (main_iter == end || main_iter->prefix.size() < iter->prefix.size()) {
         main_iter = iter;
-        break;
       }
     }
   }
