@@ -53,7 +53,7 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
        iter != end;
        iter ++) {
     // prefix matches level name
-    if (iter->main && level_name.find(iter->prefix) != std::string::npos) {
+    if (iter->main && iter->active && level_name.find(iter->prefix) != std::string::npos) {
       // prefer tilesets with a longer prefix
       if (main_iter == end || main_iter->prefix.size() < iter->prefix.size()) {
         main_iter = iter;
@@ -63,11 +63,12 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
   
   Cairo::RefPtr<Cairo::ImageSurface> main;
   if (main_iter == m_preferences.tilesets.end()) {
-    // TODO: throw something more specific
-    throw std::runtime_error(
+    // No matching main tileset, use default image and display error
+    // TODO: actually display an error box here
+    std::cerr <<
       "No valid tileset found, please add atleast one main tileset to the "
-      "tileset list that matches the current level."
-    );
+      "tileset list that matches the current level." << std::endl;
+    main = m_image_cache.get_image("internal/no_img.png");
   } else {
     main = m_image_cache.get_image(main_iter->name);
   }
@@ -90,7 +91,7 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
     if (level_name.find(iter->prefix) != std::string::npos && !iter->main) {
       Cairo::RefPtr<Cairo::ImageSurface> ts = m_image_cache.get_image(iter->name);
       // Ignore other matching main tilesets
-      if (!iter->main) {
+      if (!iter->main && iter->active) {
         cr->set_source(ts, iter->x, iter->y);
       }
       cr->paint();
