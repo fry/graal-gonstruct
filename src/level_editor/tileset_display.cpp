@@ -65,9 +65,9 @@ void level_editor::tileset_display::update_tileset(const std::string& level_name
   if (main_iter == m_preferences.tilesets.end()) {
     // No matching main tileset, use default image and display error
     // TODO: actually display an error box here
-    std::cerr <<
-      "No valid tileset found, please add atleast one main tileset to the "
-      "tileset list that matches the current level." << std::endl;
+    //std::cerr <<
+    //  "No valid tileset found, please add atleast one main tileset to the "
+    //  "tileset list that matches the current level." << std::endl;
     main = m_image_cache.get_image("internal/no_img.png");
   } else {
     main = m_image_cache.get_image(main_iter->name);
