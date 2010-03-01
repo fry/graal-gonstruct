@@ -826,12 +826,9 @@ level_editor::level_display* level_editor::window::get_current_level_display() {
 
 // Update the tileset of all level displays that start with prefix
 void level_editor::window::update_matching_level_displays(const std::string& prefix) {
-  level_display* display;
-  for (int i = 0; i < m_nb_levels.get_n_pages(); ++i) {
-    display = get_nth_level_display(i);
-    if (display->get_level_path().leaf().find(prefix) == 0) {
-      display_tileset.update_tileset(display->get_level_path().leaf());
-    }
+  level_display* display = get_current_level_display(); 
+  if (display->get_level_path().leaf().find(prefix) == 0) {
+    display_tileset.update_tileset(display->get_level_path().leaf());
   }
 }
 
