@@ -76,9 +76,12 @@ level_editor::tileset_list::tileset_list(window& _window, preferences& _preferen
   // Add editable "active" column
   m_tree_view.append_column("Active", columns.active);
   Gtk::CellRendererToggle* renderer = dynamic_cast<Gtk::CellRendererToggle*>(m_tree_view.get_column_cell_renderer(0));
-  renderer->set_activatable(true);
+  // For some reason there's no set_activatable function for CellRendererToggle on gtkmm 2.16 windows
+  Glib::PropertyProxy<bool> activatable = renderer->property_activatable();
+  activatable.set_value(true);
   renderer->signal_toggled().connect(sigc::mem_fun(
     this, &tileset_list::on_active_toggled));
+
   m_tree_view.append_column("Image", columns.image);
   m_tree_view.append_column("Prefix", columns.prefix);
   m_tree_view.append_column("X", columns.x);
