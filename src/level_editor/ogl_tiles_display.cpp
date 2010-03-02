@@ -72,7 +72,13 @@ void ogl_tiles_display::on_realize() {
   if (!glwindow->gl_begin(get_gl_context()))
     return;
 
-  glewInit();
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    std::string err_msg = "Failed to initialize glew: ";
+    err_msg += (const char*)glewGetErrorString(err);
+    throw std::runtime_error(err_msg);
+  }
+
   glDisable(GL_LIGHTING);
   glDisable(GL_CULL_FACE);
   glEnable(GL_TEXTURE_2D);
@@ -182,6 +188,9 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
 
   glwindow->swap_buffers();
 
+  glwindow->wait_gdk();
+  glwindow->wait_gl();
+  
   glwindow->gl_end();
 
   #ifdef DEBUG
@@ -197,8 +206,9 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
       g_timer.reset();
       g_frames = 0;
     }
-    return true;
   #endif
+
+  return true;
 }
 
 void ogl_tiles_display::invalidate() {
