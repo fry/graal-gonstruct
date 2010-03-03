@@ -33,8 +33,8 @@ public:
   void invalidate();
 protected:
   void on_gl_realize();
-  virtual bool on_gl_expose_event(GdkEventExpose* event);
-  bool on_configure_event(GdkEventConfigure* event);
+  bool on_gl_expose_event(GdkEventExpose* event);
+  bool on_gl_configure_event(GdkEventConfigure* event);
 
   virtual void draw_tile(tile& _tile, int x, int y);
   virtual void draw_all();

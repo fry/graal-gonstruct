@@ -15,6 +15,8 @@ void GLArea::create_gl_area(int* attrList) {
     sigc::mem_fun(this, &GLArea::glarea_on_realize));
   m_glarea->signal_expose_event().connect(
     sigc::mem_fun(this, &GLArea::glarea_on_expose_event));
+  m_glarea->signal_configure_event().connect(
+    sigc::mem_fun(this, &GLArea::glarea_on_configure_event));
 
   add(*m_glarea);
   m_glarea->show();
@@ -35,3 +37,7 @@ void GLArea::glarea_on_realize() {
 bool GLArea::glarea_on_expose_event(GdkEventExpose* event) {
   return on_gl_expose_event(event);
 };
+
+bool GLArea::glarea_on_configure_event(GdkEventConfigure* event) {
+  return on_gl_configure_event(event);
+}

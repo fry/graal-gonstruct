@@ -1010,6 +1010,7 @@ void level_display::setup_buffers() {
     }
   }
 
+
   // Load the data into the VBO
   glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
   glBufferData(GL_ARRAY_BUFFER,

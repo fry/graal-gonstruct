@@ -50,7 +50,7 @@ ogl_tiles_display::ogl_tiles_display():
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
 }
 
-bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
+bool ogl_tiles_display::on_gl_configure_event(GdkEventConfigure* event) {
   if (!make_current())
     return false;
 

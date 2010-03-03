@@ -51,7 +51,11 @@ void start_editor(int argc, char* argv[],
 
 int main(int argc, char* argv[]) {
   Gtk::Main kit(argc, argv);
-  Gtk::GL::init(argc, argv);
+
+  if (!gdk_gl_query()) {
+    std::cerr << "No OpenGL support" << std::endl;
+    return -1;
+  }
 
   Graal::level_editor::preferences prefs;
 
