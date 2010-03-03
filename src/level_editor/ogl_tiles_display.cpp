@@ -36,20 +36,22 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
 }
 
 ogl_tiles_display::ogl_tiles_display():
-  m_tileset(0), m_tile_width(16), m_tile_height(16),
-  m_interval(1000.0 / 60.0) {
-  Glib::RefPtr<Gdk::GL::Config> glconfig =
-    Gdk::GL::Config::create(Gdk::GL::MODE_RGB |
-                            Gdk::GL::MODE_DOUBLE);
-  set_gl_capability(glconfig);
+  m_tileset(0), m_tile_width(16), m_tile_height(16) {
+
+  int attrlist[] = {
+    GDK_GL_RGBA,
+    GDK_GL_DOUBLEBUFFER,
+    //GDK_GL_DEPTH_SIZE, 1,
+    GDK_GL_NONE
+  };
+
+  create_gl_area(attrlist);
 
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
 }
 
 bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-
-  if (!glwindow->gl_begin(get_gl_context()))
+  if (!make_current())
     return false;
 
   glMatrixMode(GL_PROJECTION);
@@ -58,21 +60,17 @@ bool ogl_tiles_display::on_configure_event(GdkEventConfigure* event) {
 
   glViewport(0, 0, get_width(), get_height());
 
-  glwindow->gl_end();
-  
   invalidate();
 
   return true;
 }
 
-void ogl_tiles_display::on_realize() {
-  Gtk::GL::DrawingArea::on_realize();
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-
-  if (!glwindow->gl_begin(get_gl_context()))
-    return;
+void ogl_tiles_display::on_gl_realize() {
+  if (!make_current())
+    throw std::runtime_error("Failed to initialize device context");
 
   GLenum err = glewInit();
+
   if (err != GLEW_OK) {
     std::string err_msg = "Failed to initialize glew: ";
     err_msg += (const char*)glewGetErrorString(err);
@@ -98,8 +96,6 @@ void ogl_tiles_display::on_realize() {
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-
-  glwindow->gl_end();
 
   #ifdef DEBUG
     g_timer.start();
@@ -162,10 +158,8 @@ void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface
   invalidate();
 }
 
-bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
-  Glib::RefPtr<Gdk::GL::Window> glwindow = get_gl_window();
-
-  if (!glwindow->gl_begin(get_gl_context())) {
+bool ogl_tiles_display::on_gl_expose_event(GdkEventExpose* event) {
+  if (!make_current()) {
     return false;
   }
 
@@ -186,12 +180,7 @@ bool ogl_tiles_display::on_expose_event(GdkEventExpose* event) {
   // Draw everything
   draw_all();
 
-  glwindow->swap_buffers();
-
-  glwindow->wait_gdk();
-  glwindow->wait_gl();
-  
-  glwindow->gl_end();
+  swap_buffers();
 
   #ifdef DEBUG
     // Display FPS
@@ -236,7 +225,7 @@ void ogl_tiles_display::set_surface_buffers() {
     buf.get_width() * m_tile_width,
     buf.get_height() * m_tile_height
   );
-  
+
   invalidate();
 }
 

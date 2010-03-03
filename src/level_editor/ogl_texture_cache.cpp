@@ -3,7 +3,6 @@
 
 #include <GL/glew.h>
 #include <gtkmm.h>
-#include <gtkglmm.h>
 
 using namespace Graal::level_editor;
 
