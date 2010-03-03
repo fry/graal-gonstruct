@@ -145,7 +145,7 @@ solution "gonstruct"
     files { "src/core/*.hpp", "src/core/*.cpp" }
 
   project "gonstruct"
-    kind "WindowedApp"
+    kind "ConsoleApp"
     language "C++"
     files { "src/level_editor/*.hpp", "src/level_editor/*.cpp" }
     includedirs { "src" }
@@ -157,7 +157,7 @@ solution "gonstruct"
     includedirs { "src/glew" }
 
     -- GTKmm through pkg-config
-    pkg_config { "gtkmm-2.4", "gtksourceview-2.0", "gtkglextmm-1.2" }
+    pkg_config { "gtkmm-2.4", "gtksourceview-2.0", "gtkgl-2.0" }
 
     configuration "windows"
       -- Create resource file with application icon
