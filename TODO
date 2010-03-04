@@ -8,3 +8,7 @@
 
 - hotkeys for layer switching
 - better layer interface in general
+  * layers tab in the side-panel, like in photoshop, optionally with a preview
+- selecting a "transparent tile" to be used when creating new layers,
+  possibly by selecting a tile in the tileset display and clicking a button
+  somewhere in the side-panel
