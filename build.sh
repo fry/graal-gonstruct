@@ -1,4 +1,4 @@
-premake4 gmake
-cd build
-make gonstruct -j 3
-cd ..
+premake4 gmake || exit
+cd build || exit
+make gonstruct -j 3 || exit
+cd .. || exit
