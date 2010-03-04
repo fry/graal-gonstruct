@@ -1,6 +1,8 @@
 #include "ogl_tiles_display.hpp"
 #include "helper.hpp"
 
+#include <boost/format.hpp>
+
 using namespace Graal::level_editor;
 
 #ifdef DEBUG
@@ -10,6 +12,9 @@ using namespace Graal::level_editor;
 
 unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
   glEnable(GL_TEXTURE_2D);
+
+  if (!GLEW_ARB_texture_non_power_of_two)
+    throw std::runtime_error("No ARB_texture_non_power_of_two support");
 
   if (!id) {
     glGenTextures(1, &id);
@@ -31,6 +36,10 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
     surface->get_width(), surface->get_height(),
     0, GL_BGRA, GL_UNSIGNED_BYTE,
     surface->get_data());
+  
+  GLenum err = glGetError();
+  if (err)
+    throw std::runtime_error((boost::format("Loading texture failed: %1%") % err).str());
 
   return id;
 }
