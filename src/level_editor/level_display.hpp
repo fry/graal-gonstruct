@@ -151,6 +151,21 @@ private:
 
   unsigned int m_position_buffer;
   unsigned int m_texcoord_buffer;
+
+  // Vertex data structures
+  struct vertex_position {
+    vertex_position(int _x, int _y): x(_x), y(_y) {}
+    int x, y;
+  };
+
+  struct vertex_texcoord {
+    vertex_texcoord(float _u, float _v): u(_u), v(_v) {}
+    float u, v;
+  };
+
+  // Store vertices here in case of no VBO support
+  std::vector<vertex_position> m_positions;
+  bool m_use_vbo;
 };
 
 }

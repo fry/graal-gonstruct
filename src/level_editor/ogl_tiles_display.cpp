@@ -172,6 +172,13 @@ bool ogl_tiles_display::on_gl_expose_event(GdkEventExpose* event) {
     return false;
   }
 
+#ifdef DEBUG
+  float vp[4];
+  glGetFloatv(GL_VIEWPORT, vp);
+  std::cout << "ogl_tiles_display::on_gl_expose_event" << std::endl;
+  std::cout << "viewport: " << vp[0] << "," << vp[1] << "," << vp[2] << "," << vp[3] << std::endl;
+#endif
+
   glClear(GL_COLOR_BUFFER_BIT);
 
   glMatrixMode(GL_MODELVIEW);

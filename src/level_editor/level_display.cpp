@@ -5,20 +5,10 @@
 #include <boost/scoped_ptr.hpp>
 #include <sstream>
 #include <queue>
+#include <iostream>
 
 using namespace Graal;
 using namespace Graal::level_editor;
-
-// VBO data structures
-struct vertex_position {
-  vertex_position(int _x, int _y): x(_x), y(_y) {}
-  int x, y;
-};
-
-struct vertex_texcoord {
-  vertex_texcoord(float _u, float _v): u(_u), v(_v) {}
-  float u, v;
-};
 
 // Convert cursor position to tile. Round to nearest tile.
 inline int level_display::to_tiles_x(int x) {
@@ -38,7 +28,7 @@ level_display::level_display(
     : m_preferences(_prefs),
       m_default_tile_index(default_tile_index),
       m_image_cache(cache),
-      m_texture_cache(cache) {
+      m_texture_cache(cache), m_use_vbo(false) {
   add_events(Gdk::BUTTON_PRESS_MASK
              | Gdk::BUTTON_RELEASE_MASK
              | Gdk::BUTTON_MOTION_MASK
@@ -803,7 +793,8 @@ void level_display::draw_rectangle(float x, float y, float width, float height, 
 }
 
 void level_display::draw_tiles() {
-  if (!m_position_buffer || !m_texcoord_buffer)
+  if (((!m_position_buffer || !m_texcoord_buffer) && m_use_vbo) ||
+      (!m_use_vbo && m_positions.empty()))
     setup_buffers();
   // Each tile needs 4 vertices and 4 texcoords
   const std::size_t size = m_level->get_width() * m_level->get_height() * 4;
@@ -812,12 +803,18 @@ void level_display::draw_tiles() {
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, m_tileset);
 
-  // Bind VBOs
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
-  glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
-  glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
+
+  if (m_use_vbo) {
+    // Bind VBOs
+    glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+    glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
+  } else {
+    // Link vertex array
+    glVertexPointer(2, GL_INT, sizeof(vertex_position), &m_positions.front());
+  }
 
   // Draw each layer
   int layer_count = m_level->get_layer_count();
@@ -863,12 +860,17 @@ void level_display::draw_tiles() {
         }
       }
 
-      // Upload texture coordinates and draw buffer
-      glBufferData(GL_ARRAY_BUFFER,
-                   tcoords.size() * sizeof(vertex_texcoord),
-                   &tcoords.front(),
-                   GL_STREAM_DRAW);
-      glTexCoordPointer(2, GL_FLOAT, 0, 0);
+      if (m_use_vbo) {
+        // Upload texture coordinates and draw buffer
+        glBufferData(GL_ARRAY_BUFFER,
+                     tcoords.size() * sizeof(vertex_texcoord),
+                     &tcoords.front(),
+                     GL_STREAM_DRAW);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+      } else {
+        // Link texcoord array
+        glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
+      }
       glDrawArrays(GL_QUADS, 0, size);
     }
   }
@@ -983,38 +985,46 @@ void level_display::draw_all() {
 }
 
 void level_display::setup_buffers() {
-  if (!glewIsSupported("GL_ARB_vertex_buffer_object"))
-    throw std::runtime_error("Your graphics card doesn't support ARB_vertex_buffer_object, sorry.");
+  m_use_vbo = glewIsSupported("GL_ARB_vertex_buffer_object");
+
+  if (!m_use_vbo) {
+    std::cerr << "level_display::setup_buffers: no ARB_vertex_buffer_object support, using vertex arrays" << std::endl;
+  }
   
-  if (!m_position_buffer)
-    glGenBuffers(1, &m_position_buffer);
-  if (!m_texcoord_buffer)
-    glGenBuffers(1, &m_texcoord_buffer);
+  if (m_use_vbo) {
+    if (!m_position_buffer)
+      glGenBuffers(1, &m_position_buffer);
+    if (!m_texcoord_buffer)
+      glGenBuffers(1, &m_texcoord_buffer);
+  }
 
   // Each tile needs 4 vertices and 4 texcoords
   const int width = m_level->get_width();
   const int height = m_level->get_height();
   const std::size_t size = width * height * 4;
 
-  std::vector<vertex_position> positions; positions.reserve(size);
+  m_positions.reserve(size);
 
   // fill with vertex positions
   for (int x = 0; x < width; ++x) {
     for (int y = 0; y < height; ++y) {
       const int tx = x * m_tile_width;
       const int ty = y * m_tile_height;
-      positions.push_back(vertex_position(tx, ty));
-      positions.push_back(vertex_position(tx + m_tile_width, ty));
-      positions.push_back(vertex_position(tx + m_tile_width, ty + m_tile_height));
-      positions.push_back(vertex_position(tx, ty + m_tile_height));
+      m_positions.push_back(vertex_position(tx, ty));
+      m_positions.push_back(vertex_position(tx + m_tile_width, ty));
+      m_positions.push_back(vertex_position(tx + m_tile_width, ty + m_tile_height));
+      m_positions.push_back(vertex_position(tx, ty + m_tile_height));
     }
   }
 
 
-  // Load the data into the VBO
-  glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
-  glBufferData(GL_ARRAY_BUFFER,
-               size * sizeof(vertex_position),
-               &positions.front(),
-               GL_STATIC_DRAW);
+  if (m_use_vbo) {
+    // Load the data into the VBO
+    glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+    glBufferData(GL_ARRAY_BUFFER,
+                 size * sizeof(vertex_position),
+                 &m_positions.front(),
+                 GL_STATIC_DRAW);
+    m_positions.clear();
+  }
 }
