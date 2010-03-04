@@ -1,4 +1,5 @@
 #include "GLArea.hpp"
+#include <iostream>
 
 GLArea::GLArea(int* attrList) {
   create_gl_area(attrList);
@@ -32,6 +33,10 @@ void GLArea::swap_buffers() {
 
 void GLArea::glarea_on_realize() {
   on_gl_realize();
+
+  gchar* info = gdk_gl_get_info();
+  std::cout << info << std::endl;
+  g_free(info);
 }
 
 bool GLArea::glarea_on_expose_event(GdkEventExpose* event) {
