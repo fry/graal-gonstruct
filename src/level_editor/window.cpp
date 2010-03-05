@@ -1,9 +1,9 @@
 #include "window.hpp"
 #include "preferences_display.hpp"
-#include "config.hpp"
 #include "toolbar_tools_display.hpp"
 #include "layers_control.hpp"
 
+#include "config.h"
 #include <iostream>
 #include <memory>
 
@@ -147,7 +147,7 @@ level_editor::window::window(preferences& _prefs)
   m_prefs_display(_prefs), m_tile_objects(_prefs), m_opening_levels(false),
   m_fc_open(*this, "Open Level"), m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE) {
 
-  set_title(std::string("Gonstruct ") + config::version_string);
+  set_title(std::string("Gonstruct ") + VERSION);
 
   // UIManager setup
   Glib::RefPtr<Gtk::ActionGroup> actions = Gtk::ActionGroup::create();
@@ -544,7 +544,7 @@ void level_editor::window::on_action_prefs() {
 void level_editor::window::on_action_about() {
   Gtk::AboutDialog dialog;
   dialog.set_name("Gonstruct");
-  dialog.set_version(config::version_string);
+  dialog.set_version(VERSION);
   dialog.set_comments("An alternative Graal Online level editor");
 
   dialog.set_copyright("Copyright \302\251 2008 "

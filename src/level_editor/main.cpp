@@ -1,8 +1,6 @@
 #include "window.hpp"
 #include "preferences.hpp"
 #include "preferences_display.hpp"
-#include "config.hpp"
-
 #include <gtkmm.h>
 #include <iostream>
 #include <boost/filesystem.hpp>
