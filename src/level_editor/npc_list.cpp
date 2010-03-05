@@ -85,8 +85,8 @@ void level_editor::edit_npc::set(const npc& _npc) {
 npc level_editor::edit_npc::get_npc() {
   npc new_npc(m_npc);
   new_npc.image = m_edit_image.get_text();
-  helper::parse<int>(m_edit_x.get_text(), new_npc.x);
-  helper::parse<int>(m_edit_y.get_text(), new_npc.y);
+  helper::parse<float>(m_edit_x.get_text(), new_npc.x);
+  helper::parse<float>(m_edit_y.get_text(), new_npc.y);
 
   GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_view));
   GtkTextIter start, end;

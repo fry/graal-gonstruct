@@ -46,8 +46,8 @@ namespace Graal {
 
         Gtk::TreeModelColumn<level::npc_list_type::iterator> iter;
         Gtk::TreeModelColumn<Glib::ustring> image;
-        Gtk::TreeModelColumn<int> x;
-        Gtk::TreeModelColumn<int> y;
+        Gtk::TreeModelColumn<float> x;
+        Gtk::TreeModelColumn<float> y;
       };
 
     public:

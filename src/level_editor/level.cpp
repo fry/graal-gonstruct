@@ -109,6 +109,7 @@ namespace {
     return Graal::helper::strip(line, "\r\n");
   }
 }
+#include <iostream>
 
 Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
@@ -125,6 +126,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   Graal::level* level = new Graal::level();
   while(!file.eof()) {
     std::string type = read<std::string>(file);
+    std::cout << type << std::endl;
     // read tiles
     if (type == "BOARD") {
       int start_x = read<int>(file);
@@ -178,8 +180,8 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       npc.image = read<std::string>(file);
       if (npc.image == "-")
         npc.image.clear();
-      npc.x = read<int>(file);
-      npc.y = read<int>(file);
+      npc.x = read<float>(file);
+      npc.y = read<float>(file);
       
       read_line(file); // finish the current line
       std::string line;

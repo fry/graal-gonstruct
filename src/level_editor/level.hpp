@@ -79,7 +79,7 @@ namespace Graal {
   class npc {
   public:
     int id;
-    int x, y;
+    float x, y;
     std::string image;
     std::string script;
 
