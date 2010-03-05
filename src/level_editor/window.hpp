@@ -60,6 +60,7 @@ namespace Graal {
 
       typedef sigc::signal<void, level_display&> signal_switch_level_display_type;
       signal_switch_level_display_type& signal_switch_level_display();
+
     protected:
       class tab_label: public Gtk::HBox {
       public:
@@ -120,6 +121,7 @@ namespace Graal {
       void on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display);
       void on_switch_page(GtkNotebookPage* page, guint page_num);
       void on_preferences_changed(preferences_display::preference_changes c);
+      void on_tileset_expose_event(GdkEventExpose* event);
 
       bool close_all_levels();
       std::auto_ptr<level_display> create_level_display();

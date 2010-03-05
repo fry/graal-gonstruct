@@ -301,6 +301,11 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::tiles_selected));
   display_tileset.signal_tileset_updated().connect(
       sigc::mem_fun(this, &window::on_tileset_update));
+  /* We need this because Gtk improperly draws over the opengl surface without
+   * invalidating it and causing an expose event to fix it */
+  display_tileset.signal_expose_event().connect_notify(
+      sigc::mem_fun(this, &window::on_tileset_expose_event));
+
   m_tile_objects.signal_tiles_selected().connect(
       sigc::mem_fun(this, &window::tiles_selected));
   m_tile_objects.signal_create_tile_object().connect(
@@ -868,4 +873,10 @@ tile_buf level_editor::window::get_current_tile_selection() {
 
 level_editor::window::signal_switch_level_display_type& level_editor::window::signal_switch_level_display() {
   return m_signal_switch_level_display;
+}
+
+void level_editor::window::on_tileset_expose_event(GdkEventExpose* event) {
+  level_display* display = get_current_level_display();
+  if (display)
+    display->invalidate();
 }
