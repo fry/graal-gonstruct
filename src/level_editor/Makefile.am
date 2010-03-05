@@ -22,7 +22,6 @@ gonstruct_SOURCES = \
 	sign_list.cpp \
 	tile_objects_display.cpp \
 	tileset.cpp \
-	tileset_cache.cpp \
 	tileset_display.cpp \
 	tileset_list.cpp \
 	toolbar_tools_display.cpp \
@@ -50,7 +49,6 @@ gonstruct_SOURCES = \
 	tile_objects_display.hpp \
 	tiles_display.hpp \
 	tileset.hpp \
-	tileset_cache.hpp \
 	tileset_display.hpp \
 	tileset_list.hpp \
 	toolbar_tools_display.hpp \
