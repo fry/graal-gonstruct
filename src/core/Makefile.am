@@ -4,6 +4,8 @@ libcore_la_SOURCES = \
 	csvparser.cpp \
 	helper.cpp \
 	preferences.cpp
-	csvparser.h \
+
+noinst_HEADERS = \
+	csvparser.h
 	helper.h \
 	preferences.h

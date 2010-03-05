@@ -1,6 +1,6 @@
-bin_PROGRAMS = gonstruct
+noinst_LTLIBRARIES = libgonstruct.la
 
-gonstruct_SOURCES = \
+libgonstruct_la_SOURCES = \
 	GLArea.cpp \
 	basic_tiles_display.cpp \
 	copy_cache.cpp \
@@ -28,6 +28,9 @@ gonstruct_SOURCES = \
 	undo_buffer.cpp \
 	undo_diffs.cpp \
 	window.cpp \
+	../glew/glew.c
+
+noinst_HEADERS = \
 	GLArea.hpp \
 	basic_tiles_display.hpp \
 	copy_cache.hpp \
@@ -54,22 +57,15 @@ gonstruct_SOURCES = \
 	toolbar_tools_display.hpp \
 	undo_buffer.hpp \
 	undo_diffs.hpp \
-	window.hpp \
-	../glew/glew.c
+	window.hpp
 
-gonstruct_CPPFLAGS = \
+AM_CPPFLAGS = \
 	$(gonstruct_CFLAGS) \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/level_editor \
 	-I$(top_srcdir)/src/glew \
 	-DGLEW_STATIC
-
-gonstruct_LDADD = \
-	$(top_srcdir)/src/core/libcore.la \
-	$(gonstruct_LIBS) \
-	-lboost_filesystem-mt \
-	-lboost_system-mt
 
 EXTRA_DIST = \
 	icon.svg \

@@ -8,18 +8,12 @@ Compiling
 To compile Gonstruct from source, the following packages/tools are required:
   * gtkmm
   * gtksourceview
-  * gtkglextmm
+  * gtkglarea (libgtkgl in Ubuntu)
   * premake4
   * boost
 
-You can either execute one of the build scripts (build.sh or build_release.sh)
-or manually compile by executing the following commands:
-  $ premake4 embed
-  $ premake4 gmake
-in the build directory:
-  $ make gonstruct
-to build the debug version, or
-  $ make gonstruct config=release
-to build the release version.
-The result will be placed in the bin directory in either the debug or the
-release folder.
+After that it's the normal
+ $ ./configure
+ $ make
+ $ sudo make install
+ $ gonstruct
