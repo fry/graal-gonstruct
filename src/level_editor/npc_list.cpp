@@ -75,8 +75,8 @@ level_editor::edit_npc::edit_npc()
 void level_editor::edit_npc::set(const npc& _npc) {
   m_npc = _npc;
   m_edit_image.set_text(_npc.image);
-  m_edit_x.set_text(boost::lexical_cast<std::string>(_npc.x));
-  m_edit_y.set_text(boost::lexical_cast<std::string>(_npc.y));
+  m_edit_x.set_text(boost::lexical_cast<std::string>(_npc.get_level_x()));
+  m_edit_y.set_text(boost::lexical_cast<std::string>(_npc.get_level_y()));
 
   GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_view));
   gtk_text_buffer_set_text(buf, _npc.script.c_str(), _npc.script.size());
@@ -85,8 +85,11 @@ void level_editor::edit_npc::set(const npc& _npc) {
 npc level_editor::edit_npc::get_npc() {
   npc new_npc(m_npc);
   new_npc.image = m_edit_image.get_text();
-  helper::parse<float>(m_edit_x.get_text(), new_npc.x);
-  helper::parse<float>(m_edit_y.get_text(), new_npc.y);
+  float new_x, new_y;
+  helper::parse<float>(m_edit_x.get_text(), new_x);
+  new_npc.set_level_x(new_x);
+  helper::parse<float>(m_edit_y.get_text(), new_y);
+  new_npc.set_level_y(new_y);
 
   GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_view));
   GtkTextIter start, end;
@@ -204,7 +207,7 @@ void level_editor::npc_list::get() {
     Gtk::TreeModel::iterator row = m_list_store->append();
     (*row)[columns.iter] = iter;
     (*row)[columns.image] = iter->image; // TODO: unicode
-    (*row)[columns.x] = iter->x;
-    (*row)[columns.y] = iter->y;
+    (*row)[columns.x] = iter->get_level_x();
+    (*row)[columns.y] = iter->get_level_y();
   } 
 }

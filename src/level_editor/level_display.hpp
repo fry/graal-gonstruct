@@ -130,6 +130,7 @@ protected:
   bool m_new_npc;
   // drag stuff
   bool m_dragging;
+  // in pixel:
   int m_drag_start_x, m_drag_start_y;
   // mouse offset from the selection origin
   int m_drag_mouse_x, m_drag_mouse_y;

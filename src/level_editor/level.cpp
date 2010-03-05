@@ -126,7 +126,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   Graal::level* level = new Graal::level();
   while(!file.eof()) {
     std::string type = read<std::string>(file);
-    std::cout << type << std::endl;
+
     // read tiles
     if (type == "BOARD") {
       int start_x = read<int>(file);
@@ -180,8 +180,13 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       npc.image = read<std::string>(file);
       if (npc.image == "-")
         npc.image.clear();
-      npc.x = read<float>(file);
-      npc.y = read<float>(file);
+      float rx, ry;
+      rx = read<float>(file);
+      ry = read<float>(file);
+      npc.set_level_x(rx);
+      npc.set_level_y(ry);
+      std::cout << rx << "," << ry << std::endl;
+      std::cout << npc.get_level_x() << "," << npc.get_level_y() << std::endl;
       
       read_line(file); // finish the current line
       std::string line;
@@ -256,7 +261,7 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
     std::string image = npc_iter->image;
     if (image.empty())
       image = "-";
-    stream << "NPC" << s << image << s << npc_iter->x << s << npc_iter->y << std::endl;
+    stream << "NPC" << s << image << s << npc_iter->get_level_x() << s << npc_iter->get_level_y() << std::endl;
     stream << npc_iter->script << std::endl;
     stream << "NPCEND" << std::endl;
   }

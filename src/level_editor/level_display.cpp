@@ -190,8 +190,8 @@ bool level_display::in_selection(int x, int y) {
 void level_display::set_selection(const Graal::npc& npc) {
   Cairo::RefPtr<Cairo::ImageSurface>& surface =
       m_image_cache.get_image(npc.image);
-  m_select_x = npc.x * m_tile_width;
-  m_select_y = npc.y * m_tile_height;
+  m_select_x = static_cast<int>(npc.get_level_x() * m_tile_width);
+  m_select_y = static_cast<int>(npc.get_level_y() * m_tile_height);
   m_select_width = surface->get_width();
   m_select_height = surface->get_height();
   
@@ -253,12 +253,17 @@ void level_display::on_button_motion(GdkEventMotion* event) {
 
     // move npc if selected
     if (npc_selected()) {
-      selected_npc->x = new_select_x / m_tile_width;
-      selected_npc->y = new_select_y / m_tile_height;
+      const int new_x = new_select_x / m_tile_width;
+      const int new_y = new_select_y / m_tile_height;
+      selected_npc->set_level_x(new_x);
+      selected_npc->set_level_y(new_y);
+      // Round select pos for NPCs in case of switching between 0.5 <-> 1 accuracy
+      m_select_x = new_x * m_tile_width;
+      m_select_y = new_y * m_tile_height;
+    } else {
+      m_select_x = new_select_x;
+      m_select_y = new_select_y;
     }
-
-    m_select_x = new_select_x;
-    m_select_y = new_select_y;
     
     invalidate();
   } else if (m_selecting) {
@@ -269,8 +274,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_drag_mouse_x = x - m_select_x;
       m_drag_mouse_y = y - m_select_y;
 
-      m_drag_start_x = selected_npc->x;
-      m_drag_start_y = selected_npc->y;
+      m_drag_start_x = static_cast<int>(selected_npc->get_level_x() * m_tile_width);
+      m_drag_start_y = static_cast<int>(selected_npc->get_level_y() * m_tile_height);
     } else {
       // the selection start tile needs to be limited to 0..63,
       // but in order to get correct width height these need to
@@ -280,8 +285,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_select_height =
         helper::bound_by(tile_y, 0, m_level->get_height()) * m_tile_height - m_select_y;
 
-      m_drag_start_x = tx;
-      m_drag_start_y = ty;
+      m_drag_start_x = tx * m_tile_width;
+      m_drag_start_y = ty * m_tile_height;
     }
     
     invalidate();
@@ -310,7 +315,9 @@ void level_display::on_button_pressed(GdkEventButton* event) {
     const int tile_x = to_tiles_x(x);
     const int tile_y = to_tiles_y(y);
 
+    // Double click
     if (event->type == GDK_2BUTTON_PRESS && event->button == 1) {
+      // If we double clicked on a NPC, open edit dialog
       if (npc_selected()) {
         edit_npc dialog; // TODO: ???
         dialog.set(*selected_npc);
@@ -345,31 +352,6 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       }
       return invalidate();
     }
-
-    if (!m_preferences.hide_npcs) {
-      // check whether we clicked a npc and select it
-      level::npc_list_type::iterator iter, end;
-      end = m_level->npcs.end();
-      for (iter = m_level->npcs.begin(); iter != end; iter ++) {
-        Cairo::RefPtr<Cairo::ImageSurface> npc_image =
-          m_image_cache.get_image(iter->image);
-        const int npc_x = iter->x * m_tile_width;
-        const int npc_y = iter->y * m_tile_height;
-        const int npc_width = npc_image->get_width();
-        const int npc_height = npc_image->get_height();
-        if (x >= npc_x && x < npc_x + npc_width
-            && y >= npc_y && y < npc_y + npc_height) {
-          // NPC clicked; deselect previous selection
-          if (has_selection()) {
-            save_selection();
-            clear_selection();
-          }
-          selected_npc = iter;
-          set_selection(*selected_npc);
-        }
-      }
-    }
-    
 
     // Did we click on a selection?
     if (in_selection(x, y)) {
@@ -428,6 +410,34 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         m_selecting = true;
       }
     }
+
+    if (!m_preferences.hide_npcs) {
+      // check whether we clicked a npc and select it
+      level::npc_list_type::iterator iter, end;
+      end = m_level->npcs.end();
+      for (iter = m_level->npcs.begin(); iter != end; iter ++) {
+        Cairo::RefPtr<Cairo::ImageSurface> npc_image =
+          m_image_cache.get_image(iter->image);
+        const int npc_x = static_cast<int>(iter->get_level_x() * m_tile_width);
+        const int npc_y = static_cast<int>(iter->get_level_y() * m_tile_height);
+        const int npc_width = npc_image->get_width();
+        const int npc_height = npc_image->get_height();
+        if (x >= npc_x && x < npc_x + npc_width
+            && y >= npc_y && y < npc_y + npc_height) {
+          // NPC clicked; deselect previous selection
+          if (has_selection()) {
+            save_selection();
+            clear_selection();
+          }
+          selected_npc = iter;
+          set_selection(*selected_npc);
+
+          m_selecting = true;
+
+          return invalidate();
+        }
+      }
+    }
   }
   
   invalidate();
@@ -444,11 +454,16 @@ void level_display::on_button_released(GdkEventButton* event) {
       // if no new npc was dragged, add npc changed diff
       const int tile_x = to_tiles_x(x);
       const int tile_y = to_tiles_y(y);
-      if (!m_new_npc && npc_selected() && (m_drag_start_x != tile_x || m_drag_start_y != tile_y)) {
-        Graal::npc old_npc = *selected_npc;
-        old_npc.x = m_drag_start_x;
-        old_npc.y = m_drag_start_y;
-        add_undo_diff(new npc_diff(old_npc));
+      if (!m_new_npc && npc_selected()) {
+        const float dsx = static_cast<float>(m_drag_start_x) / m_tile_width;
+        const float dsy = static_cast<float>(m_drag_start_y) / m_tile_height;
+        // Did the position actually change?
+        if (dsx != tile_x || dsy != tile_y) {
+          Graal::npc old_npc = *selected_npc;
+          old_npc.set_level_x(dsx);
+          old_npc.set_level_y(dsy);
+          add_undo_diff(new npc_diff(old_npc));
+        }
       }
       m_new_npc = false;
 
@@ -593,8 +608,8 @@ void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
   m_select_height = 3 * tw;
   m_select_width = 3 * th;
 
-  selected_npc->x = to_tiles_x(m_select_x);
-  selected_npc->y = to_tiles_y(m_select_y);
+  selected_npc->set_level_x(to_tiles_x(m_select_x));
+  selected_npc->set_level_x(to_tiles_y(m_select_y));
 
   m_dragging = true;
   
@@ -930,8 +945,8 @@ void level_display::draw_misc() {
     glColor3f(1, 1, 1);
     Graal::level::npc_list_type::iterator npc_iter, npc_end = m_level->npcs.end();
     for (npc_iter = m_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
-      const int x = npc_iter->x * m_tile_width;
-      const int y = npc_iter->y * m_tile_height;
+      const int x = static_cast<int>(npc_iter->get_level_x() * m_tile_width);
+      const int y = static_cast<int>(npc_iter->get_level_y() * m_tile_height);
       const std::string& npc_image_file = npc_iter->image;
       Cairo::RefPtr<Cairo::ImageSurface>& npc_img = m_image_cache.get_image(npc_image_file);
       const int width = npc_img->get_width();

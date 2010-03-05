@@ -79,7 +79,6 @@ namespace Graal {
   class npc {
   public:
     int id;
-    float x, y;
     std::string image;
     std::string script;
 
@@ -90,6 +89,27 @@ namespace Graal {
     bool operator!=(const Graal::npc& o) const {
       return !operator==(o);
     }
+
+    // These accessors return the correct position in floats
+    float get_level_x() const {
+      return static_cast<float>(x) / 2;
+    }
+
+    float get_level_y() const {
+      return static_cast<float>(y) / 2;
+    }
+
+    // Round down to 0.5
+    void set_level_x(float _x) {
+      x = static_cast<int>(_x * 2);
+    }
+
+    void set_level_y(float _y) {
+      y = static_cast<int>(_y * 2);
+    }
+
+    // Stored as position * 2 to allow for an accuracy of 0.5
+    int x, y;
   };
 
   class level {
