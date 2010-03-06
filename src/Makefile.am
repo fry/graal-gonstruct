@@ -1,1 +1,1 @@
-SUBDIRS = core level_editor
+SUBDIRS = core glew level_editor

@@ -6,6 +6,6 @@ libcore_la_SOURCES = \
 	preferences.cpp
 
 noinst_HEADERS = \
-	csvparser.h
+	csvparser.h \
 	helper.h \
 	preferences.h

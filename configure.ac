@@ -42,8 +42,11 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   	src/core/Makefile
+		src/glew/Makefile
+			src/glew/GL/Makefile
   	src/level_editor/Makefile
 	win/Makefile
+	dist/Makefile
 	icons/Makefile
 		icons/png/Makefile
 		icons/svg/Makefile
