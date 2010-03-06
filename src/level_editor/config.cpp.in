@@ -1,6 +1,0 @@
-#include "config.hpp"
-
-const char Graal::config::version_string[]  = "@GONSTRUCT_VERSION@";
-
-const char Graal::config::bindir[]  = "%(bindir)s";
-const char Graal::config::datadir[] = "%(datadir)s";
