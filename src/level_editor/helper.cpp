@@ -1,8 +1,16 @@
 #include "helper.hpp"
 #include <stdexcept>
+#include <string>
+#include <fstream>
 
 using namespace Graal;
 
+std::string helper::read_line(std::ifstream& stream) {
+  std::string line;
+  std::getline(stream, line);
+  return Graal::helper::strip(line, "\r\n");
+}
+  
 std::string helper::strip(const std::string& str, const char* ws) {
   std::string::size_type first, last, length;
   first = str.find_first_not_of(ws);

@@ -1,14 +1,25 @@
 #include "filesystem.hpp"
 #include <iostream>
 #include <set>
+#include <core/helper.h>
+#include <fstream>
+#include "helper.hpp"
 
 using namespace Graal;
+using namespace Graal::helper;
+using namespace Graal::level_editor;
 
-level_editor::filesystem::filesystem(preferences& _prefs): m_preferences(_prefs) {
+filesystem::filesystem(preferences& _prefs): m_preferences(_prefs) {
 }
 
-void level_editor::filesystem::update_cache() {
-  if (!boost::filesystem::is_directory(m_preferences.graal_dir))
+bool filesystem::valid_dir() {
+  std::string graal_dir = m_preferences.graal_dir;
+  return boost::filesystem::exists(graal_dir) && 
+         boost::filesystem::is_directory(graal_dir);
+}
+
+void filesystem::update_cache() {
+  if (!valid_dir())
     return;
   std::set<boost::filesystem::path> visited;
 
@@ -26,14 +37,13 @@ void level_editor::filesystem::update_cache() {
   }
 }
 
-bool level_editor::filesystem::get_path(const std::string& file_name,
+bool filesystem::get_path(const std::string& file_name,
                                         boost::filesystem::path& path_found) {
-
-  if (!boost::filesystem::exists(m_preferences.graal_dir)) {
+  if (!valid_dir()) {
     return false;
   }
 
-  cache_type::iterator fiter, fend;
+  filesystem::cache_type::iterator fiter, fend;
   fend = m_cache.end();
   fiter = m_cache.find(file_name);
   if (fiter != fend) {
@@ -51,6 +61,35 @@ bool level_editor::filesystem::get_path(const std::string& file_name,
   }*/
 
   return false;
+}
+
+#include <iostream>
+bool filesystem::update_cache_from_graal() {
+  if (!valid_dir())
+    return false;
+
+  boost::filesystem::path graal_dir(m_preferences.graal_dir);
+  graal_dir = graal_dir / "FILENAMECACHE.txt";
+
+  if (!boost::filesystem::exists(graal_dir))
+    return false;
+
+  std::ifstream cache_file(graal_dir.string().c_str());
+
+  if (cache_file.good())
+    return false;
+
+  while (!cache_file.eof()) {
+    std::string line = read_line(cache_file);
+    std::vector<std::string> tokens = csv_to_array(line);
+    std::cout << line << std::endl;
+    if (!tokens.empty()) {
+      boost::filesystem::path file(tokens[0]);
+      m_cache[file.leaf()] = file;
+    } 
+  }
+
+  return true;
 }
 
 /*void level_editor::filesystem::load(const boost::filesystem::path& path) {}

@@ -24,6 +24,7 @@ namespace Graal {
       bool fade_layers;
       bool remember_default_tile;
       int default_tile;
+      bool use_graal_cache;
 
       tile_objects_type tile_object_groups;
 

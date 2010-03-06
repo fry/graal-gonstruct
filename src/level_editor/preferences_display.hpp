@@ -12,8 +12,9 @@ namespace Graal {
       static const int GRAAL_DIR_CHANGED                     = 1 << 0;
       static const int SHOW_SELECTION_WHILE_DRAGGING_CHANGED = 1 << 1;
       static const int REMEMBER_DEFAULT_TILE_CHANGED         = 1 << 2;
-      static const int STICKY_TILE_SELECTION                 = 1 << 3;
+      static const int STICKY_TILE_SELECTION_CHANGED         = 1 << 3;
       static const int SELECTION_BACKGROUND_CHANGED          = 1 << 4;
+      static const int USE_GRAAL_CACHE_CHANGED               = 1 << 5;
 
       typedef int preference_changes;
 
@@ -38,6 +39,7 @@ namespace Graal {
       Gtk::CheckButton       m_pref_selection_background;
       Gtk::CheckButton       m_pref_remember_default_tile;
       Gtk::CheckButton       m_pref_sticky_tile_selection;
+      Gtk::CheckButton       m_pref_use_graal_cache;
     };
   }
 }

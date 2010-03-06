@@ -124,6 +124,7 @@ namespace Graal {
       void on_tileset_expose_event(GdkEventExpose* event);
 
       bool close_all_levels();
+      void update_cache();
       std::auto_ptr<level_display> create_level_display();
 
       boost::shared_ptr<level> m_level;

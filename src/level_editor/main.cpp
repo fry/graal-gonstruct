@@ -13,6 +13,8 @@ void set_default_preferences(Graal::level_editor::preferences& prefs) {
     prefs.add_tileset("pics1.png", "");
     prefs.default_tile = 511; // clear grass tile
   }
+  
+  prefs.use_graal_cache = false;
 }
 
 void start_editor(int argc, char* argv[],

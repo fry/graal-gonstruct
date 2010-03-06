@@ -40,6 +40,9 @@ void preferences::serialize() {
 
   m_values["fade_layers"]
     = fade_layers ? "true" : "false";
+  
+  m_values["use_graal_cache"]
+    = use_graal_cache ? "true" : "false";
 
   if (default_tile == -1) {
     m_values.erase("default_tile");
@@ -90,6 +93,11 @@ void preferences::deserialize() {
   iter = m_values.find("fade_layers");
   if (iter != m_values.end()) {
     fade_layers = (iter->second == "true");
+  }
+  
+  iter = m_values.find("use_graal_cache");
+  if (iter != m_values.end()) {
+    use_graal_cache = (iter->second == "true");
   }
 
   hide_npcs = false;

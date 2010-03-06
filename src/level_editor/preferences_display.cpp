@@ -13,12 +13,13 @@ preferences_display::preferences_display(preferences& prefs)
       m_pref_selection_background(
           "Show translucent background to selection"),
       m_pref_remember_default_tile("Remember default tile"),
-      m_pref_sticky_tile_selection("Sticky tile selection in tileset") {
+      m_pref_sticky_tile_selection("Sticky tile selection in tileset"),
+      m_pref_use_graal_cache("Use Graal's file cache") {
   update_controls();
 
   set_border_width(16);
 
-  Gtk::Table& entries = *Gtk::manage(new Gtk::Table(1, 5));
+  Gtk::Table& entries = *Gtk::manage(new Gtk::Table(1, 6));
   entries.set_col_spacing(0, 8);
 
   entries.attach(
@@ -45,6 +46,10 @@ preferences_display::preferences_display(preferences& prefs)
   entries.attach(m_pref_sticky_tile_selection, 0, 2, 4, 5,
     Gtk::EXPAND | Gtk::FILL,
     Gtk::SHRINK | Gtk::FILL);
+  
+  entries.attach(m_pref_use_graal_cache, 0, 2, 5, 6,
+    Gtk::EXPAND | Gtk::FILL,
+    Gtk::SHRINK | Gtk::FILL);
 
   get_vbox()->pack_start(entries);
 
@@ -58,6 +63,7 @@ preferences_display::preferences_display(preferences& prefs)
 void preferences_display::update_controls() {
   if (boost::filesystem::exists(m_prefs.graal_dir))
     m_pref_graaldir.set_filename(Glib::filename_to_utf8(m_prefs.graal_dir));
+
   m_pref_selection_border_while_dragging.set_active(
       m_prefs.selection_border_while_dragging);
   m_pref_selection_background.set_active(
@@ -66,6 +72,8 @@ void preferences_display::update_controls() {
     m_prefs.default_tile != -1);
   m_pref_sticky_tile_selection.set_active(
       m_prefs.sticky_tile_selection);
+  m_pref_use_graal_cache.set_active(
+    m_prefs.use_graal_cache);
 }
 
 preferences_display::signal_preferences_changed_type&
@@ -158,7 +166,15 @@ void preferences_display::apply() {
       != new_sticky_tile_selection) {
     m_prefs.sticky_tile_selection =
       new_sticky_tile_selection;
-    changes |= STICKY_TILE_SELECTION;
+    changes |= STICKY_TILE_SELECTION_CHANGED;
+  }
+  
+  bool new_use_graal_cache = 
+    m_pref_use_graal_cache.get_active();
+  if (m_prefs.use_graal_cache
+      != new_use_graal_cache) {
+    m_prefs.use_graal_cache = new_use_graal_cache;
+    changes |= USE_GRAAL_CACHE_CHANGED;
   }
 
   m_signal_preferences_changed.emit(changes);

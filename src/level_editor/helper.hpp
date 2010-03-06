@@ -44,6 +44,15 @@ namespace Graal {
 
     std::size_t parse_base64(const std::string& str);
     std::string format_base64(std::size_t num, std::size_t len = 2);
+    
+    std::string read_line(std::ifstream& stream);
+    
+    template <typename T>
+    inline T read(std::ifstream& stream) {
+      T v;
+      stream >> v;
+      return v;
+    }
   }
 }
 

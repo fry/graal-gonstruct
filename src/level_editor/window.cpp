@@ -312,7 +312,7 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::get_current_tile_selection));
 
   std::cout << "Caching...";
-  fs.update_cache();
+  update_cache();
   std::cout << " done" << std::endl;
 
   set_default_tile(m_preferences.default_tile);
@@ -415,12 +415,24 @@ void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num)
   }
 }
 
+void level_editor::window::update_cache() {
+  if (m_preferences.use_graal_cache) {
+    if (!fs.update_cache_from_graal())
+      display_error("Told to use Graal file cache, but can't open FILENAMECACHE.txt");
+    else
+      return;
+  }
+  
+  fs.update_cache();
+}
+
 void level_editor::window::on_preferences_changed(
     level_editor::preferences_display::preference_changes c) {
-  if (c & preferences_display::GRAAL_DIR_CHANGED) {
+  if (c & preferences_display::GRAAL_DIR_CHANGED ||
+      c & preferences_display::USE_GRAAL_CACHE_CHANGED) {
     m_image_cache.clear_cache();
     
-    fs.update_cache();
+    update_cache();
 
     for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
       level_display& disp(*get_nth_level_display(i));

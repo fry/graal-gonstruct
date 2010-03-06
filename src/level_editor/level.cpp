@@ -5,6 +5,8 @@
 #include <boost/filesystem/path.hpp>
 #include <string>
 
+using namespace Graal::helper;
+
 Graal::level::level(int fill_tile): m_unique_npc_id_counter(0) {
   // Always create one layer
   create_tiles(0, fill_tile);
@@ -95,22 +97,6 @@ void Graal::level::delete_layer(int index) {
   layers.erase(layers.begin() + index);
 }
 
-namespace {
-  template <typename T>
-  inline T read(std::ifstream& stream) {
-    T v;
-    stream >> v;
-    return v;
-  }
-
-  inline std::string read_line(std::ifstream& stream) {
-    std::string line;
-    std::getline(stream, line);
-    return Graal::helper::strip(line, "\r\n");
-  }
-}
-#include <iostream>
-
 Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
     throw std::runtime_error("load_nw_level("+path.string()+") failed: File not found");
@@ -185,9 +171,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       ry = read<float>(file);
       npc.set_level_x(rx);
       npc.set_level_y(ry);
-      std::cout << rx << "," << ry << std::endl;
-      std::cout << npc.get_level_x() << "," << npc.get_level_y() << std::endl;
-      
+
       read_line(file); // finish the current line
       std::string line;
       while (true) {
