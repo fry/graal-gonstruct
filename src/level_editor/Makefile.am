@@ -1,5 +1,10 @@
 noinst_LTLIBRARIES = libgonstruct.la
 
+image_data.cpp: $(icons_png)
+	$(RUBY) make_images.rb "$(top_srcdir)/icons/png/'*'.png" image_data.cpp
+
+BUILT_SOURCES = image_data.cpp
+
 libgonstruct_la_SOURCES = \
 	GLArea.cpp \
 	basic_tiles_display.cpp \

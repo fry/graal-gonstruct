@@ -8,8 +8,10 @@ namespace Graal {
   namespace level_editor {
     namespace image_data {
   END_OF_HEADER
-  Dir.foreach(source) do |img_name|
-    path = File.join(source, img_name)
+  Dir.glob(source) do |img_name|
+    #path = File.join(source, img_name)
+    path = img_name
+    img_name = File.basename(img_name)
     next if File.directory?(path)
     File.open(path, "rb") do |img|
       var_name = img_name[0...-4].gsub(/\W+/, '_')

@@ -19,6 +19,8 @@ AC_CACHE_SAVE
 #AC_CHECK_HEADER([boost/filesystem.hpp], [], AC_MSG_ERROR(["gonstruct requires boost_filesystem"]))
 #AC_CHECK_HEADER([boost/shared_ptr.hpp], [], AC_MSG_ERROR(["gonstruct requires boost_system"]))
 
+AC_CHECK_TOOL(RUBY, ruby)
+
 # Platform check (stolen from gobby)
 AC_MSG_CHECKING([whether to enable WIN32 specific flags])
 case "$host_os" in
@@ -39,9 +41,12 @@ AC_CACHE_SAVE
 AC_CONFIG_FILES([
   Makefile
   src/Makefile
-  src/core/Makefile
-  src/level_editor/Makefile
+  	src/core/Makefile
+  	src/level_editor/Makefile
 	win/Makefile
+	icons/Makefile
+		icons/png/Makefile
+		icons/svg/Makefile
 ])
 AC_OUTPUT
 

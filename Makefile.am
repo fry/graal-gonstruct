@@ -1,4 +1,6 @@
-SUBDIRS = win src
+SUBDIRS = win icons src
+
+#ACLOCAL_AMFLAGS = -I m4
 
 bin_PROGRAMS = gonstruct
 gonstruct_LDADD = \
