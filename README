@@ -9,11 +9,28 @@ To compile Gonstruct from source, the following packages/tools are required:
   * gtkmm
   * gtksourceview
   * gtkglarea (libgtkgl in Ubuntu)
-  * premake4
   * boost
+  * ruby
 
-After that it's the normal
+Now, if you're compiling from the GitHub repository, you have to execute
+ $ ./autogen.sh
+otherwise, if you're compiling from a downloaded archive it's
  $ ./configure
+
+for both
  $ make
  $ sudo make install
  $ gonstruct
+
+Compiling on Windows
+--------------------
+Windows is going to be a bit more difficult, you will need to properly set up
+  * msys and mingw: http://www.mingw.org/
+  * gtkmm: http://live.gnome.org/gtkmm/MSWindows
+  * gtksourceview: both available packages (dev and runtimes) from
+    http://ftp.gnome.org/pub/gnome/binaries/win32/gtksourceview/
+    (don't use 2.9.3) and extract both into the directory
+    you installed gtkmm into
+  * gtkglarea: from http://ftp.gnome.org/pub/gnome/sources/gtkglarea/2.0/
+    compile with
+    $ ./configure --prefix=<path to your gtkmm dir> && make && make install
