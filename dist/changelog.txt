@@ -2,6 +2,10 @@
 ________________________________________________________________
 
 0.2.1:
+  * 05.03.10 - Fix error in level display when scrolling in the tileset
+  * 05.03.10 - Fix crash when loading a level with fractional NPC positions
+  * 04.03.10 - Add fallback support for older graphics card
+  + 01.03.10 - Added screenshot level functionality back
   * 01.03.10 - Prefer tilesets with longer prefixes when looking for a "main"
                tileset
   * 01.03.10 - Use no-img image instead of displaying an error when no "main"
