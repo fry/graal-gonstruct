@@ -84,9 +84,11 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs), m_link_list(*this),
   m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
-  m_prefs_display(_prefs), m_tile_objects(_prefs), opening_levels(false),
+  m_tile_objects(_prefs), opening_levels(false),
   m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE),
-  m_file_commands(*this, m_header, _prefs)
+  m_file_commands(*this, m_header, _prefs),
+  m_edit_commands(*this, m_header),
+  prefs_display(_prefs)
 {
 
   set_title(std::string("Gonstruct ") + VERSION);
@@ -139,7 +141,7 @@ level_editor::window::window(preferences& _prefs)
   add(*vbox_main);
   show_all_children();
 
-  m_prefs_display.signal_preferences_changed().connect(
+  prefs_display.signal_preferences_changed().connect(
       sigc::mem_fun(this, &window::on_preferences_changed));
 
   // connect to tileset_display's signals
@@ -162,21 +164,6 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::get_current_tile_selection));
 
   // Connect header actions
-
-  m_header.action_edit_undo->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_undo));
-  m_header.action_edit_redo->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_redo));
-  m_header.action_edit_cut->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_cut));
-  m_header.action_edit_copy->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_copy));
-  m_header.action_edit_paste->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_paste));
-  m_header.action_edit_delete->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_delete));
-  m_header.action_edit_preferences->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_prefs));
 
   m_header.action_level_create_link->signal_activate().connect(
     sigc::mem_fun(*this, &window::on_action_create_link));
@@ -426,11 +413,6 @@ void level_editor::window::on_action_play() {
 }
 #endif // WIN32
 
-void level_editor::window::on_action_prefs() {
-  m_prefs_display.update_controls();
-  m_prefs_display.present();
-}
-
 void level_editor::window::on_action_about() {
   Gtk::AboutDialog dialog;
   dialog.set_name("Gonstruct");
@@ -454,64 +436,6 @@ void level_editor::window::on_action_about() {
   //dialog.set_logo(m_logo);
 
   dialog.run();
-}
-
-void level_editor::window::on_action_undo() {
-  level_display* current = get_current_level_display();
-  g_assert(current != 0);
-  current->undo();
-  current->clear_selection();
-  current->queue_draw();
-}
-
-void level_editor::window::on_action_redo() {
-  level_display* current = get_current_level_display();
-  g_assert(current != 0);
-  current->redo();
-  current->clear_selection();
-  current->queue_draw();
-}
-
-void level_editor::window::on_action_cut() {
-  level_display& display = *get_current_level_display();
-  if (!display.npc_selected()) {
-    tile_buf buf(display.selection);
-    if (buf.empty()) {
-      display.lift_selection();
-      buf = display.selection;
-    }
-    copy_cache.reset(new tiles_cache(buf));
-  } else {
-    copy_cache.reset(new npc_cache(*display.selected_npc));
-  }
-
-  display.delete_selection();
-}
-
-void level_editor::window::on_action_copy() {
-  level_display& display = *get_current_level_display();
-  if (!display.npc_selected()) {
-    tile_buf buf(display.selection);
-    if (buf.empty()) {
-      display.lift_selection();
-      buf = display.selection;
-      display.undo();
-    }
-    copy_cache.reset(new tiles_cache(buf));
-  } else {
-    copy_cache.reset(new npc_cache(*display.selected_npc));
-  }
-}
-
-void level_editor::window::on_action_paste() {
-  level_display& display = *get_current_level_display();
-  copy_cache->paste(display);
-}
-
-void level_editor::window::on_action_delete() {
-  level_display* current = get_current_level_display();
-  g_assert(current != 0);
-  current->delete_selection();
 }
 
 // create a new link

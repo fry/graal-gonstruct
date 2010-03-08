@@ -17,6 +17,7 @@
 
 #include "window/header.hpp"
 #include "window/file_commands.hpp"
+#include "window/edit_commands.hpp"
 
 namespace Graal {
   namespace level_editor {
@@ -56,6 +57,8 @@ namespace Graal {
       default_tile_display default_tile;
       tileset_map_type tilesets;
       filesystem fs;
+
+      preferences_display prefs_display;
       boost::shared_ptr<basic_cache> copy_cache;
 
       typedef sigc::signal<void, level_display&> signal_switch_level_display_type;
@@ -87,6 +90,7 @@ namespace Graal {
 
       header m_header;
       file_commands m_file_commands;
+      edit_commands m_edit_commands;
 
       image_cache m_image_cache;
       preferences& m_preferences;
@@ -95,7 +99,6 @@ namespace Graal {
       sign_list m_sign_list;
       npc_list m_npc_list;
       tileset_list m_tileset_list;
-      preferences_display m_prefs_display;
       toolbar_tools_display* m_tools;
       layers_control* m_layers_control;
       tile_objects_display m_tile_objects;
@@ -116,14 +119,7 @@ namespace Graal {
 #ifdef WIN32
       void on_action_play();
 #endif
-      void on_action_prefs();
       void on_action_about();
-      void on_action_undo();
-      void on_action_redo();
-      void on_action_cut();
-      void on_action_copy();
-      void on_action_paste();
-      void on_action_delete();
       void on_action_screenshot();
       void on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display);
       void on_switch_page(GtkNotebookPage* page, guint page_num);
