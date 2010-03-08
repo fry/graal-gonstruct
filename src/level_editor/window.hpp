@@ -16,6 +16,7 @@
 #include "tile_objects_display.hpp"
 
 #include "window/header.hpp"
+#include "window/file_commands.hpp"
 
 namespace Graal {
   namespace level_editor {
@@ -45,9 +46,6 @@ namespace Graal {
 
       tile_buf get_current_tile_selection();
 
-      bool save_current_page();
-      bool save_current_page_as();
-
       Cairo::RefPtr<Cairo::ImageSurface> get_image(const std::string& file_name);
 
       window(preferences& _prefs);
@@ -63,6 +61,15 @@ namespace Graal {
       typedef sigc::signal<void, level_display&> signal_switch_level_display_type;
       signal_switch_level_display_type& signal_switch_level_display();
 
+      bool close_all_levels();
+      // TODO: dirty hack
+      // True if we're in the middle of opening level[s] and don't want update_all spam
+      bool opening_levels;
+
+      bool save_current_page();
+      bool save_current_page_as();
+
+      std::auto_ptr<level_display> create_level_display();
     protected:
       class tab_label: public Gtk::HBox {
       public:
@@ -79,6 +86,7 @@ namespace Graal {
       };
 
       header m_header;
+      file_commands m_file_commands;
 
       image_cache m_image_cache;
       preferences& m_preferences;
@@ -100,11 +108,6 @@ namespace Graal {
 
       virtual bool on_delete_event(GdkEventAny* event);
 
-      void on_action_new();
-      void on_action_open();
-      void on_action_save();
-      void on_action_save_as();
-      void on_action_quit();
       void on_action_create_link();
       void on_action_links();
       void on_action_signs();
@@ -127,23 +130,14 @@ namespace Graal {
       void on_preferences_changed(preferences_display::preference_changes c);
       void on_tileset_expose_event(GdkEventExpose* event);
 
-      bool close_all_levels();
       void update_cache();
-      std::auto_ptr<level_display> create_level_display();
 
       boost::shared_ptr<level> m_level;
 
       Gtk::Notebook m_nb_levels;
       Gtk::Notebook m_nb_toolset;
       
-      // FileChooserDialogs to use
-      Gtk::FileChooserDialog m_fc_open;
       Gtk::FileChooserDialog m_fc_save;
-
-      //Glib::RefPtr<Gdk::Pixbuf> m_logo;
-
-      // True if we're in the middle of opening level[s] and don't want update_all spam
-      bool m_opening_levels;
     private:
       signal_switch_level_display_type m_signal_switch_level_display;
     };

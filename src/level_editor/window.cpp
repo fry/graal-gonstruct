@@ -84,8 +84,10 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs), m_link_list(*this),
   m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
-  m_prefs_display(_prefs), m_tile_objects(_prefs), m_opening_levels(false),
-  m_fc_open(*this, "Open Level"), m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE) {
+  m_prefs_display(_prefs), m_tile_objects(_prefs), opening_levels(false),
+  m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE),
+  m_file_commands(*this, m_header, _prefs)
+{
 
   set_title(std::string("Gonstruct ") + VERSION);
 
@@ -160,16 +162,6 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::get_current_tile_selection));
 
   // Connect header actions
-  m_header.action_file_new->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_new));
-  m_header.action_file_open->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_open));
-  m_header.action_file_save->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_save));
-  m_header.action_file_save_as->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_save_as));
-  m_header.action_file_quit->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_quit));
 
   m_header.action_edit_undo->signal_activate().connect(
     sigc::mem_fun(*this, &window::on_action_undo));
@@ -211,25 +203,13 @@ level_editor::window::window(preferences& _prefs)
   std::cout << " done" << std::endl;
 
   set_default_tile(m_preferences.default_tile);
+  set_level_buttons(false);
 
-  // FileChooserDialog open level
-  m_fc_open.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-  m_fc_open.add_button("Open", Gtk::RESPONSE_OK);
-  m_fc_open.set_select_multiple(true);
-  m_fc_open.set_current_folder(m_preferences.graal_dir);
-
+  // FileChooserDialog save as
   Gtk::FileFilter nw_filter;
   nw_filter.add_pattern("*.nw");
   nw_filter.set_name("Graal Level (*.nw)");
-  m_fc_open.add_filter(nw_filter);
-  m_fc_open.set_filter(nw_filter);
 
-  Gtk::FileFilter all_filter;
-  all_filter.add_pattern("*");
-  all_filter.set_name("All Files");
-  m_fc_open.add_filter(all_filter);
-
-  // FileChooserDialog save as
   m_fc_save.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
   m_fc_save.add_button("Save", Gtk::RESPONSE_OK);
 
@@ -237,8 +217,6 @@ level_editor::window::window(preferences& _prefs)
   m_fc_save.set_filter(nw_filter);
   m_fc_save.set_do_overwrite_confirmation(true);
   m_fc_save.set_current_folder(m_preferences.graal_dir);
-
-  set_level_buttons(false);
 
   // TODO: no
   m_tile_width = 16;
@@ -297,7 +275,7 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 // change tileset to the level's one when the page changes
 void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
   level_display* display = get_nth_level_display(page_num);
-  if (!m_opening_levels) {
+  if (!opening_levels) {
     display_tileset.update_tileset(display->get_level_path().leaf());
   }
 
@@ -559,86 +537,6 @@ void level_editor::window::on_action_create_link() {
   }
 }
 
-void level_editor::window::on_action_new() {
-  try {
-    std::auto_ptr<level_display> display(create_level_display());
-
-    display->new_level(default_tile.get_tile());
-    create_new_page(*Gtk::manage((display.release())), "new");
-    set_level_buttons(true);
-  } catch (std::exception& e) {
-    display_error(e.what());
-  }
-}
-
-void level_editor::window::on_action_open() {
-  if (m_fc_open.run() == Gtk::RESPONSE_OK) {
-    std::list<Glib::ustring> files(m_fc_open.get_filenames());
-    std::list<Glib::ustring>::const_iterator iter, end = files.end();
-    for (iter = files.begin();
-         iter != end;) {
-      boost::filesystem::path path(*iter);
-      ++iter;
-
-      m_opening_levels = iter != end;
-      try {
-        // Only activate the last page to load
-        load_level(path, !m_opening_levels);
-      } catch (const std::exception& e) {
-        display_error(e.what());
-      }
-    }
-  }
-  
-  m_fc_open.hide();
-}
-
-void level_editor::window::on_action_save() {
-  save_current_page();
-}
-
-void level_editor::window::on_action_save_as() {
-  save_current_page_as();
-}
-
-bool level_editor::window::save_current_page_as() {
-  level_display* disp = get_current_level_display();
-  boost::filesystem::path path = disp->get_level_path();
-  if (path.empty())
-    m_fc_save.set_current_name("new.nw");
-  else
-    m_fc_save.set_filename(path.string());
-
-  
-  if (m_fc_save.run() == Gtk::RESPONSE_OK) {
-    std::string path = m_fc_save.get_filename();
-    level_display* disp = get_current_level_display();
-    disp->save_level(path);
-    m_fc_save.hide();
-    return true;
-  } else {
-    m_fc_save.hide();
-    return false;
-  }
-}
-
-bool level_editor::window::save_current_page() {
-  level_display* disp = get_current_level_display();
-  boost::filesystem::path path = disp->get_level_path();
-  if (path.empty()) {
-    return save_current_page_as();
-  }
-
-  disp->save_level();
-  return true;
-}
-
-void level_editor::window::on_action_quit() {
-  if (close_all_levels())
-    return;
-  hide();
-}
-
 void level_editor::window::load_level(const boost::filesystem::path& file_path, bool activate) {
   // check whether the level is already loaded
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
@@ -786,4 +684,36 @@ void level_editor::window::on_tileset_expose_event(GdkEventExpose* event) {
   level_display* display = get_current_level_display();
   if (display)
     display->invalidate();
+}
+
+bool level_editor::window::save_current_page_as() {
+  level_display* disp = get_current_level_display();
+  boost::filesystem::path path = disp->get_level_path();
+  if (path.empty())
+    m_fc_save.set_current_name("new.nw");
+  else
+    m_fc_save.set_filename(path.string());
+
+  
+  if (m_fc_save.run() == Gtk::RESPONSE_OK) {
+    std::string path = m_fc_save.get_filename();
+    level_display* disp = get_current_level_display();
+    disp->save_level(path);
+    m_fc_save.hide();
+    return true;
+  } else {
+    m_fc_save.hide();
+    return false;
+  }
+}
+
+bool level_editor::window::save_current_page() {
+  level_display* disp = get_current_level_display();
+  boost::filesystem::path path = disp->get_level_path();
+  if (path.empty()) {
+    return save_current_page_as();
+  }
+
+  disp->save_level();
+  return true;
 }
