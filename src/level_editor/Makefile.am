@@ -33,7 +33,8 @@ libgonstruct_la_SOURCES = \
 	undo_buffer.cpp \
 	undo_diffs.cpp \
 	window.cpp \
-	../glew/glew.c
+	../glew/glew.c \
+	window/header.cpp
 
 noinst_HEADERS = \
 	GLArea.hpp \
@@ -62,7 +63,8 @@ noinst_HEADERS = \
 	toolbar_tools_display.hpp \
 	undo_buffer.hpp \
 	undo_diffs.hpp \
-	window.hpp
+	window.hpp \
+	window/header.hpp
 
 AM_CPPFLAGS = \
 	$(gonstruct_CFLAGS) \

@@ -15,6 +15,8 @@
 #include "copy_cache.hpp"
 #include "tile_objects_display.hpp"
 
+#include "window/header.hpp"
+
 namespace Graal {
   namespace level_editor {
     class toolbar_tools_display;
@@ -76,6 +78,8 @@ namespace Graal {
         Gtk::Button m_button;
       };
 
+      header m_header;
+
       image_cache m_image_cache;
       preferences& m_preferences;
 
@@ -136,8 +140,6 @@ namespace Graal {
       Gtk::FileChooserDialog m_fc_open;
       Gtk::FileChooserDialog m_fc_save;
 
-      Glib::RefPtr<Gtk::ActionGroup> m_level_actions;
-      Glib::RefPtr<Gtk::UIManager> m_ui;
       //Glib::RefPtr<Gdk::Pixbuf> m_logo;
 
       // True if we're in the middle of opening level[s] and don't want update_all spam

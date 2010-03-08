@@ -48,66 +48,6 @@ namespace {
     return parent.save_current_page();
   }
 
-  const Glib::ustring ui_xml(
-    "<ui>"
-    "  <menubar name='MenuBar'>"
-    "    <menu action='FileMenu'>"
-    "      <menuitem action='New'/>"
-    "      <menuitem action='Open'/>"
-    "      <menuitem action='Save'/>"
-    "      <menuitem action='SaveAs'/>"
-    "      <separator/>"
-    "      <menuitem action='Quit'/>"
-    "    </menu>"
-    "    <menu action='EditMenu'>"
-    "      <menuitem action='Undo'/>"
-    "      <menuitem action='Redo'/>"
-    "      <separator/>"
-    "      <menuitem action='Cut'/>"
-    "      <menuitem action='Copy'/>"
-    "      <menuitem action='Paste'/>"
-    "      <menuitem action='Delete'/>"
-    "      <separator/>"
-    "      <menuitem action='Preferences'/>"
-    "    </menu>"
-    "    <menu action='LevelMenu'>"
-    "      <menuitem action='CreateLink'/>"
-    "      <menuitem action='Links'/>"
-    "      <separator/>"
-    "      <menuitem action='Signs'/>"
-    "      <separator/>"
-    "      <menuitem action='NPCs'/>"
-    "      <menuitem action='Tilesets'/>"
-#ifdef WIN32
-    "      <menuitem action='Play'/>"
-#endif
-    "      <menuitem action='Screenshot'/>"
-    "    </menu>"
-    "    <menu action='HelpMenu'>"
-    "      <menuitem action='About'/>"
-    "    </menu>"
-    "  </menubar>"
-    "  <toolbar name='ToolBar'>"
-    "    <toolitem action='New'/>"
-    "    <toolitem action='Open'/>"
-    "    <toolitem action='Save'/>"
-    "    <toolitem action='SaveAs'/>"
-    "    <separator/>"
-    "    <toolitem action='CreateLink'/>"
-    "    <toolitem action='Links'/>"
-    "    <separator/>"
-    "    <toolitem action='Signs'/>"
-    "    <separator/>"
-    "    <toolitem action='NPCs'/>"
-    "    <toolitem action='Tilesets'/>"
-    "    <separator/>"
-#ifdef WIN32
-    "    <toolitem action='Play'/>"
-#endif
-    "    <toolitem action='Preferences'/>"
-    "  </toolbar>"
-    "</ui>"
-      );
 }
 
 level_editor::window::tab_label::tab_label(const Glib::ustring& label)
@@ -149,120 +89,28 @@ level_editor::window::window(preferences& _prefs)
 
   set_title(std::string("Gonstruct ") + VERSION);
 
-  // UIManager setup
-  Glib::RefPtr<Gtk::ActionGroup> actions = Gtk::ActionGroup::create();
-
-  actions->add(Gtk::Action::create("FileMenu", "_File"));
-  actions->add(Gtk::Action::create("EditMenu", "_Edit"));
-  actions->add(Gtk::Action::create("HelpMenu", "_Help"));
-  actions->add(Gtk::Action::create("New", Gtk::Stock::NEW),
-      sigc::mem_fun(*this, &window::on_action_new));
-  actions->add(Gtk::Action::create("Open", Gtk::Stock::OPEN),
-      sigc::mem_fun(*this, &window::on_action_open));
-  actions->add(Gtk::Action::create("Quit", Gtk::Stock::QUIT),
-      sigc::mem_fun(*this, &window::on_action_quit));
-  actions->add(Gtk::Action::create("Preferences",
-                                   Gtk::Stock::PREFERENCES),
-      sigc::mem_fun(*this, &window::on_action_prefs));
-  actions->add(Gtk::Action::create("About",
-                                   Gtk::Stock::ABOUT),
-      sigc::mem_fun(*this, &window::on_action_about));
-
-  m_level_actions = Gtk::ActionGroup::create();
-
-  m_level_actions->add(Gtk::Action::create("LevelMenu", "_Level"));
-  m_level_actions->add(Gtk::Action::create("Save", Gtk::Stock::SAVE),
-      sigc::mem_fun(*this, &window::on_action_save));
-  m_level_actions->add(Gtk::Action::create("SaveAs", Gtk::Stock::SAVE_AS),
-      sigc::mem_fun(*this, &window::on_action_save_as));
-  m_level_actions->add(
-      Gtk::Action::create("CreateLink",
-                          Gtk::Stock::GO_FORWARD, "Create link",
-                          "Create a link from the selected tiles."),
-      sigc::mem_fun(*this, &window::on_action_create_link));
-  m_level_actions->add(
-      Gtk::Action::create("Links",
-                          Gtk::Stock::FULLSCREEN, "Links",
-                          "Show a list of level links."),
-      sigc::mem_fun(*this, &window::on_action_links));
-  m_level_actions->add(
-      Gtk::Action::create("Signs",
-                          Gtk::Stock::DND_MULTIPLE, "Signs",
-                          "Show a list of signs."),
-      sigc::mem_fun(*this, &window::on_action_signs));
-  m_level_actions->add(
-      Gtk::Action::create("NPCs",
-                          Gtk::Stock::SELECT_COLOR, "NPCs",
-                          "Show a list of NPCs."),
-      sigc::mem_fun(*this, &window::on_action_npcs));
-  actions->add(
-      Gtk::Action::create("Tilesets",
-                          Gtk::Stock::SELECT_COLOR, "Tilesets",
-                          "Show a list of tilesets."),
-      sigc::mem_fun(*this, &window::on_action_tilesets));
-#ifdef WIN32
-  m_level_actions->add(Gtk::Action::create("Play", Gtk::Stock::EXECUTE),
-      sigc::mem_fun(*this, &window::on_action_play));
-#endif
-  m_level_actions->add(
-      Gtk::Action::create("Screenshot",
-                          Gtk::Stock::ZOOM_FIT, "Screenshot",
-                          "Take a screenshot of the level."),
-      sigc::mem_fun(*this, &window::on_action_screenshot));
-
-  m_level_actions->add(
-      Gtk::Action::create("Undo", Gtk::Stock::UNDO),
-      Gtk::AccelKey("<control>z"),
-      sigc::mem_fun(*this, &window::on_action_undo));
-  m_level_actions->add(
-      Gtk::Action::create("Redo", Gtk::Stock::REDO),
-      Gtk::AccelKey("<control>y"),
-      sigc::mem_fun(*this, &window::on_action_redo));
-  m_level_actions->add(
-      Gtk::Action::create("Cut", Gtk::Stock::CUT),
-      sigc::mem_fun(*this, &window::on_action_cut));
-  m_level_actions->add(
-      Gtk::Action::create("Copy", Gtk::Stock::COPY),
-      sigc::mem_fun(*this, &window::on_action_copy));
-  m_level_actions->add(
-      Gtk::Action::create("Paste", Gtk::Stock::PASTE),
-      sigc::mem_fun(*this, &window::on_action_paste));
-  m_level_actions->add(
-      Gtk::Action::create("Delete", Gtk::Stock::DELETE),
-      Gtk::AccelKey("Delete"),
-      sigc::mem_fun(*this, &window::on_action_delete));
-
-  m_ui = Gtk::UIManager::create();
-  m_ui->add_ui_from_string(ui_xml);
-  m_ui->insert_action_group(m_level_actions);
-  m_ui->insert_action_group(actions);
-  add_accel_group(m_ui->get_accel_group());
-
   Gtk::HPaned* hpane = Gtk::manage(new Gtk::HPaned());
+  Gtk::VBox* vbox_tools = Gtk::manage(new Gtk::VBox());
   Gtk::VBox* vbox_main = Gtk::manage(new Gtk::VBox());
-
-  Gtk::Widget* menu = m_ui->get_widget("/MenuBar");
-  vbox_main->pack_start(*menu, Gtk::PACK_SHRINK);
+  vbox_main->pack_start(m_header, Gtk::PACK_SHRINK);
+  
+  add_accel_group(m_header.get_accel_group());
 
   // toolbar + edit area + layers control
-  Gtk::Toolbar* toolbar =
-    static_cast<Gtk::Toolbar*>(m_ui->get_widget("/ToolBar"));
-  toolbar->set_toolbar_style(Gtk::TOOLBAR_ICONS);
+  
   // TODO: need to create layers_control here because it uses this in the constructor
   m_layers_control = Gtk::manage(new layers_control(*this, m_preferences));
-  Gtk::HBox& hbox_toolbar = *Gtk::manage(new Gtk::HBox());
-  hbox_toolbar.pack_start(*toolbar, Gtk::PACK_EXPAND_WIDGET);
-  hbox_toolbar.pack_start(*m_layers_control, Gtk::PACK_SHRINK);
-  vbox_main->pack_start(hbox_toolbar, Gtk::PACK_SHRINK);
+  
   // hpane with level + side panel
   m_nb_levels.signal_switch_page().connect_notify(
       sigc::mem_fun(this, &window::on_switch_page), true); // after is important
   m_nb_levels.set_scrollable(true);
   
   hpane->pack1(m_nb_levels);
-  hpane->pack2(m_nb_toolset, Gtk::SHRINK);
+  vbox_tools->pack_start(*m_layers_control, Gtk::PACK_SHRINK);
+  vbox_tools->pack_start(m_nb_toolset);
+  hpane->pack2(*vbox_tools, Gtk::SHRINK);
   hpane->set_position(550);
-
   vbox_main->pack_start(*hpane);
 
   // toolset
@@ -310,6 +158,53 @@ level_editor::window::window(preferences& _prefs)
       sigc::mem_fun(this, &window::tiles_selected));
   m_tile_objects.signal_create_tile_object().connect(
       sigc::mem_fun(this, &window::get_current_tile_selection));
+
+  // Connect header actions
+  m_header.action_file_new->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_new));
+  m_header.action_file_open->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_open));
+  m_header.action_file_save->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_save));
+  m_header.action_file_save_as->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_save_as));
+  m_header.action_file_quit->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_quit));
+
+  m_header.action_edit_undo->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_undo));
+  m_header.action_edit_redo->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_redo));
+  m_header.action_edit_cut->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_cut));
+  m_header.action_edit_copy->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_copy));
+  m_header.action_edit_paste->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_paste));
+  m_header.action_edit_delete->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_delete));
+  m_header.action_edit_preferences->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_prefs));
+
+  m_header.action_level_create_link->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_create_link));
+  m_header.action_level_links->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_links));
+  m_header.action_level_signs->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_signs));
+  m_header.action_level_npcs->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_npcs));
+  m_header.action_level_tilesets->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_tilesets));
+#ifdef WIN32
+  m_header.action_level_play->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_play));
+#endif
+  m_header.action_level_screenshot->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_screenshot));
+  
+  m_header.action_help_about->signal_activate().connect(
+    sigc::mem_fun(*this, &window::on_action_about));
 
   std::cout << "Caching...";
   update_cache();
@@ -370,7 +265,7 @@ void level_editor::window::on_tileset_update(const Cairo::RefPtr<Cairo::ImageSur
 }
 
 void level_editor::window::set_level_buttons(bool enabled) {
-  m_level_actions->set_sensitive(enabled);
+  m_header.group_level_actions->set_sensitive(enabled);
   m_tile_objects.set_sensitive(enabled);
   m_tools->set_sensitive(enabled);
   m_layers_control->set_sensitive(enabled);
