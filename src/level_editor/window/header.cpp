@@ -132,7 +132,6 @@ level_editor::header::header():
 #endif
   group_level_actions->add(action_level_screenshot);
   
-  group_level_actions->add(action_edit);
   group_level_actions->add(action_edit_undo, Gtk::AccelKey("<control>z"));
   group_level_actions->add(action_edit_redo, Gtk::AccelKey("<control>y"));
   group_level_actions->add(action_edit_cut);
@@ -147,6 +146,8 @@ level_editor::header::header():
   actions->add(action_file_quit);
   actions->add(action_help);
   actions->add(action_help_about);
+  actions->add(action_edit);
+  actions->add(action_edit_preferences);
 
   m_ui_manager = Gtk::UIManager::create();
   m_ui_manager->add_ui_from_string(ui_xml);
