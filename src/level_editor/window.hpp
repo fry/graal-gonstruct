@@ -6,10 +6,6 @@
 #include "level_display.hpp"
 #include "tileset_display.hpp"
 #include "filesystem.hpp"
-#include "link_list.hpp"
-#include "sign_list.hpp"
-#include "npc_list.hpp"
-#include "tileset_list.hpp"
 #include "default_tile_display.hpp"
 #include "preferences_display.hpp"
 #include "copy_cache.hpp"
@@ -18,6 +14,7 @@
 #include "window/header.hpp"
 #include "window/file_commands.hpp"
 #include "window/edit_commands.hpp"
+#include "window/level_commands.hpp"
 
 namespace Graal {
   namespace level_editor {
@@ -91,14 +88,11 @@ namespace Graal {
       header m_header;
       file_commands m_file_commands;
       edit_commands m_edit_commands;
+      level_commands m_level_commands;
 
       image_cache m_image_cache;
       preferences& m_preferences;
 
-      link_list m_link_list;
-      sign_list m_sign_list;
-      npc_list m_npc_list;
-      tileset_list m_tileset_list;
       toolbar_tools_display* m_tools;
       layers_control* m_layers_control;
       tile_objects_display m_tile_objects;
@@ -111,16 +105,7 @@ namespace Graal {
 
       virtual bool on_delete_event(GdkEventAny* event);
 
-      void on_action_create_link();
-      void on_action_links();
-      void on_action_signs();
-      void on_action_npcs();
-      void on_action_tilesets();
-#ifdef WIN32
-      void on_action_play();
-#endif
       void on_action_about();
-      void on_action_screenshot();
       void on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display);
       void on_switch_page(GtkNotebookPage* page, guint page_num);
       void on_preferences_changed(preferences_display::preference_changes c);

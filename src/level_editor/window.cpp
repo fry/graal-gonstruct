@@ -82,12 +82,12 @@ level_editor::window::tab_label::signal_proxy_close level_editor::window::tab_la
 // window
 level_editor::window::window(preferences& _prefs)
 : fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
-  m_preferences(_prefs), m_link_list(*this),
-  m_sign_list(*this), m_npc_list(*this), m_tileset_list(*this, _prefs),
+  m_preferences(_prefs),
   m_tile_objects(_prefs), opening_levels(false),
   m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE),
   m_file_commands(*this, m_header, _prefs),
   m_edit_commands(*this, m_header),
+  m_level_commands(*this, m_header, _prefs),
   prefs_display(_prefs)
 {
 
@@ -163,25 +163,7 @@ level_editor::window::window(preferences& _prefs)
   m_tile_objects.signal_create_tile_object().connect(
       sigc::mem_fun(this, &window::get_current_tile_selection));
 
-  // Connect header actions
-
-  m_header.action_level_create_link->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_create_link));
-  m_header.action_level_links->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_links));
-  m_header.action_level_signs->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_signs));
-  m_header.action_level_npcs->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_npcs));
-  m_header.action_level_tilesets->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_tilesets));
-#ifdef WIN32
-  m_header.action_level_play->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_play));
-#endif
-  m_header.action_level_screenshot->signal_activate().connect(
-    sigc::mem_fun(*this, &window::on_action_screenshot));
-  
+  // Connect header actions 
   m_header.action_help_about->signal_activate().connect(
     sigc::mem_fun(*this, &window::on_action_about));
 
@@ -267,12 +249,6 @@ void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num)
   }
 
   m_signal_switch_level_display(*display);
-
-  if (m_nb_levels.get_n_pages() > 0) {
-    m_link_list.get();
-    m_npc_list.get();
-    m_sign_list.get();
-  }
 }
 
 void level_editor::window::update_cache() {
@@ -350,69 +326,6 @@ bool level_editor::window::on_delete_event(GdkEventAny* event) {
   return close_all_levels();
 }
 
-void level_editor::window::on_action_links() {
-  m_link_list.present();
-}
-
-void level_editor::window::on_action_npcs() {
-  m_npc_list.present();
-}
-
-void level_editor::window::on_action_tilesets() {
-  m_tileset_list.present();
-}
-
-void level_editor::window::on_action_signs() {
-  m_sign_list.present();
-}
-
-void level_editor::window::on_action_screenshot() {
-  Gtk::FileChooserDialog dialog(*this, "Save Level Screenshot", Gtk::FILE_CHOOSER_ACTION_SAVE);
-  Gtk::FileFilter filter;
-  filter.add_pattern("*.png");
-  filter.set_name("PNG Image (*.png)");
-  dialog.add_filter(filter);
-  dialog.set_do_overwrite_confirmation(true);
-
-  dialog.add_button(Gtk::Stock::CANCEL, Gtk::RESPONSE_CANCEL);
-  dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_OK);
-
-  if (dialog.run() == Gtk::RESPONSE_OK) {
-    Cairo::RefPtr<Cairo::ImageSurface> surface = get_current_level_display()->render_level();
-    // TODO: do utf8 magic here, too lazy
-    surface->write_to_png(dialog.get_filename());
-  }
-}
-
-#ifdef WIN32
-void level_editor::window::on_action_play() {
-  if (save_current_page()) {
-    std::string path = get_current_level_display()->get_level_path().string();
-    g_assert(!path.empty());
-    std::string cmd = m_preferences.graal_dir + "/graaleditor.exe";
-    char play_arg[] = "-play";
-    gchar* argv[] = { &cmd[0], &path[0], play_arg, 0 };
-    GError* error = 0;
-    gdk_spawn_on_screen(
-        get_screen()->gobj(),
-        m_preferences.graal_dir.c_str(),
-        argv,
-        0, // envp
-        (GSpawnFlags) (G_SPAWN_STDOUT_TO_DEV_NULL
-                       | G_SPAWN_STDERR_TO_DEV_NULL),
-        0, // setup func
-        0, // user data
-        0, // pid ptr
-        &error);
-    if (error) {
-      Glib::ustring message(error->message);
-      g_error_free(error);
-      display_error(message);
-    }
-  }
-}
-#endif // WIN32
-
 void level_editor::window::on_action_about() {
   Gtk::AboutDialog dialog;
   dialog.set_name("Gonstruct");
@@ -436,29 +349,6 @@ void level_editor::window::on_action_about() {
   //dialog.set_logo(m_logo);
 
   dialog.run();
-}
-
-// create a new link
-void level_editor::window::on_action_create_link() {
-  level_display* current = get_current_level_display();
-  if (current->has_selection()) {
-    link new_link;
-    new_link.x = current->select_x() / m_tile_width;
-    new_link.y = current->select_y() / m_tile_height;
-    new_link.width = std::abs(current->select_width() / m_tile_width);
-    new_link.height = std::abs(current->select_height() / m_tile_height);
-    edit_link link_window(*this);
-    link_window.get(new_link);
-    if (link_window.run() == Gtk::RESPONSE_OK) {
-      new_link = link_window.get_link();
-      get_current_level()->links.push_back(new_link);
-
-      // update link list & level
-      m_link_list.get();
-      // TODO: also probably shouldn't be here
-      current->queue_draw();
-    }
-  }
 }
 
 void level_editor::window::load_level(const boost::filesystem::path& file_path, bool activate) {
@@ -527,9 +417,7 @@ void level_editor::window::on_close_level_clicked(Gtk::ScrolledWindow& scrolled,
   if (m_nb_levels.get_n_pages() <= 0) {
     set_level_buttons(false);
 
-    m_link_list.hide();
-    m_npc_list.hide();
-    m_sign_list.hide();
+    m_level_commands.hide_lists();
   }
 }
 

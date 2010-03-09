@@ -89,6 +89,9 @@ public:
 
   void flood_fill(int tx, int ty, int fill_with_index);
 
+  // Create a link from the current selection (but don't add it)
+  link create_link();
+
   void add_undo_diff(basic_diff* diff);
 
   void set_unsaved(bool new_unsaved);

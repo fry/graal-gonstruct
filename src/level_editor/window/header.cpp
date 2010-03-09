@@ -126,6 +126,7 @@ level_editor::header::header():
   group_level_actions->add(action_level_links);
   group_level_actions->add(action_level_signs);
   group_level_actions->add(action_level_npcs);
+  group_level_actions->add(action_level_tilesets);
 #ifdef WIN32
   group_level_actions->add(action_level_play);
 #endif

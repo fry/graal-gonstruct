@@ -36,7 +36,8 @@ libgonstruct_la_SOURCES = \
 	../glew/glew.c \
 	window/header.cpp \
 	window/file_commands.cpp \
-	window/edit_commands.cpp
+	window/edit_commands.cpp \
+	window/level_commands.cpp
 
 noinst_HEADERS = \
 	GLArea.hpp \
@@ -68,7 +69,8 @@ noinst_HEADERS = \
 	window.hpp \
 	window/header.hpp \
 	window/file_commands.hpp \
-	window/edit_commands.hpp
+	window/edit_commands.hpp \
+	window/level_commands.hpp
 
 AM_CPPFLAGS = \
 	$(gonstruct_CFLAGS) \

@@ -1043,3 +1043,12 @@ void level_display::setup_buffers() {
     m_positions.clear();
   }
 }
+
+link level_editor::level_display::create_link() {
+  link new_link;
+  new_link.x = select_x() / m_tile_width;
+  new_link.y = select_y() / m_tile_height;
+  new_link.width = std::abs(select_width() / m_tile_width);
+  new_link.height = std::abs(select_height() / m_tile_height);
+  return new_link;
+}
