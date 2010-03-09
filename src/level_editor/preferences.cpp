@@ -24,6 +24,11 @@ namespace {
   }
 }
 
+preferences::preferences():
+  use_graal_cache(false)
+{
+}
+
 void preferences::serialize() {
   std::ostringstream str;
   

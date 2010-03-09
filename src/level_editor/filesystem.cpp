@@ -63,29 +63,27 @@ bool filesystem::get_path(const std::string& file_name,
   return false;
 }
 
-#include <iostream>
 bool filesystem::update_cache_from_graal() {
   if (!valid_dir())
     return false;
 
   boost::filesystem::path graal_dir(m_preferences.graal_dir);
-  graal_dir = graal_dir / "FILENAMECACHE.txt";
+  boost::filesystem::path cache_file_name = graal_dir / "FILENAMECACHE.txt";
 
-  if (!boost::filesystem::exists(graal_dir))
+  if (!boost::filesystem::exists(cache_file_name))
     return false;
 
-  std::ifstream cache_file(graal_dir.string().c_str());
+  std::ifstream cache_file(cache_file_name.string().c_str());
 
-  if (cache_file.good())
+  if (!cache_file.good())
     return false;
 
   while (!cache_file.eof()) {
     std::string line = read_line(cache_file);
     std::vector<std::string> tokens = csv_to_array(line);
-    std::cout << line << std::endl;
     if (!tokens.empty()) {
       boost::filesystem::path file(tokens[0]);
-      m_cache[file.leaf()] = file;
+      m_cache[file.leaf()] = graal_dir / file;
     } 
   }
 

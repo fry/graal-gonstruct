@@ -15,6 +15,8 @@ namespace Graal {
       typedef std::map<std::string, tile_buf> tile_object_group_type;
       typedef std::map<std::string, tile_object_group_type> tile_objects_type;
 
+      preferences();
+
       std::string graal_dir;
       tileset_list_type tilesets;
       bool selection_border_while_dragging;
