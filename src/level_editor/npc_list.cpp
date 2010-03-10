@@ -3,7 +3,6 @@
 #include "helper.hpp"
 #include "undo_diffs.hpp"
 #include "level.hpp"
-#include <boost/lexical_cast.hpp>
 #include <string>
 #include "edit_npc.hpp"
 

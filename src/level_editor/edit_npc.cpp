@@ -2,6 +2,8 @@
 #include <gtksourceview/gtksourceview.h>
 #include <gtksourceview/gtksourcebuffer.h>
 #include <gtksourceview/gtksourcelanguagemanager.h>
+#include <boost/lexical_cast.hpp>
+#include "helper.hpp"
 
 using namespace Graal;
 

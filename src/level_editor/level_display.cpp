@@ -1,6 +1,7 @@
 #include "level_display.hpp"
-#include "npc_list.hpp"
 #include "helper.hpp"
+#include "edit_npc.hpp"
+
 #include <string>
 #include <boost/scoped_ptr.hpp>
 #include <sstream>
