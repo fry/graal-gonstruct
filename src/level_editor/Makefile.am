@@ -20,6 +20,7 @@ libgonstruct_la_SOURCES = \
 	link_list.cpp \
 	main.cpp \
 	npc_list.cpp \
+	edit_npc.cpp \
 	ogl_texture_cache.cpp \
 	ogl_tiles_display.cpp \
 	preferences.cpp \
@@ -53,6 +54,7 @@ noinst_HEADERS = \
 	level_display.hpp \
 	link_list.hpp \
 	npc_list.hpp \
+	edit_npc.hpp \
 	ogl_texture_cache.hpp \
 	ogl_tiles_display.hpp \
 	preferences.hpp \
