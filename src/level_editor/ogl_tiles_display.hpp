@@ -23,7 +23,7 @@ public:
 
   void set_tile_size(int tile_width, int tile_height);
   void set_tileset_surface(const Cairo::RefPtr<Cairo::ImageSurface>& surface);
-  void set_surface_buffers();
+  virtual void set_surface_buffers();
 
   void clear();
 

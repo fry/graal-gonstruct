@@ -43,21 +43,21 @@ public:
 /* Contains multiple levels and provides helpful functions for accessing them.
  * Dynamically loads requested levels from an input level name list
  */
-class level_map {
+class level_map: boost::noncopyable {
 public:
   typedef boost::multi_array<boost::shared_ptr<level>, 2> level_list_type;
-  static boost::shared_ptr<level_map> load_from_gmap(filesystem& _filesystem, const boost::filesystem::path& _file_name);
+  static level_map* load_from_gmap(filesystem& _filesystem, const boost::filesystem::path& _file_name);
 
   level_map();
 
   // Sets a level source to use in case get_level can't find a level
   void set_level_source(const boost::shared_ptr<level_map_source>& source);
   // Loads a level and calls set_level on it
-  level* load_level(const boost::filesystem::path& _file_name, int x = 0, int y = 0);
+  const boost::shared_ptr<level>& load_level(const boost::filesystem::path& _file_name, int x = 0, int y = 0);
   // Places a level into the specified slot
   void set_level(level* _level, int x = 0, int y = 0);
   // Returns the level at the specified location
-  level* get_level(int x, int y);
+  const boost::shared_ptr<level>& get_level(int x, int y);
   // Returns all levels
   /* TODO: is this actually needed? It'd be possibly to iterate over all
    * levels easily that way, but we'd lack the level's position, making it
@@ -72,6 +72,9 @@ public:
   int get_width();
   int get_height();
   void set_size(int width, int height);
+  // get the size of the map in tiles
+  int get_width_tiles();
+  int get_height_tiles();
 
   // get/set the size of an individual level
   int get_level_width();

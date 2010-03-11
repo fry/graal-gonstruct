@@ -29,7 +29,8 @@ level_display::level_display(
     : m_preferences(_prefs),
       m_default_tile_index(default_tile_index),
       m_image_cache(cache),
-      m_texture_cache(cache), m_use_vbo(false) {
+      m_texture_cache(cache), m_use_vbo(false),
+      m_current_level_x(0), m_current_level_y(0) {
   add_events(Gdk::BUTTON_PRESS_MASK
              | Gdk::BUTTON_RELEASE_MASK
              | Gdk::BUTTON_MOTION_MASK
@@ -74,24 +75,36 @@ void level_display::set_default_tile(int tile_index) {
 }
 
 void level_display::set_active_layer(int layer) {
-  if (m_level->tiles_exist(layer)) {
+  if (get_level()->tiles_exist(layer)) {
     m_active_layer = layer;
     invalidate();
   }
 }
 
 void level_display::load_level(const boost::filesystem::path& file_path) {
-  m_level_path = file_path;
-  set_level(Graal::load_nw_level(file_path.string()));
+  //m_level_path = file_path; // TODO: NYI
+  level* _level = Graal::load_nw_level(file_path.string());
+  set_level(_level);
+}
+
+
+void level_display::set_level(Graal::level* _level) {
+  level_map* _map = new level_map();
+  _map->set_level(_level);
+  set_level_map(_map);
 }
 
 // Takes ownership of the pointer
-void level_display::set_level(Graal::level* _level) {
-  m_level.reset(_level);
-  selected_npc = m_level->npcs.end();
+void level_display::set_level_map(level_map* _level_map) {
+  m_level_map.reset(_level_map);
+  // TODO: ???
+  m_current_level_x = 0;
+  m_current_level_y = 0;
+
+  selected_npc = get_level()->npcs.end();
 
   // Show all layers initially
-  int layer_count = m_level->get_layer_count();
+  int layer_count = get_level()->get_layer_count();
   for (int i = 0; i < layer_count; i ++) {
     set_layer_visibility(i, true);
   }
@@ -105,12 +118,12 @@ void level_display::new_level(int fill_tile = 0) {
 
 void level_display::set_level_path(
     const boost::filesystem::path& new_path) {
-  m_level_path = new_path;
+  //m_level_path = new_path; // TODO: nyi
   m_signal_title_changed.emit(new_path.leaf());
 }
 
 void level_display::save_level() {
-  save_nw_level(m_level.get(), m_level_path);
+  //save_nw_level(m_level.get(), m_level_path); // TODO: NYI
   set_unsaved(false);
 }
 
@@ -132,8 +145,8 @@ void level_display::save_selection() {
 
   int offset_left   = std::max(0, -sx);
   int offset_top    = std::max(0, -sy);
-  int offset_right  = std::max(0, (sx + sw) - m_level->get_width() );
-  int offset_bottom = std::max(0, (sy + sh) - m_level->get_height());
+  int offset_right  = std::max(0, (sx + sw) - m_level_map->get_width_tiles() );
+  int offset_bottom = std::max(0, (sy + sh) - m_level_map->get_height_tiles());
 
   const int actual_width = sw - offset_left - offset_right;
   const int actual_height = sh - offset_top - offset_bottom;
@@ -144,13 +157,13 @@ void level_display::save_selection() {
 
   tile_buf buf; // make a bounds-checked copy of the selection while applying
   buf.resize(actual_width, actual_height);
-  tile_buf& tiles = get_tile_buf();
+
   for (int x = offset_left; x < selection.get_width() - offset_right; ++x) {
     for (int y = offset_top; y < selection.get_height() - offset_bottom; ++y) {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = tiles.get_tile(tx, ty);
+      tile& t = m_level_map->get_tile(tx, ty);
       buf.get_tile(x - offset_left, y - offset_top) = t;
       t = selection.get_tile(x, y);
     }
@@ -163,7 +176,7 @@ void level_display::save_selection() {
 void level_display::delete_selection() {
   if (npc_selected()) {
     add_undo_diff(new delete_npc_diff(*selected_npc));
-    m_level->npcs.erase(selected_npc);
+    get_level()->npcs.erase(selected_npc); // TODO: delete from the correct level here
   } else {
     // lift selection if we don't have one yet
     if (selection.empty())
@@ -174,7 +187,7 @@ void level_display::delete_selection() {
 
 void level_display::clear_selection() {
   selection.clear();
-  selected_npc = m_level->npcs.end();
+  selected_npc = get_level()->npcs.end();
 
   m_selecting = false;
   m_dragging = false;
@@ -200,7 +213,7 @@ void level_display::set_selection(const Graal::npc& npc) {
 }
 
 tile_buf& level_display::get_tile_buf() {
-  return m_level->get_tiles(m_active_layer);
+  return get_level()->get_tiles(m_active_layer);
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level() {
@@ -241,8 +254,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
   const int tile_x = to_tiles_x(x);
   const int tile_y = to_tiles_y(y);
 
-  const int tx = helper::bound_by(tile_x, 0, m_level->get_width() - 1);
-  const int ty = helper::bound_by(tile_y, 0, m_level->get_height() - 1);
+  const int tx = helper::bound_by(tile_x, 0, m_level_map->get_width_tiles() - 1);
+  const int ty = helper::bound_by(tile_y, 0, m_level_map->get_height_tiles() - 1);
 
   if (m_dragging) {
     // Move selection
@@ -278,13 +291,13 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_drag_start_x = static_cast<int>(selected_npc->get_level_x() * m_tile_width);
       m_drag_start_y = static_cast<int>(selected_npc->get_level_y() * m_tile_height);
     } else {
-      // the selection start tile needs to be limited to 0..63,
+      // the selection start tile needs to be limited to 0..<size>-1,
       // but in order to get correct width height these need to
-      // go till 64
+      // go till <size>
       m_select_width =
-        helper::bound_by(tile_x, 0, m_level->get_width()) * m_tile_width - m_select_x;
+        helper::bound_by(tile_x, 0, m_level_map->get_width_tiles()) * m_tile_width - m_select_x;
       m_select_height =
-        helper::bound_by(tile_y, 0, m_level->get_height()) * m_tile_height - m_select_y;
+        helper::bound_by(tile_y, 0, m_level_map->get_height_tiles()) * m_tile_height - m_select_y;
 
       m_drag_start_x = tx * m_tile_width;
       m_drag_start_y = ty * m_tile_height;
@@ -296,7 +309,7 @@ void level_display::on_button_motion(GdkEventMotion* event) {
   std::ostringstream str;
   str
     << "Tile (" << tx << ", " << ty << "): "
-    << get_tile_buf().get_tile(tx, ty).index;
+    << m_level_map->get_tile(tx, ty, m_active_layer).index;
   m_signal_status_update(str.str());
 
   // change cursor
@@ -339,7 +352,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
 
       // set default tile
       if (!has_selection()) {
-        const int tile_index = get_tile_buf().get_tile(x/m_tile_width, y/m_tile_height).index;
+        const int tile_index = m_level_map->get_tile(x/m_tile_width, y/m_tile_height).index;
         m_signal_default_tile_changed.emit(tile_index);
       }
     }
@@ -360,8 +373,8 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         // write selection if we right click
         if (npc_selected()) {
           Graal::npc new_npc = *selected_npc;
-          add_undo_diff(new create_npc_diff(m_level->add_npc(new_npc).id));
-          selected_npc = (--m_level->npcs.end());
+          add_undo_diff(new create_npc_diff(get_level()->add_npc(new_npc).id));
+          selected_npc = (--get_level()->npcs.end());
           m_new_npc = true;
         } else {
           if (selection.empty()) {
@@ -396,8 +409,8 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       }
 
       // prevent selecting out of bounds
-      if (x > m_level->get_width() * m_tile_width ||
-          y > m_level->get_height() * m_tile_height)
+      if (x > m_level_map->get_width_tiles() * m_tile_width ||
+          y > m_level_map->get_height_tiles() * m_tile_height)
         return invalidate();
 
       // otherwise select tiles only with left mouse button
@@ -415,8 +428,8 @@ void level_display::on_button_pressed(GdkEventButton* event) {
     if (!m_preferences.hide_npcs) {
       // check whether we clicked a npc and select it
       level::npc_list_type::iterator iter, end;
-      end = m_level->npcs.end();
-      for (iter = m_level->npcs.begin(); iter != end; iter ++) {
+      end = get_level()->npcs.end();
+      for (iter = get_level()->npcs.begin(); iter != end; iter ++) {
         Cairo::RefPtr<Cairo::ImageSurface> npc_image =
           m_image_cache.get_image(iter->image);
         const int npc_x = static_cast<int>(iter->get_level_x() * m_tile_width);
@@ -500,8 +513,8 @@ void level_display::lift_selection() {
 
   int offset_left   = std::max(0, -sx);
   int offset_top    = std::max(0, -sy);
-  int offset_right  = std::max(0, (sx + sw) - m_level->get_width() );
-  int offset_bottom = std::max(0, (sy + sh) - m_level->get_height());
+  int offset_right  = std::max(0, (sx + sw) - m_level_map->get_width_tiles() );
+  int offset_bottom = std::max(0, (sy + sh) - m_level_map->get_height_tiles());
 
   const int actual_width = sw - offset_left - offset_right;
   const int actual_height = sh - offset_top - offset_bottom;
@@ -514,13 +527,13 @@ void level_display::lift_selection() {
   selection.resize(sw, sh);
   tile_buf buf;
   buf.resize(actual_width, actual_height);
-  tile_buf& tiles = get_tile_buf();
+
   for (int x = offset_left; x < selection.get_width() - offset_right; ++x) {
     for (int y = offset_top; y < selection.get_height() - offset_bottom; ++y) {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = tiles.get_tile(tx, ty);
+      tile& t = m_level_map->get_tile(tx, ty);
       selection.get_tile(x, y)
         = buf.get_tile(x - offset_left, y - offset_top)
         = t;
@@ -680,8 +693,8 @@ level_display::signal_status_update() {
 }
 
 Graal::npc& level_display::drag_new_npc() {
-  Graal::npc& npc = m_level->add_npc();
-  drag_selection(--m_level->npcs.end());
+  Graal::npc& npc = get_level()->add_npc();
+  drag_selection(--get_level()->npcs.end());
   add_undo_diff(new create_npc_diff(npc.id));
   return npc;
 }
@@ -691,7 +704,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
   static int vec_y[] = { 0, -1, 0, 1};
 
   // the index of the tiles to fill
-  tile& start_tile = get_tile_buf().get_tile(tx, ty);
+  tile& start_tile = m_level_map->get_tile(tx, ty);
   int fill_index = start_tile.index;
   if (fill_with_index == fill_index)
     return;
@@ -701,12 +714,11 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
   queue.push(std::pair<int, int>(tx, ty));
 
   std::list<std::pair<int, int> > changed_tiles;
-  int start_x = m_level->get_width();
-  int start_y = m_level->get_height();
+  int start_x = m_level_map->get_width_tiles();
+  int start_y = m_level_map->get_height_tiles();
   int end_x = -1;
   int end_y = -1;
   
-  tile_buf& tiles = get_tile_buf();
   while (!queue.empty()) {
     std::pair<int, int> current_node = queue.front(); queue.pop();
     changed_tiles.push_back(current_node);
@@ -726,9 +738,9 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
       int current_tx = cx + vec_x[i];
       int current_ty = cy + vec_y[i];
 
-      if (current_tx >= 0 && current_tx < m_level->get_width() &&
-          current_ty >= 0 && current_ty < m_level->get_height()) {
-        tile& adjacent_tile = tiles.get_tile(current_tx, current_ty);
+      if (current_tx >= 0 && current_tx < m_level_map->get_width_tiles() &&
+          current_ty >= 0 && current_ty < m_level_map->get_height_tiles()) {
+        tile& adjacent_tile = m_level_map->get_tile(current_tx, current_ty);
         if (adjacent_tile.index == fill_index) {
           queue.push(std::pair<int, int>(current_tx, current_ty));
           adjacent_tile.index = fill_with_index;
@@ -750,7 +762,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
       const int cx = start_x + x;
       const int cy = start_y + y;
       tile& current_tile = buffer.get_tile(x, y);
-      current_tile = tiles.get_tile(cx, cy);
+      current_tile = m_level_map->get_tile(cx, cy);
     }
   }
 
@@ -812,82 +824,102 @@ void level_display::draw_tiles() {
   if (((!m_position_buffer || !m_texcoord_buffer) && m_use_vbo) ||
       (!m_use_vbo && m_positions.empty()))
     setup_buffers();
-  // Each tile needs 4 vertices and 4 texcoords
-  const std::size_t size = m_level->get_width() * m_level->get_height() * 4;
-  std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
 
-  glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, m_tileset);
+  const int map_width = m_level_map->get_width();
+  const int map_height = m_level_map->get_height();
+  // TODO: handle different tilesets per level
+  // TODO: only draw surrounding levels
+  // Draw all levels 
+  for (int x = 0; x < map_width; x++) {
+    for (int y = 0; y < map_height; y++) {
+      const int screen_level_x = x * m_level_map->get_level_width() * m_tile_width,;
+      const int screen_level_y = y * m_level_map->get_level_height() * m_tile_height;
 
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+      std::cout << "level: " << x << "," << y << " draw: " << screen_level_x << "," << screen_level_y << std::endl;
+      level* current_level = m_level_map->get_level(x, y).get();
+      // Each tile needs 4 vertices and 4 texcoords
+      const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
+      std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
 
-  if (m_use_vbo) {
-    // Bind VBOs
-    glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
-    glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
-    glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
-  } else {
-    // Link vertex array
-    glVertexPointer(2, GL_INT, sizeof(vertex_position), &m_positions.front());
-  }
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, m_tileset);
 
-  // Draw each layer
-  int layer_count = m_level->get_layer_count();
-  for (int i = 0; i < layer_count; i ++) {
-    // If it's visible
-    if (m_layer_visibility[i]) {
-      // With its own set of tiles
-      tile_buf& tiles = m_level->get_tiles(i);
-      const int width = tiles.get_width();
-      const int height = tiles.get_height();
-
-      // Draw layers below the current darker, above transparent
-      glColor3f(1, 1, 1);
-      if (m_preferences.fade_layers) {
-        if (i > m_active_layer) {
-          int level_diff = std::abs(m_active_layer - i);
-          glColor4f(1, 1, 1, std::pow(0.5, level_diff));
-        } else if (i < m_active_layer) {
-          glColor4f(0.5, 0.5, 0.5, 1);
-        }
-      }
-
-      tcoords.clear();
-      // Build texture coordinates
-      for (int x = 0; x < width; ++x) {
-        for (int y = 0; y < height; ++y) {
-          tile& _tile = tiles.get_tile(x, y);
-
-          // The position of the actual tile inside the tileset
-          const int tx = helper::get_tile_x(_tile.index);
-          const int ty = helper::get_tile_y(_tile.index);
-
-          // Build texture coordinates
-          float x1 = (float)(tx * m_tile_width)/m_tileset_width;
-          float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
-          float y1 = (float)(ty*m_tile_height)/m_tileset_height;
-          float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
-          
-          tcoords.push_back(vertex_texcoord(x1, y1));
-          tcoords.push_back(vertex_texcoord(x2, y1));
-          tcoords.push_back(vertex_texcoord(x2, y2));
-          tcoords.push_back(vertex_texcoord(x1, y2));
-        }
-      }
+      glEnableClientState(GL_VERTEX_ARRAY);
+      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
       if (m_use_vbo) {
-        // Upload texture coordinates and draw buffer
-        glBufferData(GL_ARRAY_BUFFER,
-                     tcoords.size() * sizeof(vertex_texcoord),
-                     &tcoords.front(),
-                     GL_STREAM_DRAW);
-        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+        // Bind VBOs
+        glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+        glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
+        glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
       } else {
-        // Link texcoord array
-        glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
+        // Link vertex array
+        glVertexPointer(2, GL_INT, sizeof(vertex_position), &m_positions.front());
       }
-      glDrawArrays(GL_QUADS, 0, size);
+
+      // Draw level at the correct position
+      glPushMatrix();
+      glTranslatef(screen_level_x, screen_level_y, 0);
+      // Draw each layer
+      int layer_count = current_level->get_layer_count();
+      for (int i = 0; i < layer_count; i ++) {
+        // If it's visible
+        if (m_layer_visibility[i]) {
+          // With its own set of tiles
+          tile_buf& tiles = current_level->get_tiles(i);
+          const int width = tiles.get_width();
+          const int height = tiles.get_height();
+
+          // Draw layers below the current darker, above transparent
+          glColor3f(1, 1, 1);
+          if (m_preferences.fade_layers) {
+            if (i > m_active_layer) {
+              int level_diff = std::abs(m_active_layer - i);
+              glColor4f(1, 1, 1, std::pow(0.5, level_diff));
+            } else if (i < m_active_layer) {
+              glColor4f(0.5, 0.5, 0.5, 1);
+            }
+          }
+
+          tcoords.clear();
+          // Build texture coordinates
+          for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+              tile& _tile = tiles.get_tile(x, y);
+
+              // The position of the actual tile inside the tileset
+              const int tx = helper::get_tile_x(_tile.index);
+              const int ty = helper::get_tile_y(_tile.index);
+
+              // Build texture coordinates
+              float x1 = (float)(tx * m_tile_width)/m_tileset_width;
+              float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
+              float y1 = (float)(ty*m_tile_height)/m_tileset_height;
+              float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
+              
+              tcoords.push_back(vertex_texcoord(x1, y1));
+              tcoords.push_back(vertex_texcoord(x2, y1));
+              tcoords.push_back(vertex_texcoord(x2, y2));
+              tcoords.push_back(vertex_texcoord(x1, y2));
+            }
+          }
+
+          if (m_use_vbo) {
+            // Upload texture coordinates and draw buffer
+            glBufferData(GL_ARRAY_BUFFER,
+                         tcoords.size() * sizeof(vertex_texcoord),
+                         &tcoords.front(),
+                         GL_STREAM_DRAW);
+            glTexCoordPointer(2, GL_FLOAT, 0, 0);
+          } else {
+            // Link texcoord array
+            glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
+          }
+          glDrawArrays(GL_QUADS, 0, size);
+        }
+      }
+
+      glPopMatrix();
     }
   }
 
@@ -944,8 +976,8 @@ void level_display::draw_misc() {
   // NPCs
   if (!m_preferences.hide_npcs) {
     glColor3f(1, 1, 1);
-    Graal::level::npc_list_type::iterator npc_iter, npc_end = m_level->npcs.end();
-    for (npc_iter = m_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
+    Graal::level::npc_list_type::iterator npc_iter, npc_end = get_level()->npcs.end();
+    for (npc_iter = get_level()->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
       const int x = static_cast<int>(npc_iter->get_level_x() * m_tile_width);
       const int y = static_cast<int>(npc_iter->get_level_y() * m_tile_height);
       const std::string& npc_image_file = npc_iter->image;
@@ -970,8 +1002,8 @@ void level_display::draw_misc() {
 
   // Signs
   if (!m_preferences.hide_signs) {
-    Graal::level::sign_list_type::iterator sign_iter, sign_end = m_level->signs.end();
-    for (sign_iter = m_level->signs.begin(); sign_iter != sign_end; sign_iter ++) {
+    Graal::level::sign_list_type::iterator sign_iter, sign_end = get_level()->signs.end();
+    for (sign_iter = get_level()->signs.begin(); sign_iter != sign_end; sign_iter ++) {
       draw_rectangle(
         sign_iter->x * m_tile_width, sign_iter->y * m_tile_height,
         2 * m_tile_width, 1 * m_tile_height, // Signs are by default 2x1 tiles big
@@ -982,8 +1014,8 @@ void level_display::draw_misc() {
 
   // Links
   if (!m_preferences.hide_links) {
-    Graal::level::link_list_type::iterator link_iter, link_end = m_level->links.end();
-    for (link_iter = m_level->links.begin(); link_iter != link_end; link_iter ++) {
+    Graal::level::link_list_type::iterator link_iter, link_end = get_level()->links.end();
+    for (link_iter = get_level()->links.begin(); link_iter != link_end; link_iter ++) {
       draw_rectangle(
         link_iter->x * m_tile_width, link_iter->y * m_tile_height,
         link_iter->width * m_tile_width, link_iter->height * m_tile_height,
@@ -995,7 +1027,7 @@ void level_display::draw_misc() {
 
 void level_display::draw_all() {
   draw_tiles();
-  draw_misc();
+  //draw_misc();
 
   draw_selection();
 }
@@ -1015,8 +1047,8 @@ void level_display::setup_buffers() {
   }
 
   // Each tile needs 4 vertices and 4 texcoords
-  const int width = m_level->get_width();
-  const int height = m_level->get_height();
+  const int width = m_level_map->get_level_width();
+  const int height = m_level_map->get_level_height();
   const std::size_t size = width * height * 4;
 
   m_positions.reserve(size);
@@ -1052,4 +1084,20 @@ link level_editor::level_display::create_link() {
   new_link.width = std::abs(select_width() / m_tile_width);
   new_link.height = std::abs(select_height() / m_tile_height);
   return new_link;
+}
+
+const boost::shared_ptr<level>& level_editor::level_display::get_level() {
+  return m_level_map->get_level(
+      m_current_level_x,
+      m_current_level_y);
+}
+
+void level_editor::level_display::set_surface_buffers() {
+  // Resize to fit the level
+  set_size_request(
+    m_level_map->get_width_tiles() * m_tile_width,
+    m_level_map->get_height_tiles() * m_tile_height
+  );
+
+  invalidate();
 }

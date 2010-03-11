@@ -4,6 +4,7 @@
 #include "core/helper.h"
 
 #include <fstream>
+#include <iostream>
 
 using namespace Graal;
 using namespace Graal::level_editor;
@@ -15,13 +16,15 @@ level_map_source::level_map_source(filesystem& _filesystem):
 
 std::string level_map_source::get_level_name(int x, int y) {
   // Return an empty name if the index is out of bounds
-  if (m_level_names.shape()[0] >= x || m_level_names.shape()[1] >= y)
+  if (x >= get_width() || y >= get_height())
     return "";
+  
   return m_level_names[x][y];
 }
 
 Graal::level* level_map_source::load_level(int x, int y) {
   std::string level_name = get_level_name(x, y);
+
   if (!level_name.empty()) {
     boost::filesystem::path level_path;
     if (m_filesystem.get_path(level_name, level_path)) {
@@ -107,21 +110,20 @@ void level_map::set_level_source(const boost::shared_ptr<level_map_source>& sour
   m_level_source = source;
 }
 
-level* level_map::load_level(const boost::filesystem::path& _file_name, int x, int y) {
+const boost::shared_ptr<level>& level_map::load_level(const boost::filesystem::path& _file_name, int x, int y) {
   level* new_level = load_nw_level(_file_name);
 
-  if (new_level == 0)
-    return 0;
-
   set_level(new_level, x, y);
+
+  return get_level(x, y);
 }
 
 void level_map::set_level(level* _level, int x, int y) {
   // Increase map size to fit the new level
   if (x <= get_width() || y <= get_width()) {
     set_size(
-      std::max(x, get_width()),
-      std::max(y, get_height()));
+      std::max(x + 1, get_width()),
+      std::max(y + 1, get_height()));
   }
 
   // Set level size to biggest level
@@ -135,22 +137,23 @@ void level_map::set_level(level* _level, int x, int y) {
 
   /* Store and take ownership of the passed level, overwriting any possibly
    * already loaded levels */
+  std::cout << "set:" << x << "," << y << ":" << _level << std::endl;
   m_level_list[x][y].reset(_level);
 }
 
-level* level_map::get_level(int x, int y) {
+const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
+  ///std::cout << "get: " << x << "," << y << ":" << m_level_list[x][y].get() << std::endl;
   boost::shared_ptr<level>& level_ptr = m_level_list[x][y];
   // Load the level if it is not loaded and we have a source to look up into
-  if (!level_ptr && m_level_source) {
+  if (m_level_source && !level_ptr) {
     level* new_level = m_level_source->load_level(x, y);
     if (new_level) {
       level_ptr.reset(new_level);
     }
-  } else {
-    return 0;
   }
 
-  return level_ptr.get();
+
+  return level_ptr;
 }
 
 level_map::level_list_type& level_map::get_levels() {
@@ -169,7 +172,7 @@ tile& level_map::get_tile(int x, int y, int layer) {
   const int tile_x = x % level_width;
   const int tile_y = x % level_height;
 
-  level* tile_level = get_level(level_x, level_y);
+  level* tile_level = get_level(level_x, level_y).get();
   if (tile_level) {
     // Ensure that the layer exists
     return tile_level->create_tiles(layer).get_tile(tile_x, tile_y);
@@ -184,6 +187,14 @@ int level_map::get_width() {
 
 int level_map::get_height() {
   return m_level_list.shape()[1];
+}
+
+int level_map::get_width_tiles() {
+  return get_width() * get_level_width();
+}
+
+int level_map::get_height_tiles() {
+  return get_height() * get_level_height();
 }
 
 void level_map::set_size(int width, int height) {
@@ -204,10 +215,11 @@ void level_map::set_level_size(int width, int height) {
   m_level_height = height;
 }
 
-boost::shared_ptr<level_map> level_map::load_from_gmap(filesystem& _filesystem, const boost::filesystem::path& _file_name) {
+level_map* level_map::load_from_gmap(filesystem& _filesystem, const boost::filesystem::path& _file_name) {
   boost::shared_ptr<gmap_level_map_source> source(new gmap_level_map_source(_filesystem, _file_name));
-  boost::shared_ptr<level_map> map(new level_map());
+  level_map* map(new level_map());
 
+  std::cout << "load_from_gmap(): " << source->get_width() << "," << source->get_height() << std::endl;
   map->set_level_source(source);
   map->set_size(source->get_width(), source->get_height());
 

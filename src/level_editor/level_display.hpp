@@ -11,6 +11,8 @@
 #include "ogl_tiles_display.hpp"
 #include "ogl_texture_cache.hpp"
 
+#include "level_map.hpp"
+
 namespace Graal {
 namespace level_editor {
 
@@ -33,19 +35,25 @@ public:
   void lift_selection();
   void grab_selection();
 
-  void load_level(const boost::filesystem::path& file_path);
-  void set_level(Graal::level* _level);
+  // Level loading/etc.
   void new_level(int fill_tile);
   const boost::filesystem::path& get_level_path() const {
-    return m_level_path;
+    return ""; // TODO: NYI
   }
   void set_level_path(const boost::filesystem::path& new_path);
   void save_level();
   void save_level(const boost::filesystem::path& path);
 
+  void set_level(Graal::level* _level);
+  // Sets the used level map
+  void set_level_map(level_map* _level_map);
+  void load_level(const boost::filesystem::path& file_path);
+
   void set_selection(const Graal::npc& npc);
   bool in_selection(int x, int y);
-  boost::shared_ptr<level>& get_level() { return m_level; }
+
+  // Return the currently active level
+  const boost::shared_ptr<level>& get_level();
 
   // Create new npc at mouse
   Graal::npc& drag_new_npc();
@@ -58,7 +66,7 @@ public:
   inline int to_tiles_y(int y);
 
   // TODO: no
-  bool npc_selected() { return (selected_npc != m_level->npcs.end()); }
+  bool npc_selected() { return (selected_npc != get_level()->npcs.end()); }
   bool is_selecting() { return m_selecting; }
   bool has_selection() { return !selection.empty() || m_select_width > 0 || npc_selected(); }
   int select_x() { return m_select_x; }
@@ -120,8 +128,8 @@ protected:
   void on_button_motion(GdkEventMotion* event);
   void on_mouse_leave(GdkEventCrossing* event);
 
-  boost::shared_ptr<level> m_level;
-  boost::filesystem::path m_level_path;
+  int m_current_level_x, m_current_level_y;
+  boost::shared_ptr<level_map> m_level_map;
 
   preferences& m_preferences;
 
@@ -140,6 +148,8 @@ protected:
 
   layer_visibility_list_type m_layer_visibility;
 private:
+  virtual void set_surface_buffers();
+
   int m_active_layer;
   bool m_unsaved;
 
