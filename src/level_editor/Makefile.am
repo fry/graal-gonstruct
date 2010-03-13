@@ -38,7 +38,8 @@ libgonstruct_la_SOURCES = \
 	window/header.cpp \
 	window/file_commands.cpp \
 	window/edit_commands.cpp \
-	window/level_commands.cpp
+	window/level_commands.cpp \
+	gtkmarshalers.c
 
 noinst_HEADERS = \
 	GLArea.hpp \
@@ -72,7 +73,8 @@ noinst_HEADERS = \
 	window/header.hpp \
 	window/file_commands.hpp \
 	window/edit_commands.hpp \
-	window/level_commands.hpp
+	window/level_commands.hpp \
+	gtkmarshalers.h
 
 AM_CPPFLAGS = \
 	$(gonstruct_CFLAGS) \

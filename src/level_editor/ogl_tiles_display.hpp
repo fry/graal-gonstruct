@@ -23,7 +23,7 @@ public:
 
   void set_tile_size(int tile_width, int tile_height);
   void set_tileset_surface(const Cairo::RefPtr<Cairo::ImageSurface>& surface);
-  virtual void set_surface_buffers();
+  virtual void set_surface_size();
 
   void clear();
 
@@ -31,7 +31,21 @@ public:
   void set_tile_buf(tile_buf& buf);
 
   void invalidate();
+
+  void set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjustment* vadjustment);
+
+  // Sets the GtkAdjustments to be big enugh for the level
+  void set_scroll_size(int width, int height);
+
+  // Return the current offset specified by the Gtk::Adjustment
+  void get_scroll_offset(int& x, int& y);
+
+  // Return the positon of the cursor adjusted by the offset
+  void get_cursor_position(int& x, int& y);
 protected:
+  Gtk::Adjustment* m_hadjustment;
+  Gtk::Adjustment* m_vadjustment;
+
   void on_gl_realize();
   bool on_gl_expose_event(GdkEventExpose* event);
   bool on_gl_configure_event(GdkEventConfigure* event);

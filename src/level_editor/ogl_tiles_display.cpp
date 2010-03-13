@@ -1,7 +1,11 @@
 #include "ogl_tiles_display.hpp"
 #include "helper.hpp"
+#include <iostream>
 
 #include <boost/format.hpp>
+
+// Needs this for _gtk_VOID__OBJECT_OBJECT
+#include "gtkmarshalers.h"
 
 using namespace Graal::level_editor;
 
@@ -44,9 +48,68 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
   return id;
 }
 
-ogl_tiles_display::ogl_tiles_display():
-  m_tileset(0), m_tile_width(16), m_tile_height(16) {
+namespace {
+  // A little wrapper for the GTK C signal callback from set-scroll-adjustments
+  static void ogl_tiles_display_set_adjustments(void* display_gobj, GtkAdjustment* hadj, GtkAdjustment* vadj, ogl_tiles_display* display) {
+    display->set_adjustments(
+      Glib::wrap(hadj),
+      Glib::wrap(vadj));
+  }
+}
 
+void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjustment* vadjustment) {
+  std::cout << "set adjustment" << std::endl;
+  m_hadjustment = hadjustment;
+  m_vadjustment = vadjustment;
+
+  // Invalidate screen when scrolling
+  if (m_hadjustment) {
+    m_hadjustment->signal_value_changed().connect_notify(
+      sigc::mem_fun(*this, &ogl_tiles_display::invalidate));
+  }
+
+  if (m_vadjustment) {
+    m_vadjustment->signal_value_changed().connect_notify(
+      sigc::mem_fun(*this, &ogl_tiles_display::invalidate));
+  }
+}
+
+
+ogl_tiles_display::ogl_tiles_display():
+  m_tileset(0),
+  m_tile_width(16), // TODO: take a parameter for this?
+  m_tile_height(16),
+  m_hadjustment(0),
+  m_vadjustment(0)
+{
+
+  /* Set up for custom scrolling handling. GTK does this in a pretty terrible
+   * way by providing a signal slot to fill that gets emitted when the parent
+   * sets GtkAdjustments.
+   * So we create the empty signal here, set it in the class object, and
+   * connect to it right again because the function you can provide in
+   * g_signal_new is only a gobject class offset, which we can't provide.
+   */
+  GtkWidget* widget = (GtkWidget*)gobj();
+  GtkWidgetClass* klass = GTK_WIDGET_GET_CLASS(widget);
+  guint adjust_signal = g_signal_new(
+    "set-scroll-adjustments",
+    G_OBJECT_CLASS_TYPE(klass),
+    (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+    0,
+    NULL, NULL,
+    _gtk_VOID__OBJECT_OBJECT,
+    GTK_TYPE_NONE, 2,
+    GTK_TYPE_ADJUSTMENT,
+    GTK_TYPE_ADJUSTMENT);
+
+
+  klass->set_scroll_adjustments_signal = adjust_signal;
+  
+  g_signal_connect(widget, "set-scroll-adjustments",
+    G_CALLBACK(ogl_tiles_display_set_adjustments), this);
+
+  // Set up GLArea
   int attrlist[] = {
     GDK_GL_RGBA,
     GDK_GL_DOUBLEBUFFER,
@@ -96,7 +159,7 @@ void ogl_tiles_display::on_gl_realize() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   
-  set_surface_buffers();
+  set_surface_size();
 
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
@@ -234,12 +297,12 @@ void ogl_tiles_display::set_tileset_surface(
   invalidate();
 }
 
-void ogl_tiles_display::set_surface_buffers() {
-  const tile_buf& buf = get_tile_buf();
-  // Resize to fit the level
+void ogl_tiles_display::set_surface_size() {
+  // Resize to fit one level
+  // TODO
   set_size_request(
-    buf.get_width() * m_tile_width,
-    buf.get_height() * m_tile_height
+    64 * m_tile_width,
+    32 * m_tile_height
   );
 
   invalidate();
@@ -247,10 +310,43 @@ void ogl_tiles_display::set_surface_buffers() {
 
 void ogl_tiles_display::clear() {
   get_tile_buf().clear();
-  set_surface_buffers();
+  set_surface_size();
 }
 
 void ogl_tiles_display::set_tile_buf(tile_buf& buf) {
   m_tile_buf.swap(buf);
-  set_surface_buffers();
+  set_surface_size();
+}
+
+void ogl_tiles_display::set_scroll_size(int width, int height) {
+  if (m_hadjustment && m_vadjustment) {
+    // Page size is set to a fraction of the size
+    m_hadjustment->set_lower(0);
+    m_hadjustment->set_upper(width);
+    m_hadjustment->set_page_size(0.05 * width);
+
+    m_vadjustment->set_lower(0);
+    m_vadjustment->set_upper(height);
+    m_vadjustment->set_page_size(0.05 * height);
+  }
+}
+
+void ogl_tiles_display::get_scroll_offset(int& x, int& y) {
+  x = 0;
+  y = 0;
+
+  if (m_hadjustment)
+    x = static_cast<int>(m_hadjustment->get_value());
+
+  if (m_vadjustment)
+    y = static_cast<int>(m_vadjustment->get_value());
+}
+
+void ogl_tiles_display::get_cursor_position(int& x, int& y) {
+  get_pointer(x, y);
+  int ox, oy;
+  get_scroll_offset(ox, oy);
+
+  x += ox;
+  y += oy;
 }

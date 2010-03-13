@@ -18,6 +18,7 @@ public:
 
   bool make_current();
   void swap_buffers();
+
 private:
   // The Glib-wrapped GtkGLArea
   Gtk::DrawingArea* m_glarea;

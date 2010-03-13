@@ -113,6 +113,8 @@ public:
 
   void set_layer_visibility(std::size_t layer, bool visible);
   bool get_layer_visibility(std::size_t layer);
+
+  void set_surface_size();
 protected:
   void draw_tiles();
   void draw_selection();
@@ -148,8 +150,6 @@ protected:
 
   layer_visibility_list_type m_layer_visibility;
 private:
-  virtual void set_surface_buffers();
-
   int m_active_layer;
   bool m_unsaved;
 

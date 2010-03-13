@@ -108,8 +108,6 @@ void level_display::set_level_map(level_map* _level_map) {
   for (int i = 0; i < layer_count; i ++) {
     set_layer_visibility(i, true);
   }
-
-  set_surface_buffers();
 }
 
 void level_display::new_level(int fill_tile = 0) {
@@ -249,7 +247,7 @@ Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level() {
 
 void level_display::on_button_motion(GdkEventMotion* event) {
   int x, y;
-  get_pointer(x, y);
+  get_cursor_position(x, y);
 
   const int tile_x = to_tiles_x(x);
   const int tile_y = to_tiles_y(y);
@@ -324,7 +322,7 @@ void level_display::on_button_motion(GdkEventMotion* event) {
 void level_display::on_button_pressed(GdkEventButton* event) {
   if (event->button == 1 || event->button == 3) {
     int x, y;
-    get_pointer(x, y);
+    get_cursor_position(x, y);
 
     const int tile_x = to_tiles_x(x);
     const int tile_y = to_tiles_y(y);
@@ -461,7 +459,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
 void level_display::on_button_released(GdkEventButton* event) {
   if (event->button == 1 || event->button == 3) {
     int x, y;
-    get_pointer(x, y);
+    get_cursor_position(x, y);
 
     // Stop dragging
     if (m_dragging) {
@@ -562,7 +560,7 @@ void level_display::grab_selection() {
 void level_display::drag_selection(tile_buf& tiles,
                                        int drag_x, int drag_y) {
   int x, y;
-  get_pointer(x, y);
+  get_cursor_position(x, y);
 
   // save a previous selection
   //if (has_selection()) {
@@ -593,7 +591,7 @@ void level_display::drag_selection(tile_buf& tiles,
 // npc
 void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
   int x, y;
-  get_pointer(x, y);
+  get_cursor_position(x, y);
 
   // save a previous selection
   //if (has_selection()) {
@@ -821,6 +819,8 @@ void level_display::draw_rectangle(float x, float y, float width, float height, 
 }
 
 void level_display::draw_tiles() {
+  /* Set up the level vertices if we don't have a buffer and are using VBOS
+   * or if we're using vertex arrays and don't have vertices generated */
   if (((!m_position_buffer || !m_texcoord_buffer) && m_use_vbo) ||
       (!m_use_vbo && m_positions.empty()))
     setup_buffers();
@@ -828,14 +828,17 @@ void level_display::draw_tiles() {
   const int map_width = m_level_map->get_width();
   const int map_height = m_level_map->get_height();
   // TODO: handle different tilesets per level
-  // TODO: only draw surrounding levels
-  // Draw all levels 
-  for (int x = 0; x < map_width; x++) {
-    for (int y = 0; y < map_height; y++) {
+  // Draw surrounding levels
+  const int start_x = std::max(0, m_current_level_x - 1);
+  const int start_y = std::max(0, m_current_level_y - 1);
+  const int end_x = std::min(map_width, m_current_level_x + 1) + 1;
+  const int end_y = std::min(map_height, m_current_level_y + 1) + 1;
+
+  for (int x = start_x; x < end_x; x++) {
+    for (int y = start_y; y < end_y; y++) {
       const int screen_level_x = x * m_level_map->get_level_width() * m_tile_width,;
       const int screen_level_y = y * m_level_map->get_level_height() * m_tile_height;
 
-      std::cout << "level: " << x << "," << y << " draw: " << screen_level_x << "," << screen_level_y << std::endl;
       level* current_level = m_level_map->get_level(x, y).get();
       // Each tile needs 4 vertices and 4 texcoords
       const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
@@ -933,7 +936,6 @@ void level_display::draw_selection() {
   if (!selection.empty()) {
     // Draw at selection position
     glPushMatrix();
-    glLoadIdentity();
     glTranslatef(m_select_x, m_select_y, 0);
     glColor4f(1, 1, 1, 1);
     glEnable(GL_TEXTURE_2D);
@@ -957,7 +959,7 @@ void level_display::draw_selection() {
   bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
   if (show_border && (m_selecting || m_select_width*m_select_height != 0 || npc_selected())) {
     // reload selection width/height for npcs
-    if (npc_selected()) {
+    if (npc_selected() && false) { // TODO
       Cairo::RefPtr<Cairo::ImageSurface> img =
           m_image_cache.get_image(selected_npc->image);
       m_select_width = img->get_width();
@@ -1025,11 +1027,23 @@ void level_display::draw_misc() {
   }
 }
 
-void level_display::draw_all() {
+void level_display::draw_all() { 
+  // Apply scroll offset
+  int offset_x, offset_y;
+  get_scroll_offset(offset_x, offset_y);
+  glPushMatrix();
+  glTranslatef(-offset_x, -offset_y, 0);
+
+  m_current_level_x = (offset_x/m_tile_width + 32) / 64;
+  m_current_level_y = (offset_y/m_tile_height + 32) / 64;
+
+  std::cout << m_current_level_x << "," << m_current_level_y << std::endl;
   draw_tiles();
   //draw_misc();
 
   draw_selection();
+
+  glPopMatrix();
 }
 
 void level_display::setup_buffers() {
@@ -1092,12 +1106,9 @@ const boost::shared_ptr<level>& level_editor::level_display::get_level() {
       m_current_level_y);
 }
 
-void level_editor::level_display::set_surface_buffers() {
-  // Resize to fit the level
-  set_size_request(
+void level_editor::level_display::set_surface_size() {
+  level_editor::ogl_tiles_display::set_surface_size();
+  set_scroll_size(
     m_level_map->get_width_tiles() * m_tile_width,
-    m_level_map->get_height_tiles() * m_tile_height
-  );
-
-  invalidate();
+    m_level_map->get_height_tiles() * m_tile_height);
 }

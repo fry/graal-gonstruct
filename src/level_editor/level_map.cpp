@@ -170,7 +170,7 @@ tile& level_map::get_tile(int x, int y, int layer) {
 
   // The actual tile position inside the level
   const int tile_x = x % level_width;
-  const int tile_y = x % level_height;
+  const int tile_y = y % level_height;
 
   level* tile_level = get_level(level_x, level_y).get();
   if (tile_level) {
