@@ -174,7 +174,7 @@ void level_display::save_selection() {
 
 void level_display::delete_selection() {
   if (npc_selected()) {
-    //add_undo_diff(new delete_npc_diff(selected_npc)); // TODO
+    add_undo_diff(new delete_npc_diff(selected_npc, *m_level_map->get_npc(selected_npc)));
     m_level_map->delete_npc(selected_npc);
     clear_selection();
   } else {
@@ -351,7 +351,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         if (dialog.run() == Gtk::RESPONSE_OK) {
           Graal::npc new_npc = dialog.get_npc();
           if (new_npc != *npc) {
-            //add_undo_diff(new npc_diff(*npc)); // TODO
+            add_undo_diff(new npc_diff(selected_npc, *npc));
           }
           (*npc) = new_npc;
         }
@@ -391,7 +391,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
           level* npc_level = m_level_map->get_level(selected_npc.level_x, selected_npc.level_y).get();
           // Create new NPC in that level
           selected_npc.id = npc_level->add_npc(new_npc).id;
-          //add_undo_diff(new create_npc_diff(npc_level->add_npc(new_npc).id)); // TODO
+          add_undo_diff(new create_npc_diff(selected_npc));
           m_new_npc = true;
         } else {
           if (selection.empty()) {
@@ -514,11 +514,7 @@ void level_display::on_button_released(GdkEventButton* event) {
         // Did the position actually change?
         if (dsx != tile_x || dsy != tile_y) {
           // Add npc move diff
-          // TODO
-          /*npc old_npc = *selected_npc;
-          old_npc.set_level_x(dsx);
-          old_npc.set_level_y(dsy);
-          add_undo_diff(new npc_diff(old_npc));*/
+          add_undo_diff(new move_npc_diff(selected_npc, dsx, dsy));
         }
       }
       m_new_npc = false;
@@ -742,7 +738,7 @@ Graal::npc& level_display::drag_new_npc() {
   ref.level_x = m_current_level_x;
   ref.level_y = m_current_level_y;
   drag_selection(ref);
-  //add_undo_diff(new create_npc_diff(npc.id)); // TODO
+  add_undo_diff(new create_npc_diff(ref));
   return npc;
 }
 
