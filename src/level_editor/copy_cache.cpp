@@ -23,5 +23,5 @@ void level_editor::npc_cache::paste(level_display& target) {
 
   Graal::npc npc(m_npc);
   target.get_level()->add_npc(npc);
-  target.drag_selection(--target.get_level()->npcs.end());
+  //target.drag_selection(--target.get_level()->npcs.end()); // TODO
 }

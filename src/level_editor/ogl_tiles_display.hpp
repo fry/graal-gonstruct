@@ -42,6 +42,9 @@ public:
 
   // Return the positon of the cursor adjusted by the offset
   void get_cursor_position(int& x, int& y);
+
+  // Return the cursor position in tiles rounded down
+  void get_cursor_tiles_position(int& x, int& y);
 protected:
   Gtk::Adjustment* m_hadjustment;
   Gtk::Adjustment* m_vadjustment;

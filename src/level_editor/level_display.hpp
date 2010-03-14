@@ -29,7 +29,8 @@ public:
   // writes the selection to the level
   void save_selection();
   tile_buf selection;
-  level::npc_list_type::iterator selected_npc;
+  level_map::npc_ref selected_npc;
+
   void clear_selection();
   void delete_selection();
   void lift_selection();
@@ -49,7 +50,7 @@ public:
   void set_level_map(level_map* _level_map);
   void load_level(const boost::filesystem::path& file_path);
 
-  void set_selection(const Graal::npc& npc);
+  void set_selection(const level_map::npc_ref& npc);
   bool in_selection(int x, int y);
 
   // Return the currently active level
@@ -60,21 +61,15 @@ public:
   // TODO: use c++0x move semantics, tiles will be swapped with the
   // current selection and then hopefully discarded
   void drag_selection(tile_buf& tiles, int drag_x, int drag_y);
-  void drag_selection(level::npc_list_type::iterator npc_iter);
+  void drag_selection(const level_map::npc_ref& ref);
 
   inline int to_tiles_x(int x);
   inline int to_tiles_y(int y);
 
   // TODO: no
-  bool npc_selected() { return (selected_npc != get_level()->npcs.end()); }
+  bool npc_selected() { return (selected_npc.id != 0); }
   bool is_selecting() { return m_selecting; }
   bool has_selection() { return !selection.empty() || m_select_width > 0 || npc_selected(); }
-  int select_x() { return m_select_x; }
-  int select_y() { return m_select_y; }
-  int select_tile_x() { return m_select_x / m_tile_width; }
-  int select_tile_y() { return m_select_y / m_tile_height; }
-  int select_width() { return m_select_width; }
-  int select_height() { return m_select_height; }
 
   level_editor::undo_buffer undo_buffer;
   level_editor::undo_buffer redo_buffer;
@@ -116,9 +111,9 @@ public:
 
   void set_surface_size();
 protected:
-  void draw_tiles();
+  void draw_tiles(level* current_level);
   void draw_selection();
-  void draw_misc();
+  void draw_misc(level* current_level);
   virtual void draw_all();
   
   void setup_buffers();

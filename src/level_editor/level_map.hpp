@@ -27,8 +27,8 @@ public:
   /* Reads the level name at the passed position and loads it */
   level* load_level(int x, int y);
 
-  int get_width();
-  int get_height();
+  int get_width() const;
+  int get_height() const;
 protected:
   level_names_list_type m_level_names;
   filesystem& m_filesystem;
@@ -45,6 +45,13 @@ public:
  */
 class level_map: boost::noncopyable {
 public:
+  struct npc_ref {
+    int level_x, level_y;
+    int id;
+
+    npc_ref(): id(0) {}
+  };
+
   typedef boost::multi_array<boost::shared_ptr<level>, 2> level_list_type;
   static level_map* load_from_gmap(filesystem& _filesystem, const boost::filesystem::path& _file_name);
 
@@ -68,17 +75,32 @@ public:
    * already and returns the tile from inside that level */
   tile& get_tile(int x, int y, int layer = 0);
 
+  /* Return the list of NPCs from the level at the specified tile position.
+   * Loads the level if it is not loaded already */
+  level::npc_list_type& get_npcs(int x, int y);
+  /* Properly updates the position and level of an NPC by translating the
+   * NPCs GLOBAL position to the correct level. Returns the (possibly) new
+   * NPC */
+  npc* update_npc(npc* _npc);
+
+  npc* get_npc(const npc_ref& ref);
+  void delete_npc(const npc_ref& ref);
+  // in global coords, might update ref if level changes
+  npc* move_npc(npc_ref& ref, float new_x, float new_y);
+  // Return the global position of the references NPC
+  void get_global_npc_position(const npc_ref& ref, float& x, float& y);
+
   // get/set the size of the map in levels
-  int get_width();
-  int get_height();
+  int get_width() const;
+  int get_height() const;
   void set_size(int width, int height);
   // get the size of the map in tiles
-  int get_width_tiles();
-  int get_height_tiles();
+  int get_width_tiles() const;
+  int get_height_tiles() const;
 
   // get/set the size of an individual level
-  int get_level_width();
-  int get_level_height();
+  int get_level_width() const;
+  int get_level_height() const;
   void set_level_size(int width, int height);
 protected:
   // Size of one level in tiles

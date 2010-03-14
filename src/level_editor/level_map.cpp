@@ -34,11 +34,11 @@ Graal::level* level_map_source::load_level(int x, int y) {
   return 0;
 }
 
-int level_map_source::get_width() {
+int level_map_source::get_width() const {
   return m_level_names.shape()[0];
 }
 
-int level_map_source::get_height() {
+int level_map_source::get_height() const {
   return m_level_names.shape()[1];
 }
 
@@ -137,12 +137,13 @@ void level_map::set_level(level* _level, int x, int y) {
 
   /* Store and take ownership of the passed level, overwriting any possibly
    * already loaded levels */
-  std::cout << "set:" << x << "," << y << ":" << _level << std::endl;
   m_level_list[x][y].reset(_level);
 }
 
 const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
-  ///std::cout << "get: " << x << "," << y << ":" << m_level_list[x][y].get() << std::endl;
+  if (x >= get_width() || y >= get_height())
+    throw new std::runtime_error("Level position out of bounds");
+
   boost::shared_ptr<level>& level_ptr = m_level_list[x][y];
   // Load the level if it is not loaded and we have a source to look up into
   if (m_level_source && !level_ptr) {
@@ -181,19 +182,89 @@ tile& level_map::get_tile(int x, int y, int layer) {
   throw new std::runtime_error("Attempted to edit a tile outside the map");
 }
 
-int level_map::get_width() {
+level::npc_list_type& level_map::get_npcs(int x, int y) {
+  const int level_width = get_level_width();
+  const int level_height = get_level_height();
+
+  // The particular level this tile falls in
+  const int level_x = x / level_width;
+  const int level_y = y / level_height;
+
+  level* tile_level = get_level(level_x, level_y).get();
+  if (tile_level) {
+    return tile_level->npcs;
+  }
+
+  throw new std::runtime_error("Attempted to retrieve NPCs from outside the map");
+}
+
+npc* level_map::get_npc(const level_map::npc_ref& ref) {
+  level* npc_level = get_level(ref.level_x, ref.level_y).get();
+  if (npc_level)
+    return &(*npc_level->get_npc(ref.id));
+  return 0;
+}
+
+void level_map::delete_npc(const level_map::npc_ref& ref) {
+  level* npc_level = get_level(ref.level_x, ref.level_y).get();
+  if (npc_level)
+    npc_level->delete_npc(ref.id);
+}
+
+npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
+  const int level_width = get_level_width();
+  const int level_height = get_level_height();
+
+  const int new_level_x = new_x / level_width;
+  const int new_level_y = new_y / level_height;
+
+  // Determine the position of the NPC inside the level
+  const float new_tiles_x = new_x - new_level_x * get_level_width();
+  const float new_tiles_y = new_y - new_level_y * get_level_height();
+
+  npc* _npc = get_npc(ref);
+  npc* new_npc = _npc;
+  // The level changed, take care of moving the NPC into the new level
+  if (new_level_x != ref.level_x || new_level_y != ref.level_y) {
+    level* old_level = get_level(ref.level_x, ref.level_y).get();
+    level* new_level = get_level(new_level_x, new_level_y).get();
+
+    // Add a copy of the old NPC
+    new_npc = &new_level->add_npc(*_npc);
+    old_level->delete_npc(_npc->id);
+
+    // Fix reference
+    ref.id = new_npc->id;
+    ref.level_x = new_level_x;
+    ref.level_y = new_level_y;
+  }
+
+  // Set the correct position inside the level
+  new_npc->set_level_x(new_tiles_x);
+  new_npc->set_level_y(new_tiles_y);
+
+  return new_npc;
+}
+
+void level_map::get_global_npc_position(const level_map::npc_ref& ref, float& x, float& y) {
+  npc* _npc = get_npc(ref);
+  x = ref.level_x * get_level_width() + _npc->get_level_x();
+  y = ref.level_y * get_level_height() + _npc->get_level_y();
+}
+
+int level_map::get_width() const {
   return m_level_list.shape()[0];
 }
 
-int level_map::get_height() {
+int level_map::get_height() const {
   return m_level_list.shape()[1];
 }
 
-int level_map::get_width_tiles() {
+int level_map::get_width_tiles() const {
   return get_width() * get_level_width();
 }
 
-int level_map::get_height_tiles() {
+int level_map::get_height_tiles() const {
   return get_height() * get_level_height();
 }
 
@@ -202,11 +273,11 @@ void level_map::set_size(int width, int height) {
   m_level_list.resize(extents[width][height]);
 }
 
-int level_map::get_level_width() {
+int level_map::get_level_width() const {
   return m_level_width;
 }
 
-int level_map::get_level_height() {
+int level_map::get_level_height() const {
   return m_level_height;
 }
 

@@ -7,6 +7,7 @@
 #include <sstream>
 #include <queue>
 #include <iostream>
+#include <algorithm>
 
 using namespace Graal;
 using namespace Graal::level_editor;
@@ -101,7 +102,7 @@ void level_display::set_level_map(level_map* _level_map) {
   m_current_level_x = 0;
   m_current_level_y = 0;
 
-  selected_npc = get_level()->npcs.end();
+  clear_selection();
 
   // Show all layers initially
   int layer_count = get_level()->get_layer_count();
@@ -173,8 +174,9 @@ void level_display::save_selection() {
 
 void level_display::delete_selection() {
   if (npc_selected()) {
-    add_undo_diff(new delete_npc_diff(*selected_npc));
-    get_level()->npcs.erase(selected_npc); // TODO: delete from the correct level here
+    //add_undo_diff(new delete_npc_diff(selected_npc)); // TODO
+    m_level_map->delete_npc(selected_npc);
+    clear_selection();
   } else {
     // lift selection if we don't have one yet
     if (selection.empty())
@@ -185,7 +187,7 @@ void level_display::delete_selection() {
 
 void level_display::clear_selection() {
   selection.clear();
-  selected_npc = get_level()->npcs.end();
+  selected_npc = level_map::npc_ref();
 
   m_selecting = false;
   m_dragging = false;
@@ -199,11 +201,19 @@ bool level_display::in_selection(int x, int y) {
          y >= m_select_y && y <= (m_select_y + m_select_height);
 }
 
-void level_display::set_selection(const Graal::npc& npc) {
+void level_display::set_selection(const level_map::npc_ref& ref) {
+  npc& npc = *m_level_map->get_npc(ref);
+  
+  // Set selection origin at the NPC's global position
+  float npc_x, npc_y;
+  m_level_map->get_global_npc_position(ref, npc_x, npc_y);
+
+  m_select_x = static_cast<int>(npc_x * m_tile_width);
+  m_select_y = static_cast<int>(npc_y * m_tile_height);
+
+  // Set selection size to the image's size
   Cairo::RefPtr<Cairo::ImageSurface>& surface =
       m_image_cache.get_image(npc.image);
-  m_select_x = static_cast<int>(npc.get_level_x() * m_tile_width);
-  m_select_y = static_cast<int>(npc.get_level_y() * m_tile_height);
   m_select_width = surface->get_width();
   m_select_height = surface->get_height();
   
@@ -267,8 +277,10 @@ void level_display::on_button_motion(GdkEventMotion* event) {
     if (npc_selected()) {
       const int new_x = new_select_x / m_tile_width;
       const int new_y = new_select_y / m_tile_height;
-      selected_npc->set_level_x(new_x);
-      selected_npc->set_level_y(new_y);
+
+      // Moves the NPC and updates the reference if the level changes
+      m_level_map->move_npc(selected_npc, new_x, new_y);
+
       // Round select pos for NPCs in case of switching between 0.5 <-> 1 accuracy
       m_select_x = new_x * m_tile_width;
       m_select_y = new_y * m_tile_height;
@@ -286,8 +298,10 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_drag_mouse_x = x - m_select_x;
       m_drag_mouse_y = y - m_select_y;
 
-      m_drag_start_x = static_cast<int>(selected_npc->get_level_x() * m_tile_width);
-      m_drag_start_y = static_cast<int>(selected_npc->get_level_y() * m_tile_height);
+      float npc_x, npc_y;
+      m_level_map->get_global_npc_position(selected_npc, npc_x, npc_y);
+      m_drag_start_x = static_cast<int>(npc_x * m_tile_width);
+      m_drag_start_y = static_cast<int>(npc_y * m_tile_height);
     } else {
       // the selection start tile needs to be limited to 0..<size>-1,
       // but in order to get correct width height these need to
@@ -332,18 +346,19 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       // If we double clicked on a NPC, open edit dialog
       if (npc_selected()) {
         edit_npc dialog; // TODO: ???
-        dialog.set(*selected_npc);
+        npc* npc = m_level_map->get_npc(selected_npc);
+        dialog.set(*npc);
         if (dialog.run() == Gtk::RESPONSE_OK) {
           Graal::npc new_npc = dialog.get_npc();
-          if (new_npc != *selected_npc) {
-            add_undo_diff(new npc_diff(*selected_npc));
+          if (new_npc != *npc) {
+            //add_undo_diff(new npc_diff(*npc)); // TODO
           }
-          (*selected_npc) = new_npc;
+          (*npc) = new_npc;
         }
         m_dragging = false;
         m_selecting = false;
         
-        set_selection(*selected_npc);
+        set_selection(selected_npc);
 
         return invalidate();
       }
@@ -370,9 +385,13 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       if (event->button == 3) {
         // write selection if we right click
         if (npc_selected()) {
-          Graal::npc new_npc = *selected_npc;
-          add_undo_diff(new create_npc_diff(get_level()->add_npc(new_npc).id));
-          selected_npc = (--get_level()->npcs.end());
+          // Copy selected NPC
+          npc new_npc = *m_level_map->get_npc(selected_npc);
+          // Retrieve level of selected NPC
+          level* npc_level = m_level_map->get_level(selected_npc.level_x, selected_npc.level_y).get();
+          // Create new NPC in that level
+          selected_npc.id = npc_level->add_npc(new_npc).id;
+          //add_undo_diff(new create_npc_diff(npc_level->add_npc(new_npc).id)); // TODO
           m_new_npc = true;
         } else {
           if (selection.empty()) {
@@ -423,26 +442,49 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       }
     }
 
+    // Check whether we clicked a npc and select it
     if (!m_preferences.hide_npcs) {
-      // check whether we clicked a npc and select it
+      // Determine the level the mouse is in
+      const int level_width = m_level_map->get_level_width();
+      const int level_height = m_level_map->get_level_height();
+
+      const int mouse_level_x = tile_x / level_width;
+      const int mouse_level_y = tile_y / level_height;
+
+      // The position of the mouse inside the level, in pixel
+      const int mouse_pixel_level_x = x - mouse_level_x * level_width * m_tile_width;
+      const int mouse_pixel_level_y = y - mouse_level_y * level_height * m_tile_height;
+
+      std::cout << "mouse level: " << mouse_level_x << "," << mouse_level_y << std::endl;
+      level* mouse_level = m_level_map->get_level(mouse_level_x, mouse_level_y).get();
+
+      if (!mouse_level)
+        return;
+
+      // Iterate through NPCs in that level
       level::npc_list_type::iterator iter, end;
-      end = get_level()->npcs.end();
-      for (iter = get_level()->npcs.begin(); iter != end; iter ++) {
+      end = mouse_level->npcs.end();
+      for (iter = mouse_level->npcs.begin(); iter != end; iter ++) {
+        // Retrieve NPC image dimensions
         Cairo::RefPtr<Cairo::ImageSurface> npc_image =
           m_image_cache.get_image(iter->image);
         const int npc_x = static_cast<int>(iter->get_level_x() * m_tile_width);
         const int npc_y = static_cast<int>(iter->get_level_y() * m_tile_height);
         const int npc_width = npc_image->get_width();
         const int npc_height = npc_image->get_height();
-        if (x >= npc_x && x < npc_x + npc_width
-            && y >= npc_y && y < npc_y + npc_height) {
+        if (mouse_pixel_level_x >= npc_x && mouse_pixel_level_x < npc_x + npc_width
+            && mouse_pixel_level_y >= npc_y && mouse_pixel_level_y < npc_y + npc_height) {
           // NPC clicked; deselect previous selection
           if (has_selection()) {
             save_selection();
             clear_selection();
           }
-          selected_npc = iter;
-          set_selection(*selected_npc);
+
+          // Select the clicked on NPC and update selection
+          selected_npc.id = iter->id;
+          selected_npc.level_x = mouse_level_x;
+          selected_npc.level_y = mouse_level_y;
+          set_selection(selected_npc);
 
           m_selecting = true;
 
@@ -471,10 +513,12 @@ void level_display::on_button_released(GdkEventButton* event) {
         const float dsy = static_cast<float>(m_drag_start_y) / m_tile_height;
         // Did the position actually change?
         if (dsx != tile_x || dsy != tile_y) {
-          Graal::npc old_npc = *selected_npc;
+          // Add npc move diff
+          // TODO
+          /*npc old_npc = *selected_npc;
           old_npc.set_level_x(dsx);
           old_npc.set_level_y(dsy);
-          add_undo_diff(new npc_diff(old_npc));
+          add_undo_diff(new npc_diff(old_npc));*/
         }
       }
       m_new_npc = false;
@@ -550,8 +594,8 @@ void level_display::grab_selection() {
   lift_selection();
   save_selection();
   for (int i = 0; i < 2; ++i) {
-    boost::scoped_ptr<basic_diff> p(undo_buffer.apply(*this));
-    p->apply(*this);
+    boost::scoped_ptr<basic_diff> p(undo_buffer.apply(*m_level_map));
+    p->apply(*m_level_map);
   }
   // TODO: this is sooo wasteful, so it should probably be the other way around
 }
@@ -589,29 +633,29 @@ void level_display::drag_selection(tile_buf& tiles,
 }
 
 // npc
-void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
+void level_display::drag_selection(const level_map::npc_ref& ref) {
   int x, y;
   get_cursor_position(x, y);
 
-  // save a previous selection
-  //if (has_selection()) {
-    if (!m_dragging) {
-      save_selection();
-    }
-    clear_selection();
-  //}
+  // Deselect and save a previous selection
+  if (!m_dragging) {
+    save_selection();
+  }
+  clear_selection();
 
+  // Set the NPC as selected and updated selection
   m_new_npc = true;
-  selected_npc = npc_iter;
+  selected_npc = ref;
+  set_selection(ref);
 
-  set_selection(*selected_npc);
-
+  // Position NPC at mouse
   const int tx = to_tiles_x(x);
   const int ty = to_tiles_y(y);
 
   const int tw = m_tile_width;
   const int th = m_tile_height;
 
+  // Set drag offset
   m_drag_mouse_x = 3 * tw;
   m_drag_mouse_y = 3 * th;
 
@@ -620,8 +664,9 @@ void level_display::drag_selection(level::npc_list_type::iterator npc_iter) {
   m_select_height = 3 * tw;
   m_select_width = 3 * th;
 
-  selected_npc->set_level_x(to_tiles_x(m_select_x));
-  selected_npc->set_level_x(to_tiles_y(m_select_y));
+  npc* _npc = m_level_map->get_npc(ref);
+  _npc->set_level_x(to_tiles_x(m_select_x));
+  _npc->set_level_x(to_tiles_y(m_select_y));
 
   m_dragging = true;
   
@@ -636,7 +681,7 @@ void level_display::undo() {
   if (undo_buffer.empty())
     return;
 
-  redo_buffer.push(undo_buffer.apply(*this));
+  redo_buffer.push(undo_buffer.apply(*m_level_map));
   set_unsaved(true);
   invalidate();
 }
@@ -645,7 +690,7 @@ void level_display::redo() {
   if (redo_buffer.empty())
     return;
 
-  undo_buffer.push(redo_buffer.apply(*this));
+  undo_buffer.push(redo_buffer.apply(*m_level_map));
   set_unsaved(true);
   invalidate();
 }
@@ -692,8 +737,12 @@ level_display::signal_status_update() {
 
 Graal::npc& level_display::drag_new_npc() {
   Graal::npc& npc = get_level()->add_npc();
-  drag_selection(--get_level()->npcs.end());
-  add_undo_diff(new create_npc_diff(npc.id));
+  level_map::npc_ref ref;
+  ref.id = npc.id;
+  ref.level_x = m_current_level_x;
+  ref.level_y = m_current_level_y;
+  drag_selection(ref);
+  //add_undo_diff(new create_npc_diff(npc.id)); // TODO
   return npc;
 }
 
@@ -818,111 +867,90 @@ void level_display::draw_rectangle(float x, float y, float width, float height, 
   glEnable(GL_TEXTURE_2D);
 }
 
-void level_display::draw_tiles() {
+void level_display::draw_tiles(level* current_level) {
   /* Set up the level vertices if we don't have a buffer and are using VBOS
    * or if we're using vertex arrays and don't have vertices generated */
   if (((!m_position_buffer || !m_texcoord_buffer) && m_use_vbo) ||
       (!m_use_vbo && m_positions.empty()))
     setup_buffers();
-
-  const int map_width = m_level_map->get_width();
-  const int map_height = m_level_map->get_height();
+ 
   // TODO: handle different tilesets per level
-  // Draw surrounding levels
-  const int start_x = std::max(0, m_current_level_x - 1);
-  const int start_y = std::max(0, m_current_level_y - 1);
-  const int end_x = std::min(map_width, m_current_level_x + 1) + 1;
-  const int end_y = std::min(map_height, m_current_level_y + 1) + 1;
+  // Each tile needs 4 vertices and 4 texcoords
+  const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
+  std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
 
-  for (int x = start_x; x < end_x; x++) {
-    for (int y = start_y; y < end_y; y++) {
-      const int screen_level_x = x * m_level_map->get_level_width() * m_tile_width,;
-      const int screen_level_y = y * m_level_map->get_level_height() * m_tile_height;
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, m_tileset);
 
-      level* current_level = m_level_map->get_level(x, y).get();
-      // Each tile needs 4 vertices and 4 texcoords
-      const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
-      std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-      glEnable(GL_TEXTURE_2D);
-      glBindTexture(GL_TEXTURE_2D, m_tileset);
+  if (m_use_vbo) {
+    // Bind VBOs
+    glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
+    glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
+    glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
+  } else {
+    // Link vertex array
+    glVertexPointer(2, GL_INT, sizeof(vertex_position), &m_positions.front());
+  }
 
-      glEnableClientState(GL_VERTEX_ARRAY);
-      glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  // Draw each layer
+  int layer_count = current_level->get_layer_count();
+  for (int i = 0; i < layer_count; i ++) {
+    // If it's visible
+    if (m_layer_visibility[i]) {
+      // With its own set of tiles
+      tile_buf& tiles = current_level->get_tiles(i);
+      const int width = tiles.get_width();
+      const int height = tiles.get_height();
 
-      if (m_use_vbo) {
-        // Bind VBOs
-        glBindBuffer(GL_ARRAY_BUFFER, m_position_buffer);
-        glVertexPointer(2, GL_INT, sizeof(vertex_position), 0);
-        glBindBuffer(GL_ARRAY_BUFFER, m_texcoord_buffer);
-      } else {
-        // Link vertex array
-        glVertexPointer(2, GL_INT, sizeof(vertex_position), &m_positions.front());
-      }
-
-      // Draw level at the correct position
-      glPushMatrix();
-      glTranslatef(screen_level_x, screen_level_y, 0);
-      // Draw each layer
-      int layer_count = current_level->get_layer_count();
-      for (int i = 0; i < layer_count; i ++) {
-        // If it's visible
-        if (m_layer_visibility[i]) {
-          // With its own set of tiles
-          tile_buf& tiles = current_level->get_tiles(i);
-          const int width = tiles.get_width();
-          const int height = tiles.get_height();
-
-          // Draw layers below the current darker, above transparent
-          glColor3f(1, 1, 1);
-          if (m_preferences.fade_layers) {
-            if (i > m_active_layer) {
-              int level_diff = std::abs(m_active_layer - i);
-              glColor4f(1, 1, 1, std::pow(0.5, level_diff));
-            } else if (i < m_active_layer) {
-              glColor4f(0.5, 0.5, 0.5, 1);
-            }
-          }
-
-          tcoords.clear();
-          // Build texture coordinates
-          for (int x = 0; x < width; ++x) {
-            for (int y = 0; y < height; ++y) {
-              tile& _tile = tiles.get_tile(x, y);
-
-              // The position of the actual tile inside the tileset
-              const int tx = helper::get_tile_x(_tile.index);
-              const int ty = helper::get_tile_y(_tile.index);
-
-              // Build texture coordinates
-              float x1 = (float)(tx * m_tile_width)/m_tileset_width;
-              float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
-              float y1 = (float)(ty*m_tile_height)/m_tileset_height;
-              float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
-              
-              tcoords.push_back(vertex_texcoord(x1, y1));
-              tcoords.push_back(vertex_texcoord(x2, y1));
-              tcoords.push_back(vertex_texcoord(x2, y2));
-              tcoords.push_back(vertex_texcoord(x1, y2));
-            }
-          }
-
-          if (m_use_vbo) {
-            // Upload texture coordinates and draw buffer
-            glBufferData(GL_ARRAY_BUFFER,
-                         tcoords.size() * sizeof(vertex_texcoord),
-                         &tcoords.front(),
-                         GL_STREAM_DRAW);
-            glTexCoordPointer(2, GL_FLOAT, 0, 0);
-          } else {
-            // Link texcoord array
-            glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
-          }
-          glDrawArrays(GL_QUADS, 0, size);
+      // Draw layers below the current darker, above transparent
+      glColor3f(1, 1, 1);
+      if (m_preferences.fade_layers) {
+        if (i > m_active_layer) {
+          int level_diff = std::abs(m_active_layer - i);
+          glColor4f(1, 1, 1, std::pow(0.5, level_diff));
+        } else if (i < m_active_layer) {
+          glColor4f(0.5, 0.5, 0.5, 1);
         }
       }
 
-      glPopMatrix();
+      tcoords.clear();
+      // Build texture coordinates
+      for (int x = 0; x < width; ++x) {
+        for (int y = 0; y < height; ++y) {
+          tile& _tile = tiles.get_tile(x, y);
+
+          // The position of the actual tile inside the tileset
+          const int tx = helper::get_tile_x(_tile.index);
+          const int ty = helper::get_tile_y(_tile.index);
+
+          // Build texture coordinates
+          float x1 = (float)(tx * m_tile_width)/m_tileset_width;
+          float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
+          float y1 = (float)(ty*m_tile_height)/m_tileset_height;
+          float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
+          
+          tcoords.push_back(vertex_texcoord(x1, y1));
+          tcoords.push_back(vertex_texcoord(x2, y1));
+          tcoords.push_back(vertex_texcoord(x2, y2));
+          tcoords.push_back(vertex_texcoord(x1, y2));
+        }
+      }
+
+      if (m_use_vbo) {
+        // Upload texture coordinates and draw buffer
+        glBufferData(GL_ARRAY_BUFFER,
+                     tcoords.size() * sizeof(vertex_texcoord),
+                     &tcoords.front(),
+                     GL_STREAM_DRAW);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
+      } else {
+        // Link texcoord array
+        glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
+      }
+      glDrawArrays(GL_QUADS, 0, size);
     }
   }
 
@@ -959,9 +987,11 @@ void level_display::draw_selection() {
   bool show_border = !m_dragging || m_preferences.selection_border_while_dragging;
   if (show_border && (m_selecting || m_select_width*m_select_height != 0 || npc_selected())) {
     // reload selection width/height for npcs
-    if (npc_selected() && false) { // TODO
+    // TODO: can we somehow get rid of this?
+    if (npc_selected()) {
+      npc* npc = m_level_map->get_npc(selected_npc);
       Cairo::RefPtr<Cairo::ImageSurface> img =
-          m_image_cache.get_image(selected_npc->image);
+          m_image_cache.get_image(npc->image);
       m_select_width = img->get_width();
       m_select_height = img->get_height();
     }
@@ -974,12 +1004,12 @@ void level_display::draw_selection() {
   }
 }
 
-void level_display::draw_misc() {
+void level_display::draw_misc(level* current_level) {
   // NPCs
   if (!m_preferences.hide_npcs) {
     glColor3f(1, 1, 1);
-    Graal::level::npc_list_type::iterator npc_iter, npc_end = get_level()->npcs.end();
-    for (npc_iter = get_level()->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
+    Graal::level::npc_list_type::iterator npc_iter, npc_end = current_level->npcs.end();
+    for (npc_iter = current_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
       const int x = static_cast<int>(npc_iter->get_level_x() * m_tile_width);
       const int y = static_cast<int>(npc_iter->get_level_y() * m_tile_height);
       const std::string& npc_image_file = npc_iter->image;
@@ -1004,8 +1034,8 @@ void level_display::draw_misc() {
 
   // Signs
   if (!m_preferences.hide_signs) {
-    Graal::level::sign_list_type::iterator sign_iter, sign_end = get_level()->signs.end();
-    for (sign_iter = get_level()->signs.begin(); sign_iter != sign_end; sign_iter ++) {
+    Graal::level::sign_list_type::iterator sign_iter, sign_end = current_level->signs.end();
+    for (sign_iter = current_level->signs.begin(); sign_iter != sign_end; sign_iter ++) {
       draw_rectangle(
         sign_iter->x * m_tile_width, sign_iter->y * m_tile_height,
         2 * m_tile_width, 1 * m_tile_height, // Signs are by default 2x1 tiles big
@@ -1016,8 +1046,8 @@ void level_display::draw_misc() {
 
   // Links
   if (!m_preferences.hide_links) {
-    Graal::level::link_list_type::iterator link_iter, link_end = get_level()->links.end();
-    for (link_iter = get_level()->links.begin(); link_iter != link_end; link_iter ++) {
+    Graal::level::link_list_type::iterator link_iter, link_end = current_level->links.end();
+    for (link_iter = current_level->links.begin(); link_iter != link_end; link_iter ++) {
       draw_rectangle(
         link_iter->x * m_tile_width, link_iter->y * m_tile_height,
         link_iter->width * m_tile_width, link_iter->height * m_tile_height,
@@ -1034,12 +1064,48 @@ void level_display::draw_all() {
   glPushMatrix();
   glTranslatef(-offset_x, -offset_y, 0);
 
-  m_current_level_x = (offset_x/m_tile_width + 32) / 64;
-  m_current_level_y = (offset_y/m_tile_height + 32) / 64;
+  const int map_width = m_level_map->get_width();
+  const int map_height = m_level_map->get_height();
 
-  std::cout << m_current_level_x << "," << m_current_level_y << std::endl;
-  draw_tiles();
-  //draw_misc();
+  const int level_width = m_level_map->get_level_width();
+  const int level_height = m_level_map->get_level_height();
+
+  m_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
+  m_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
+
+  // Draw surrounding levels
+  const int start_x = std::max(0, m_current_level_x - 1);
+  const int start_y = std::max(0, m_current_level_y - 1);
+  const int end_x = std::min(map_width - 1, m_current_level_x + 1) + 1;
+  const int end_y = std::min(map_height - 1, m_current_level_y + 1) + 1;
+
+  // Do this in two loops so the tiles get drawn below everything
+  // TODO: enable z buffer again?
+  for (int x = start_x; x < end_x; x++) {
+    for (int y = start_y; y < end_y; y++) {
+      const int screen_level_x = x * level_width * m_tile_width,;
+      const int screen_level_y = y * level_height * m_tile_height;  
+      level* current_level = m_level_map->get_level(x, y).get();
+      // Draw level at the correct position
+      glPushMatrix();
+      glTranslatef(screen_level_x, screen_level_y, 0);
+      draw_tiles(current_level);
+      glPopMatrix();
+    }
+  }
+
+  for (int x = start_x; x < end_x; x++) {
+    for (int y = start_y; y < end_y; y++) {
+      const int screen_level_x = x * level_width * m_tile_width,;
+      const int screen_level_y = y * level_height * m_tile_height;  
+      level* current_level = m_level_map->get_level(x, y).get();
+      // Draw level at the correct position
+      glPushMatrix();
+      glTranslatef(screen_level_x, screen_level_y, 0);
+      draw_misc(current_level);
+      glPopMatrix();
+    }
+  }
 
   draw_selection();
 
@@ -1093,10 +1159,10 @@ void level_display::setup_buffers() {
 
 link level_editor::level_display::create_link() {
   link new_link;
-  new_link.x = select_x() / m_tile_width;
-  new_link.y = select_y() / m_tile_height;
-  new_link.width = std::abs(select_width() / m_tile_width);
-  new_link.height = std::abs(select_height() / m_tile_height);
+  new_link.x = m_select_x / m_tile_width;
+  new_link.y = m_select_y / m_tile_height;
+  new_link.width = std::abs(m_select_width / m_tile_width);
+  new_link.height = std::abs(m_select_height / m_tile_height);
   return new_link;
 }
 

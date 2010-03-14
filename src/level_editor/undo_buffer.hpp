@@ -8,7 +8,7 @@ namespace Graal {
   namespace level_editor {
     class undo_buffer {
     public:
-      basic_diff* apply(Graal::level_editor::level_display& target);
+      basic_diff* apply(Graal::level_editor::level_map& target);
       void clear();
       bool empty();
 

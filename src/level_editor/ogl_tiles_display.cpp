@@ -58,7 +58,6 @@ namespace {
 }
 
 void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjustment* vadjustment) {
-  std::cout << "set adjustment" << std::endl;
   m_hadjustment = hadjustment;
   m_vadjustment = vadjustment;
 
@@ -349,4 +348,10 @@ void ogl_tiles_display::get_cursor_position(int& x, int& y) {
 
   x += ox;
   y += oy;
+}
+
+void ogl_tiles_display::get_cursor_tiles_position(int& x, int& y) {
+  get_cursor_position(x, y);
+  x /= m_tile_width;
+  y /= m_tile_height;
 }

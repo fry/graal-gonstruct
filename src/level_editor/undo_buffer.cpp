@@ -7,7 +7,7 @@ void level_editor::undo_buffer::push(basic_diff* diff) {
 }
 
 level_editor::basic_diff* level_editor::undo_buffer::apply(
-    level_editor::level_display& target) {
+    level_editor::level_map& target) {
   undos_type::auto_type op = m_undos.pop_back();
   return op->apply(target);
 }

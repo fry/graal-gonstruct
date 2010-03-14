@@ -22,13 +22,13 @@ int Graal::level::get_height() const {
 
 Graal::npc& Graal::level::add_npc() {
   Graal::npc npc;
-  npc.id = m_unique_npc_id_counter++;
+  npc.id = ++m_unique_npc_id_counter;
   npcs.push_back(npc);
   return npcs.back();
 }
 
-Graal::npc& Graal::level::add_npc(Graal::npc& npc) {
-  npc.id = m_unique_npc_id_counter++;
+Graal::npc& Graal::level::add_npc(Graal::npc npc) {
+  npc.id = ++m_unique_npc_id_counter;
   npcs.push_back(npc);
   return npc;
 }

@@ -124,7 +124,7 @@ namespace Graal {
     int get_height() const;
 
     Graal::npc& add_npc();
-    Graal::npc& add_npc(Graal::npc& npc);
+    Graal::npc& add_npc(Graal::npc npc);
     level::npc_list_type::iterator get_npc(int id);
     void delete_npc(int id);
 
