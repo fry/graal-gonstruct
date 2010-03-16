@@ -260,8 +260,8 @@ npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
   const int level_width = get_level_width();
   const int level_height = get_level_height();
 
-  const int new_level_x = static_cast<int>(new_x / level_width);
-  const int new_level_y = static_cast<int>(new_y / level_height);
+  const int new_level_x = static_cast<int>(new_x) / level_width;
+  const int new_level_y = static_cast<int>(new_y) / level_height;
 
   // Determine the position of the NPC inside the level
   const float new_tiles_x = new_x - new_level_x * get_level_width();
@@ -269,6 +269,7 @@ npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
 
   npc* _npc = get_npc(ref);
   npc* new_npc = _npc;
+
   // The level changed, take care of moving the NPC into the new level
   if (new_level_x != ref.level_x || new_level_y != ref.level_y) {
     level* old_level = get_level(ref.level_x, ref.level_y).get();

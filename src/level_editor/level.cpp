@@ -30,7 +30,7 @@ Graal::npc& Graal::level::add_npc() {
 Graal::npc& Graal::level::add_npc(Graal::npc npc) {
   npc.id = ++m_unique_npc_id_counter;
   npcs.push_back(npc);
-  return npc;
+  return npcs.back();
 }
 
 Graal::level::npc_list_type::iterator Graal::level::get_npc(int id) {

@@ -279,7 +279,7 @@ void level_display::on_button_motion(GdkEventMotion* event) {
       m_select_x = new_select_x;
       m_select_y = new_select_y;
     }
-    
+
     invalidate();
   } else if (m_selecting) {
     // extend selection rectangle or
@@ -650,9 +650,7 @@ void level_display::drag_selection(const level_map::npc_ref& ref) {
   m_select_height = 3 * tw;
   m_select_width = 3 * th;
 
-  npc* _npc = m_level_map->get_npc(ref);
-  _npc->set_level_x(to_tiles_x(m_select_x));
-  _npc->set_level_x(to_tiles_y(m_select_y));
+  m_level_map->move_npc(selected_npc, to_tiles_x(m_select_x), to_tiles_y(m_select_y));
 
   m_dragging = true;
   
@@ -881,7 +879,7 @@ void level_display::draw_tiles(level* current_level) {
   int layer_count = current_level->get_layer_count();
   for (int i = 0; i < layer_count; i ++) {
     // If it's visible
-    if (m_layer_visibility[i]) {
+    if (get_layer_visibility(i)) {
       // With its own set of tiles
       tile_buf& tiles = current_level->get_tiles(i);
       const int width = tiles.get_width();
@@ -1054,7 +1052,6 @@ void level_display::draw_all() {
 
   m_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
   m_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
-  std::cout << "set current: " << m_current_level_x << "," << m_current_level_y << std::endl;
   // Draw surrounding levels
   const int start_x = std::max(0, m_current_level_x - 1);
   const int start_y = std::max(0, m_current_level_y - 1);
@@ -1167,7 +1164,6 @@ void level_editor::level_display::set_surface_size() {
 }
 
 const boost::filesystem::path level_editor::level_display::get_current_level_path() const {
-  std::cout << "current: " << m_current_level_x << "," << m_current_level_y << std::endl;
   return m_level_source->get_level_name(m_current_level_x, m_current_level_y);
 }
 

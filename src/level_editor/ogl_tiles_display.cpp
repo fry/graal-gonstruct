@@ -58,6 +58,8 @@ namespace {
 }
 
 void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjustment* vadjustment) {
+  std::cout << "set adjustments: " << this << std::endl;
+
   m_hadjustment = hadjustment;
   m_vadjustment = vadjustment;
 
@@ -91,22 +93,24 @@ ogl_tiles_display::ogl_tiles_display():
    */
   GtkWidget* widget = (GtkWidget*)gobj();
   GtkWidgetClass* klass = GTK_WIDGET_GET_CLASS(widget);
-  guint adjust_signal = g_signal_new(
-    "set-scroll-adjustments",
-    G_OBJECT_CLASS_TYPE(klass),
-    (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
-    0,
-    NULL, NULL,
-    _gtk_VOID__OBJECT_OBJECT,
-    GTK_TYPE_NONE, 2,
-    GTK_TYPE_ADJUSTMENT,
-    GTK_TYPE_ADJUSTMENT);
 
+  if (!klass->set_scroll_adjustments_signal) {
+    guint adjust_signal = g_signal_new(
+      "set-scroll-adjustments",
+      G_OBJECT_CLASS_TYPE(klass),
+      (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+      0,
+      NULL, NULL,
+      _gtk_VOID__OBJECT_OBJECT,
+      GTK_TYPE_NONE, 2,
+      GTK_TYPE_ADJUSTMENT,
+      GTK_TYPE_ADJUSTMENT);
 
-  klass->set_scroll_adjustments_signal = adjust_signal;
-  
+    klass->set_scroll_adjustments_signal = adjust_signal;
+  }
+
   g_signal_connect(widget, "set-scroll-adjustments",
-    G_CALLBACK(ogl_tiles_display_set_adjustments), this);
+  G_CALLBACK(ogl_tiles_display_set_adjustments), this);
 
   // Set up GLArea
   int attrlist[] = {
