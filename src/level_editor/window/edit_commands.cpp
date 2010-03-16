@@ -2,6 +2,7 @@
 #include "window.hpp"
 #include "level_display.hpp"
 
+using namespace Graal;
 using namespace Graal::level_editor;
 
 edit_commands::edit_commands(window& _window, header& _header):
@@ -50,7 +51,8 @@ void edit_commands::on_action_cut() {
     }
     m_window.copy_cache.reset(new tiles_cache(buf));
   } else {
-    m_window.copy_cache.reset(new npc_cache(*display.selected_npc));
+    npc& selected_npc = *display.get_level_map()->get_npc(display.selected_npc);
+    m_window.copy_cache.reset(new npc_cache(selected_npc));
   }
 
   display.delete_selection();
@@ -67,7 +69,8 @@ void edit_commands::on_action_copy() {
     }
     m_window.copy_cache.reset(new tiles_cache(buf));
   } else {
-    m_window.copy_cache.reset(new npc_cache(*display.selected_npc));
+    npc& selected_npc = *display.get_level_map()->get_npc(display.selected_npc);
+    m_window.copy_cache.reset(new npc_cache(selected_npc));
   }
 }
 

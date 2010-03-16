@@ -19,6 +19,8 @@ namespace level_editor {
 class level_display: public ogl_tiles_display {
 public:
   typedef std::vector<bool> layer_visibility_list_type;
+  typedef std::map<std::pair<int, int>, bool> unsaved_level_map_type;
+
   level_display(preferences& _prefs, image_cache& cache, int default_tile_index = 0);
   virtual ~level_display() {}
 
@@ -38,23 +40,24 @@ public:
 
   // Level loading/etc.
   void new_level(int fill_tile);
-  const boost::filesystem::path& get_level_path() const {
-    return ""; // TODO: NYI
-  }
-  void set_level_path(const boost::filesystem::path& new_path);
-  void save_level();
-  void save_level(const boost::filesystem::path& path);
+  const boost::filesystem::path get_current_level_path() const;
 
-  void set_level(Graal::level* _level);
+  void save_current_level();
+  void save_current_level(const boost::filesystem::path& path);
+
   // Sets the used level map
-  void set_level_map(level_map* _level_map);
+  void set_level_map(level_map_source* _level_map);
   void load_level(const boost::filesystem::path& file_path);
+  void load_gmap(filesystem& fs, const boost::filesystem::path& file_path);
 
   void set_selection(const level_map::npc_ref& npc);
   bool in_selection(int x, int y);
 
   // Return the currently active level
-  const boost::shared_ptr<level>& get_level();
+  const boost::shared_ptr<level>& get_current_level();
+
+  const boost::shared_ptr<level_map>& get_level_map() { return m_level_map; }
+  const boost::shared_ptr<level_map_source>& get_level_source() { return m_level_source; }
 
   // Create new npc at mouse
   Graal::npc& drag_new_npc();
@@ -62,6 +65,9 @@ public:
   // current selection and then hopefully discarded
   void drag_selection(tile_buf& tiles, int drag_x, int drag_y);
   void drag_selection(const level_map::npc_ref& ref);
+  // Adds the npc to the level and start dragging it
+  void drag_selection(const npc& _npc);
+
 
   inline int to_tiles_x(int x);
   inline int to_tiles_y(int y);
@@ -97,8 +103,8 @@ public:
 
   void add_undo_diff(basic_diff* diff);
 
-  void set_unsaved(bool new_unsaved);
-  bool get_unsaved();
+  void set_unsaved(int level_x, int level_y, bool new_unsaved);
+  unsaved_level_map_type& get_unsaved_levels() { return m_unsaved_levels; }
 
   void set_active_layer(int layer);
   int get_active_layer() { return m_active_layer; };
@@ -127,6 +133,7 @@ protected:
 
   int m_current_level_x, m_current_level_y;
   boost::shared_ptr<level_map> m_level_map;
+  boost::shared_ptr<level_map_source> m_level_source;
 
   preferences& m_preferences;
 
@@ -144,6 +151,9 @@ protected:
   int m_drag_mouse_x, m_drag_mouse_y;
 
   layer_visibility_list_type m_layer_visibility;
+
+  // Contains the list of unsaved levels
+  unsaved_level_map_type m_unsaved_levels;
 private:
   int m_active_layer;
   bool m_unsaved;

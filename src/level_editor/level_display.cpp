@@ -76,60 +76,51 @@ void level_display::set_default_tile(int tile_index) {
 }
 
 void level_display::set_active_layer(int layer) {
-  if (get_level()->tiles_exist(layer)) {
+  if (get_current_level()->tiles_exist(layer)) {
     m_active_layer = layer;
     invalidate();
   }
 }
 
 void level_display::load_level(const boost::filesystem::path& file_path) {
-  //m_level_path = file_path; // TODO: NYI
-  level* _level = Graal::load_nw_level(file_path.string());
-  set_level(_level);
+  set_level_map(new single_level_map_source(file_path));
 }
 
-
-void level_display::set_level(Graal::level* _level) {
-  level_map* _map = new level_map();
-  _map->set_level(_level);
-  set_level_map(_map);
+void level_display::load_gmap(filesystem& fs, const boost::filesystem::path& file_path) {
+  set_level_map(new gmap_level_map_source(fs, file_path));
 }
 
 // Takes ownership of the pointer
-void level_display::set_level_map(level_map* _level_map) {
-  m_level_map.reset(_level_map);
+void level_display::set_level_map(level_map_source* level_source) {
+  m_level_source.reset(level_source);
+  m_level_map.reset(new level_map());
+  m_level_map->set_level_source(m_level_source);
+
   // TODO: ???
   m_current_level_x = 0;
   m_current_level_y = 0;
 
   clear_selection();
-
-  // Show all layers initially
-  int layer_count = get_level()->get_layer_count();
-  for (int i = 0; i < layer_count; i ++) {
-    set_layer_visibility(i, true);
-  }
 }
 
 void level_display::new_level(int fill_tile = 0) {
-  set_level(new Graal::level(fill_tile));
+  level* new_level = new Graal::level(fill_tile);
+  // The level name needs to be set by the host
+  set_level_map(new single_level_map_source(""));
+  m_level_map->set_level(new_level);
 }
 
-void level_display::set_level_path(
-    const boost::filesystem::path& new_path) {
-  //m_level_path = new_path; // TODO: nyi
-  m_signal_title_changed.emit(new_path.leaf());
+void level_display::save_current_level() {
+  m_level_map->get_level_source()->save_level(m_current_level_x, m_current_level_y, get_current_level().get());
+  set_unsaved(m_current_level_x, m_current_level_y, false);
 }
 
-void level_display::save_level() {
-  //save_nw_level(m_level.get(), m_level_path); // TODO: NYI
-  set_unsaved(false);
-}
-
-void level_display::save_level(
+void level_display::save_current_level(
     const boost::filesystem::path& path) {
-  set_level_path(path);
-  save_level();
+  m_level_map->get_level_source()->set_level_name(
+    m_current_level_x, m_current_level_y,
+    path.string());
+  save_current_level();
 }
 
 void level_display::save_selection() {
@@ -221,7 +212,7 @@ void level_display::set_selection(const level_map::npc_ref& ref) {
 }
 
 tile_buf& level_display::get_tile_buf() {
-  return get_level()->get_tiles(m_active_layer);
+  return get_current_level()->get_tiles(m_active_layer);
 }
 
 Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level() {
@@ -455,7 +446,6 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       const int mouse_pixel_level_x = x - mouse_level_x * level_width * m_tile_width;
       const int mouse_pixel_level_y = y - mouse_level_y * level_height * m_tile_height;
 
-      std::cout << "mouse level: " << mouse_level_x << "," << mouse_level_y << std::endl;
       level* mouse_level = m_level_map->get_level(mouse_level_x, mouse_level_y).get();
 
       if (!mouse_level)
@@ -669,6 +659,15 @@ void level_display::drag_selection(const level_map::npc_ref& ref) {
   invalidate();
 }
 
+void level_display::drag_selection(const npc& _npc) {
+  npc& new_npc = get_current_level()->add_npc(_npc);
+  level_map::npc_ref ref;
+  ref.level_x = m_current_level_x;
+  ref.level_y = m_current_level_y;
+  ref.id = new_npc.id;
+  drag_selection(ref);
+}
+
 void level_display::undo() {
   if (has_selection()) {
     save_selection();
@@ -678,7 +677,7 @@ void level_display::undo() {
     return;
 
   redo_buffer.push(undo_buffer.apply(*m_level_map));
-  set_unsaved(true);
+  //set_unsaved(true); // TODO!!
   invalidate();
 }
 
@@ -687,7 +686,7 @@ void level_display::redo() {
     return;
 
   undo_buffer.push(redo_buffer.apply(*m_level_map));
-  set_unsaved(true);
+  //set_unsaved(true); // TODO!!
   invalidate();
 }
 
@@ -695,20 +694,7 @@ void level_display::add_undo_diff(basic_diff* diff) {
   undo_buffer.push(diff);
   redo_buffer.clear();
 
-  set_unsaved(true);
-}
-
-void level_display::set_unsaved(bool new_unsaved) {
-  if (m_unsaved != new_unsaved) {
-    m_unsaved = new_unsaved;
-    signal_unsaved_status_changed().emit(new_unsaved);
-  } else {
-    m_unsaved = new_unsaved;
-  }
-}
-
-bool level_display::get_unsaved() {
-  return m_unsaved;
+  //set_unsaved(true); // TODO!!
 }
 
 level_display::signal_default_tile_changed_type&
@@ -732,7 +718,7 @@ level_display::signal_status_update() {
 }
 
 Graal::npc& level_display::drag_new_npc() {
-  Graal::npc& npc = get_level()->add_npc();
+  Graal::npc& npc = get_current_level()->add_npc();
   level_map::npc_ref ref;
   ref.id = npc.id;
   ref.level_x = m_current_level_x;
@@ -828,7 +814,7 @@ void level_display::on_mouse_leave(GdkEventCrossing* event) {
 
 void level_display::set_layer_visibility(std::size_t layer, bool visible) {
   if (layer >= m_layer_visibility.size())
-    m_layer_visibility.resize(layer + 1, false);
+    m_layer_visibility.resize(layer + 1, true);
   m_layer_visibility[layer] = visible;
   invalidate();
 }
@@ -836,7 +822,7 @@ void level_display::set_layer_visibility(std::size_t layer, bool visible) {
 bool level_display::get_layer_visibility(std::size_t layer) {
   if (layer < m_layer_visibility.size())
     return m_layer_visibility[layer];
-  return false;
+  return true;
 }
 
 void level_display::draw_rectangle(float x, float y, float width, float height, float r, float g, float b, float a, bool fill) {
@@ -1068,7 +1054,7 @@ void level_display::draw_all() {
 
   m_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
   m_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
-
+  std::cout << "set current: " << m_current_level_x << "," << m_current_level_y << std::endl;
   // Draw surrounding levels
   const int start_x = std::max(0, m_current_level_x - 1);
   const int start_y = std::max(0, m_current_level_y - 1);
@@ -1077,16 +1063,19 @@ void level_display::draw_all() {
 
   // Do this in two loops so the tiles get drawn below everything
   // TODO: enable z buffer again?
+  // TODO: do bounds checking with viewport to only draw those levels that are actually visible
   for (int x = start_x; x < end_x; x++) {
     for (int y = start_y; y < end_y; y++) {
       const int screen_level_x = x * level_width * m_tile_width,;
       const int screen_level_y = y * level_height * m_tile_height;  
       level* current_level = m_level_map->get_level(x, y).get();
       // Draw level at the correct position
-      glPushMatrix();
-      glTranslatef(screen_level_x, screen_level_y, 0);
-      draw_tiles(current_level);
-      glPopMatrix();
+      if (current_level) {
+        glPushMatrix();
+        glTranslatef(screen_level_x, screen_level_y, 0);
+        draw_tiles(current_level);
+        glPopMatrix();
+      }
     }
   }
 
@@ -1095,11 +1084,13 @@ void level_display::draw_all() {
       const int screen_level_x = x * level_width * m_tile_width,;
       const int screen_level_y = y * level_height * m_tile_height;  
       level* current_level = m_level_map->get_level(x, y).get();
-      // Draw level at the correct position
-      glPushMatrix();
-      glTranslatef(screen_level_x, screen_level_y, 0);
-      draw_misc(current_level);
-      glPopMatrix();
+      if (current_level) {
+        // Draw level at the correct position
+        glPushMatrix();
+        glTranslatef(screen_level_x, screen_level_y, 0);
+        draw_misc(current_level);
+        glPopMatrix();
+      }
     }
   }
 
@@ -1162,7 +1153,7 @@ link level_editor::level_display::create_link() {
   return new_link;
 }
 
-const boost::shared_ptr<level>& level_editor::level_display::get_level() {
+const boost::shared_ptr<level>& level_editor::level_display::get_current_level() {
   return m_level_map->get_level(
       m_current_level_x,
       m_current_level_y);
@@ -1173,4 +1164,14 @@ void level_editor::level_display::set_surface_size() {
   set_scroll_size(
     m_level_map->get_width_tiles() * m_tile_width,
     m_level_map->get_height_tiles() * m_tile_height);
+}
+
+const boost::filesystem::path level_editor::level_display::get_current_level_path() const {
+  std::cout << "current: " << m_current_level_x << "," << m_current_level_y << std::endl;
+  return m_level_source->get_level_name(m_current_level_x, m_current_level_y);
+}
+
+void level_editor::level_display::set_unsaved(int level_x, int level_y, bool new_unsaved) {
+  std::pair<int, int> level_key(level_x, level_y);
+  m_unsaved_levels[level_key] = new_unsaved;
 }

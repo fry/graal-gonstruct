@@ -10,10 +10,6 @@ using namespace Graal;
 using namespace Graal::level_editor;
 using namespace Graal::helper;
 
-level_map_source::level_map_source(filesystem& _filesystem):
-  m_filesystem(_filesystem) {
-}
-
 std::string level_map_source::get_level_name(int x, int y) {
   // Return an empty name if the index is out of bounds
   if (x >= get_width() || y >= get_height())
@@ -22,16 +18,10 @@ std::string level_map_source::get_level_name(int x, int y) {
   return m_level_names[x][y];
 }
 
-Graal::level* level_map_source::load_level(int x, int y) {
-  std::string level_name = get_level_name(x, y);
-
-  if (!level_name.empty()) {
-    boost::filesystem::path level_path;
-    if (m_filesystem.get_path(level_name, level_path)) {
-      return load_nw_level(level_path);
-    }
-  }
-  return 0;
+void level_map_source::set_level_name(int x, int y, const std::string& name) {
+  if (x >= get_width() || y >= get_height())
+    return;
+  m_level_names[x][y] = name;
 }
 
 int level_map_source::get_width() const {
@@ -42,8 +32,9 @@ int level_map_source::get_height() const {
   return m_level_names.shape()[1];
 }
 
+/* GMap level source */
 gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boost::filesystem::path& gmap_file_name):
-  level_map_source(_filesystem)
+  m_filesystem(_filesystem)
 {
   static const std::string GMAP_VERSION = "GRMAP001";
 
@@ -96,6 +87,55 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
   }
 }
 
+Graal::level* gmap_level_map_source::load_level(int x, int y) {
+  std::string level_name = get_level_name(x, y);
+
+  if (!level_name.empty()) {
+    boost::filesystem::path level_path;
+    if (m_filesystem.get_path(level_name, level_path)) {
+      return load_nw_level(level_path);
+    }
+  }
+  return 0;
+}
+
+void gmap_level_map_source::save_level(int x, int y, level* _level) {
+  std::string level_name = get_level_name(x, y);
+
+  if (!level_name.empty()) {
+    boost::filesystem::path level_path;
+    if (m_filesystem.get_path(level_name, level_path)) {
+      save_nw_level(_level, level_path);
+    }
+  }
+}
+
+/* Single level source */
+single_level_map_source::single_level_map_source(const boost::filesystem::path& file_name) {
+  // Resize level names array to fit the single level
+  level_names_list_type::extent_gen extend;
+  m_level_names.resize(extend[1][1]);
+  m_level_names[0][0] = file_name.string();
+}
+
+Graal::level* single_level_map_source::load_level(int x, int y) {
+  std::string level_name = get_level_name(x, y);
+
+  if (level_name.empty())
+    return 0;
+
+  return load_nw_level(level_name);
+}
+
+void single_level_map_source::save_level(int x, int y, level* _level) {
+  std::string level_name = get_level_name(x, y);
+
+  if (!level_name.empty()) {
+    save_nw_level(_level, level_name);
+  }
+}
+
+/* level map */
 level_map::level_map():
   m_level_width(0),
   m_level_height(0)
@@ -108,6 +148,11 @@ level_map::level_map():
 
 void level_map::set_level_source(const boost::shared_ptr<level_map_source>& source) {
   m_level_source = source;
+  set_size(source->get_width(), source->get_height());
+}
+
+const boost::shared_ptr<level_map_source>& level_map::get_level_source() {
+  return m_level_source;
 }
 
 const boost::shared_ptr<level>& level_map::load_level(const boost::filesystem::path& _file_name, int x, int y) {
@@ -215,8 +260,8 @@ npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
   const int level_width = get_level_width();
   const int level_height = get_level_height();
 
-  const int new_level_x = new_x / level_width;
-  const int new_level_y = new_y / level_height;
+  const int new_level_x = static_cast<int>(new_x / level_width);
+  const int new_level_y = static_cast<int>(new_y / level_height);
 
   // Determine the position of the NPC inside the level
   const float new_tiles_x = new_x - new_level_x * get_level_width();

@@ -16,7 +16,7 @@ namespace {
   bool confirm_changes(Graal::level_editor::window& parent,
                       level_editor::level_display& display) {
     parent.set_current_page(display);
-    const boost::filesystem::path& path = display.get_level_path();
+    const boost::filesystem::path path = display.get_current_level_path();
 
     Glib::ustring basename;
     if (path.empty())
@@ -244,11 +244,14 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 // change tileset to the level's one when the page changes
 void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
   level_display* display = get_nth_level_display(page_num);
-  if (!opening_levels) {
-    display_tileset.update_tileset(display->get_level_path().leaf());
-  }
 
-  m_signal_switch_level_display(*display);
+  if (display) {
+    if (!opening_levels) {
+      display_tileset.update_tileset(display->get_current_level_path().leaf());
+    }
+
+    m_signal_switch_level_display(*display);
+  }
 }
 
 void level_editor::window::update_cache() {
@@ -270,12 +273,11 @@ void level_editor::window::on_preferences_changed(
     
     update_cache();
 
-    for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
-      level_display& disp(*get_nth_level_display(i));
-      display_tileset.update_tileset(disp.get_level_path().leaf());
+    level_display* display(get_current_level_display());
+    if (display) {
+      display_tileset.update_tileset(display->get_current_level_path().leaf());
+      m_tile_objects.get();
     }
-
-    m_tile_objects.get();
   }
 
   if (c & preferences_display::REMEMBER_DEFAULT_TILE_CHANGED) {
@@ -294,6 +296,7 @@ level_editor::window::create_level_display() {
       sigc::mem_fun(this, &window::set_default_tile));
   display->signal_status_update().connect(
       sigc::mem_fun(this, &window::set_status));
+  // TODO: connect to signal firing when the current level changes
 
   return display;
 }
@@ -302,13 +305,14 @@ void level_editor::window::tiles_selected(tile_buf& selection, int x, int y) {
   get_current_level_display()->drag_selection(selection, x, y);
 }
 
-boost::shared_ptr<level>& level_editor::window::get_current_level() {
-  return get_current_level_display()->get_level();
+const boost::shared_ptr<level>& level_editor::window::get_current_level() {
+  return get_current_level_display()->get_current_level();
 }
 
 bool level_editor::window::close_all_levels() {
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
     level_display& disp(*get_nth_level_display(i));
+    /*// TODO: Iterate through ALL unsaved levels here
     if (disp.get_unsaved()) {
       if (confirm_changes(*this, disp)) {
         m_nb_levels.remove_page(i);
@@ -316,7 +320,8 @@ bool level_editor::window::close_all_levels() {
       } else {
         return true;
       }
-    }
+    }*/
+    return false;
   }
   
   return false;
@@ -352,19 +357,29 @@ void level_editor::window::on_action_about() {
 }
 
 void level_editor::window::load_level(const boost::filesystem::path& file_path, bool activate) {
+  // TODO: also handle loading GMaps here, depending on the extensions?
   // check whether the level is already loaded
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
-    if (get_nth_level_display(i)->get_level_path() == file_path) {
+    // TODO: Iterate through all levels inside the level_display's level_map here
+    /*if (get_nth_level_display(i)->get_current_level_path() == file_path) {
       if (activate)
         m_nb_levels.set_current_page(i);
       return;
-    }
+    }*/
   }
 
+  std::string ext = file_path.extension();
   try {
     std::auto_ptr<level_display> display(create_level_display());
-    //display_tileset.update_tileset(file_path.leaf());
-    display->load_level(file_path);
+    
+    std::cout << "extension: " << ext << std::endl;
+    if (ext == ".nw") {
+      display->load_level(file_path);
+    } else if (ext == ".gmap") {
+      display->load_gmap(fs, file_path);
+    } else {
+      throw new std::runtime_error("Unknown level extension");
+    }
     create_new_page(*Gtk::manage(display.release()), file_path.leaf(), activate);
     set_level_buttons(true);
   } catch (const std::exception& e) {
@@ -373,7 +388,6 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
 }
 
 void level_editor::window::create_new_page(level_display& display, const std::string& name, bool activate) {
-  
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
   
@@ -407,10 +421,11 @@ void level_editor::window::set_current_page(const level_display& display) {
 }
 
 void level_editor::window::on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display) {
-  if (display.get_unsaved()) {
+  // TODO: Loop through all unsaved levels here
+  /*if (display.get_unsaved()) {
     if (!confirm_changes(*this, display))
       return;
-  }
+  }*/
 
   m_nb_levels.remove(scrolled);
 
@@ -429,13 +444,7 @@ level_editor::level_display* level_editor::window::get_nth_level_display(int n) 
   if (!scrolled)
     return 0;
 
-  Gtk::Viewport* viewport =
-    static_cast<Gtk::Viewport*>(scrolled->get_child());
-
-  if (!viewport)
-    return 0;
-
-  return static_cast<level_display*>(viewport->get_child());
+  return static_cast<level_display*>(scrolled->get_child());
 }
 
 level_editor::level_display* level_editor::window::get_current_level_display() {
@@ -445,8 +454,8 @@ level_editor::level_display* level_editor::window::get_current_level_display() {
 // Update the tileset of all level displays that start with prefix
 void level_editor::window::update_matching_level_displays(const std::string& prefix) {
   level_display* display = get_current_level_display(); 
-  if (display->get_level_path().leaf().find(prefix) == 0) {
-    display_tileset.update_tileset(display->get_level_path().leaf());
+  if (display->get_current_level_path().leaf().find(prefix) == 0) {
+    display_tileset.update_tileset(display->get_current_level_path().leaf());
   }
 }
 
@@ -500,7 +509,7 @@ void level_editor::window::on_tileset_expose_event(GdkEventExpose* event) {
 
 bool level_editor::window::save_current_page_as() {
   level_display* disp = get_current_level_display();
-  boost::filesystem::path path = disp->get_level_path();
+  boost::filesystem::path path = disp->get_current_level_path();
   if (path.empty())
     m_fc_save.set_current_name("new.nw");
   else
@@ -510,7 +519,7 @@ bool level_editor::window::save_current_page_as() {
   if (m_fc_save.run() == Gtk::RESPONSE_OK) {
     std::string path = m_fc_save.get_filename();
     level_display* disp = get_current_level_display();
-    disp->save_level(path);
+    disp->save_current_level(path);
     m_fc_save.hide();
     return true;
   } else {
@@ -521,11 +530,11 @@ bool level_editor::window::save_current_page_as() {
 
 bool level_editor::window::save_current_page() {
   level_display* disp = get_current_level_display();
-  boost::filesystem::path path = disp->get_level_path();
+  boost::filesystem::path path = disp->get_current_level_path();
   if (path.empty()) {
     return save_current_page_as();
   }
 
-  disp->save_level();
+  disp->save_current_level();
   return true;
 }

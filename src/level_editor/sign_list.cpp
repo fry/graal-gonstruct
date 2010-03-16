@@ -132,8 +132,9 @@ void level_editor::sign_list::get() {
 
   level_display& display = *m_window.get_current_level_display();
   if (display.has_selection()) {
-    m_edit_x.set_text(boost::lexical_cast<std::string>(display.select_tile_x()));
-    m_edit_y.set_text(boost::lexical_cast<std::string>(display.select_tile_y()));
+    // TODO: find another solution for this
+    /*m_edit_x.set_text(boost::lexical_cast<std::string>(display.select_tile_x()));
+    m_edit_y.set_text(boost::lexical_cast<std::string>(display.select_tile_y()));*/
   }
   level::sign_list_type::iterator iter, end;
   end = m_window.get_current_level()->signs.end();

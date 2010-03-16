@@ -45,7 +45,7 @@ void level_editor::layers_control::on_layer_changed() {
 }
 
 void level_editor::layers_control::on_switch_level_display(level_display& display) {
-  int layer_count = display.get_level()->get_layer_count();
+  int layer_count = display.get_current_level()->get_layer_count();
   m_spin_layer.set_range(0, layer_count - 1);
   //m_spin_layer.set_value(0);
   m_spin_layer.set_increments(1, 1);
@@ -65,7 +65,7 @@ void level_editor::layers_control::on_layer_visible_toggled() {
 void level_editor::layers_control::on_add_layer() {
   int layer = m_spin_layer.get_value_as_int();
   level_display& display = *m_window.get_current_level_display();
-  display.get_level()->insert_layer(layer + 1, m_window.default_tile.get_tile());
+  display.get_current_level()->insert_layer(layer + 1, m_window.default_tile.get_tile());
   display.set_layer_visibility(layer + 1, true);
 
   m_spin_layer.set_value(layer + 1);
@@ -77,6 +77,6 @@ void level_editor::layers_control::on_delete_layer() {
   level_display& display = *m_window.get_current_level_display();
 
   m_spin_layer.set_value(layer - 1);
-  display.get_level()->delete_layer(layer);
+  display.get_current_level()->delete_layer(layer);
   on_switch_level_display(display);
 }

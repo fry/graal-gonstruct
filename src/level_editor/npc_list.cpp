@@ -63,10 +63,10 @@ void level_editor::npc_list::on_edit_clicked() {
     if (dialog.run() == Gtk::RESPONSE_OK) {
       Graal::npc new_npc = dialog.get_npc();
       level_display* display = m_window.get_current_level_display();
-      // TODO: urgh
-      if (new_npc != current_npc) {
+      // TODO: urgh -- move this into level_display (edit_npc() or something)
+      /*if (new_npc != current_npc) {
         display->add_undo_diff(new npc_diff(current_npc));
-      }
+      }*/
       // save npc
       current_npc = new_npc;
       // TODO: this should probably not be here
@@ -85,8 +85,9 @@ void level_editor::npc_list::on_delete_clicked() {
     Gtk::TreeRow row = *iter;
     level_display* display = m_window.get_current_level_display();
     Graal::level::npc_list_type::iterator npc_iter = row.get_value(columns.iter);
-    display->add_undo_diff(new delete_npc_diff(*npc_iter));
-    display->get_level()->npcs.erase(npc_iter);
+    // TODO: move this into level_display, too
+    /*display->add_undo_diff(new delete_npc_diff(*npc_iter));
+    display->get_current_level()->npcs.erase(npc_iter);*/
     get();
 
     display->clear_selection();

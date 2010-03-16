@@ -67,7 +67,7 @@ void level_commands::on_action_screenshot() {
 #ifdef G_OS_WIN32
 void level_commands::on_action_play() {
   if (m_window.save_current_page()) {
-    std::string path = m_window.get_current_level_display()->get_level_path().string();
+    std::string path = m_window.get_current_level_display()->get_current_level_path().string();
     g_assert(!path.empty());
     std::string cmd = m_preferences.graal_dir + "/graaleditor.exe";
     char play_arg[] = "-play";

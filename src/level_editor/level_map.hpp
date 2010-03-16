@@ -19,25 +19,41 @@ class filesystem;
 class level_map_source {
 public:
   typedef boost::multi_array<std::string, 2> level_names_list_type;
-  level_map_source(filesystem& _filesystem);
 
   /* Returns the name of the level at the passed positon, returning an empty
    * string if no level is found */
   std::string get_level_name(int x, int y);
+  /* Set the name of the level at the specified position */
+  void set_level_name(int x, int y, const std::string& name);
   /* Reads the level name at the passed position and loads it */
-  level* load_level(int x, int y);
+  virtual level* load_level(int x, int y) = 0;
+  /* Saves the level at the specified position */
+  virtual void save_level(int x, int y, level* _level) = 0;
 
   int get_width() const;
   int get_height() const;
 protected:
   level_names_list_type m_level_names;
-  filesystem& m_filesystem;
+};
+
+/* A map source representing a single level */
+class single_level_map_source: public level_map_source {
+public:
+  single_level_map_source(const boost::filesystem::path& file_name);
+
+  virtual level* load_level(int x, int y);
+  virtual void save_level(int x, int y, level* _level);
 };
 
 /* A map source retrieving its level names from a GMap */
 class gmap_level_map_source: public level_map_source {
 public:
   gmap_level_map_source(filesystem& _filesystem, const boost::filesystem::path& gmap_file_name);
+
+  virtual level* load_level(int x, int y);
+  virtual void save_level(int x, int y, level* _level);
+protected:
+  filesystem& m_filesystem;
 };
 
 /* Contains multiple levels and provides helpful functions for accessing them.
@@ -57,8 +73,9 @@ public:
 
   level_map();
 
-  // Sets a level source to use in case get_level can't find a level
+  // gets/sets a level source to use in case get_level can't find a level
   void set_level_source(const boost::shared_ptr<level_map_source>& source);
+  const boost::shared_ptr<level_map_source>& get_level_source();
   // Loads a level and calls set_level on it
   const boost::shared_ptr<level>& load_level(const boost::filesystem::path& _file_name, int x = 0, int y = 0);
   // Places a level into the specified slot

@@ -29,7 +29,8 @@ file_commands::file_commands(window& _window, header& _header, preferences& _pre
 
   Gtk::FileFilter nw_filter;
   nw_filter.add_pattern("*.nw");
-  nw_filter.set_name("Graal Level (*.nw)");
+  nw_filter.add_pattern("*.gmap");
+  nw_filter.set_name("Graal Levels (*.nw, *.gmap)");
   m_fc_open.add_filter(nw_filter);
   m_fc_open.set_filter(nw_filter);
 
