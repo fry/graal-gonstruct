@@ -48,8 +48,13 @@ void Graal::level::delete_npc(int id) {
 }
 
 Graal::tile_buf& Graal::level::create_tiles(int layer, int fill_tile, bool overwrite) {
-  if (get_layer_count() < layer + 1) {
+  int old_size = get_layer_count();
+  if (old_size < layer + 1) {
+    /* When skipping several layers, fill the layers below with the same fill_tile */
     layers.resize(layer + 1);
+    while (old_size < layer + 1) {
+      create_tiles(old_size++, fill_tile, true);
+    }
   } else if (!overwrite) {
     return layers[layer];
   }
@@ -57,11 +62,9 @@ Graal::tile_buf& Graal::level::create_tiles(int layer, int fill_tile, bool overw
   tile_buf& tiles = layers[layer];
   tiles.resize(get_width(), get_height());
 
-  if (fill_tile > -1) {
-    for (int x = 0; x < get_width(); x ++) {
-      for (int y = 0; y < get_height(); y ++) {
-        tiles.get_tile(x, y).index = fill_tile;
-      }
+  for (int x = 0; x < get_width(); x ++) {
+    for (int y = 0; y < get_height(); y ++) {
+      tiles.get_tile(x, y).index = fill_tile;
     }
   }
 

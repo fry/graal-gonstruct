@@ -199,6 +199,8 @@ level_editor::window::window(preferences& _prefs)
 }
 
 level_editor::window::~window() {
+  /* TODO: -1 is (usually) the transparent tile, should probably identify
+   * "remember default tile" differently */
   if (m_preferences.default_tile != -1)
     m_preferences.default_tile = default_tile.get_tile();
 }
@@ -219,6 +221,7 @@ void level_editor::window::set_level_buttons(bool enabled) {
 }
 
 void level_editor::window::set_default_tile(int tile_index) {
+  // TODO: same as above
   if (tile_index == -1)
     tile_index = 511;
   default_tile.set_tile(tile_index);

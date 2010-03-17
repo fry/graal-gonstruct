@@ -153,7 +153,7 @@ void level_display::save_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level_map->get_tile(tx, ty);
+      tile& t = m_level_map->get_tile(tx, ty, m_active_layer);
       buf.get_tile(x - offset_left, y - offset_top) = t;
       t = selection.get_tile(x, y);
     }
@@ -356,7 +356,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
 
       // set default tile
       if (!has_selection()) {
-        const int tile_index = m_level_map->get_tile(x/m_tile_width, y/m_tile_height).index;
+        const int tile_index = m_level_map->get_tile(x/m_tile_width, y/m_tile_height, m_active_layer).index;
         m_signal_default_tile_changed.emit(tile_index);
       }
     }
@@ -561,7 +561,7 @@ void level_display::lift_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level_map->get_tile(tx, ty);
+      tile& t = m_level_map->get_tile(tx, ty, m_active_layer);
       selection.get_tile(x, y)
         = buf.get_tile(x - offset_left, y - offset_top)
         = t;
@@ -731,7 +731,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
   static int vec_y[] = { 0, -1, 0, 1};
 
   // the index of the tiles to fill
-  tile& start_tile = m_level_map->get_tile(tx, ty);
+  tile& start_tile = m_level_map->get_tile(tx, ty, m_active_layer);
   int fill_index = start_tile.index;
   if (fill_with_index == fill_index)
     return;
@@ -767,7 +767,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
 
       if (current_tx >= 0 && current_tx < m_level_map->get_width_tiles() &&
           current_ty >= 0 && current_ty < m_level_map->get_height_tiles()) {
-        tile& adjacent_tile = m_level_map->get_tile(current_tx, current_ty);
+        tile& adjacent_tile = m_level_map->get_tile(current_tx, current_ty, m_active_layer);
         if (adjacent_tile.index == fill_index) {
           queue.push(std::pair<int, int>(current_tx, current_ty));
           adjacent_tile.index = fill_with_index;
@@ -789,7 +789,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
       const int cx = start_x + x;
       const int cy = start_y + y;
       tile& current_tile = buffer.get_tile(x, y);
-      current_tile = m_level_map->get_tile(cx, cy);
+      current_tile = m_level_map->get_tile(cx, cy, m_active_layer);
     }
   }
 
@@ -857,7 +857,7 @@ void level_display::draw_tiles(level* current_level) {
   // TODO: handle different tilesets per level
   // Each tile needs 4 vertices and 4 texcoords
   const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
-  std::vector<vertex_texcoord> tcoords; tcoords.reserve(size);
+  std::vector<vertex_texcoord> tcoords; tcoords.resize(size);
 
   glEnable(GL_TEXTURE_2D);
   glBindTexture(GL_TEXTURE_2D, m_tileset);
@@ -896,11 +896,26 @@ void level_display::draw_tiles(level* current_level) {
         }
       }
 
-      tcoords.clear();
+      /* We need to draw this in chunks so we can skip transparent tiles */
+      int current_start = 0;
+      int current_length = 0;
+      std::list<std::pair<int, int> > chunks;
       // Build texture coordinates
       for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
           tile& _tile = tiles.get_tile(x, y);
+          // Add a new chunk once a transparent tile is reached
+          if (_tile.transparent()) {
+            if (current_length > 0) {
+              chunks.push_back(std::pair<int, int>(current_start, current_length));
+              current_start += current_length;
+              current_length = 0;
+            }
+
+            // Skip this tile
+            current_start ++;
+            continue;
+          }
 
           // The position of the actual tile inside the tileset
           const int tx = helper::get_tile_x(_tile.index);
@@ -912,11 +927,20 @@ void level_display::draw_tiles(level* current_level) {
           float y1 = (float)(ty*m_tile_height)/m_tileset_height;
           float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
           
-          tcoords.push_back(vertex_texcoord(x1, y1));
-          tcoords.push_back(vertex_texcoord(x2, y1));
-          tcoords.push_back(vertex_texcoord(x2, y2));
-          tcoords.push_back(vertex_texcoord(x1, y2));
+          // Fill texcoord array at the current vertex position
+          int index = (x * height + y) * 4;
+
+          tcoords[index++] = vertex_texcoord(x1, y1);
+          tcoords[index++] = vertex_texcoord(x2, y1);
+          tcoords[index++] = vertex_texcoord(x2, y2);
+          tcoords[index  ] = vertex_texcoord(x1, y2);
+
+          current_length ++;
         }
+      }
+      // And one last chunk
+      if (current_length > 0) {
+        chunks.push_back(std::pair<int, int>(current_start, current_length));
       }
 
       if (m_use_vbo) {
@@ -930,7 +954,12 @@ void level_display::draw_tiles(level* current_level) {
         // Link texcoord array
         glTexCoordPointer(2, GL_FLOAT, 0, &tcoords.front());
       }
-      glDrawArrays(GL_QUADS, 0, size);
+      // Draw all collected chunks
+      std::list<std::pair<int, int> >::iterator iter, end = chunks.end();
+      for (iter = chunks.begin(); iter != end; ++iter) {
+        // Indices are per tile, but we draw 4 vertices per tile
+        glDrawArrays(GL_QUADS, iter->first * 4, iter->second * 4);
+      }
     }
   }
 

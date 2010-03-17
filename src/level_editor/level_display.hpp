@@ -178,6 +178,7 @@ private:
   };
 
   struct vertex_texcoord {
+    vertex_texcoord() {}
     vertex_texcoord(float _u, float _v): u(_u), v(_v) {}
     float u, v;
   };

@@ -49,7 +49,7 @@ void preferences::serialize() {
   m_values["use_graal_cache"]
     = use_graal_cache ? "true" : "false";
 
-  if (default_tile == -1) {
+  if (default_tile == -1) { // TODO: see window.cpp TODO re this
     m_values.erase("default_tile");
   } else {
     m_values["default_tile"] = boost::lexical_cast<std::string>(default_tile);
@@ -109,7 +109,7 @@ void preferences::deserialize() {
   hide_signs = false;
   hide_links = false;
 
-  default_tile = -1;
+  default_tile = -1; // TODO: see window.cpp TODO re. this
   iter = m_values.find("default_tile");
   if (iter != m_values.end()) {
     std::istringstream ss(iter->second);

@@ -12,10 +12,13 @@ namespace Graal {
   static const std::string NW_LEVEL_VERSION = "GLEVNW01";
   class tile {
   public:
+    static const int transparent_index = -1;
+
     int index;
 
     tile(): index(0) {}
     explicit tile(int index_): index(index_) {}
+    bool transparent() { return index == transparent_index; }
   };
 
   class tile_buf {
@@ -128,12 +131,12 @@ namespace Graal {
     level::npc_list_type::iterator get_npc(int id);
     void delete_npc(int id);
 
-    tile_buf& create_tiles(int layer = 0, int fill_tile = -1, bool overwrite = false);
+    tile_buf& create_tiles(int layer = 0, int fill_tile = tile::transparent_index, bool overwrite = false);
     tile_buf& get_tiles(int layer = 0);
     const tile_buf& get_tiles(int layer = 0) const;
     bool tiles_exist(int layer = 0);
 
-    void insert_layer(int index, int fill_tile = -1);
+    void insert_layer(int index, int fill_tile = tile::transparent_index);
     void delete_layer(int index);
 
     int get_layer_count() const;
