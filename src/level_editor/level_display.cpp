@@ -96,6 +96,9 @@ void level_display::set_level_map(level_map_source* level_source) {
   m_level_map.reset(new level_map());
   m_level_map->set_level_source(m_level_source);
 
+  m_level_map->signal_level_changed().connect(
+    sigc::mem_fun(*this, &level_display::on_level_changed));
+
   // TODO: ???
   m_current_level_x = 0;
   m_current_level_y = 0;
@@ -153,9 +156,9 @@ void level_display::save_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level_map->get_tile(tx, ty, m_active_layer);
+      const tile& t = m_level_map->get_tile(tx, ty, m_active_layer);
       buf.get_tile(x - offset_left, y - offset_top) = t;
-      t = selection.get_tile(x, y);
+      m_level_map->set_tile(selection.get_tile(x, y), tx, ty, m_active_layer);
     }
   }
 
@@ -561,13 +564,15 @@ void level_display::lift_selection() {
       const int tx = x + sx;
       const int ty = y + sy;
 
-      tile& t = m_level_map->get_tile(tx, ty, m_active_layer);
+      tile t = m_level_map->get_tile(tx, ty, m_active_layer);
       selection.get_tile(x, y)
         = buf.get_tile(x - offset_left, y - offset_top)
         = t;
 
       // set to default tile
+      // TODO: set to transparent tile on layers > 0
       t.index = m_default_tile_index;
+      m_level_map->set_tile(t, tx, ty, m_active_layer);
     }
   }
 
@@ -731,11 +736,12 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
   static int vec_y[] = { 0, -1, 0, 1};
 
   // the index of the tiles to fill
-  tile& start_tile = m_level_map->get_tile(tx, ty, m_active_layer);
-  int fill_index = start_tile.index;
+  int fill_index = m_level_map->get_tile(tx, ty, m_active_layer).index;
+  // Abort if the start tile's index is the same as the fill tile
   if (fill_with_index == fill_index)
     return;
-  start_tile.index = fill_with_index;
+  m_level_map->set_tile(tile(fill_with_index), tx, ty, m_active_layer);
+
 
   std::queue<std::pair<int, int> > queue;
   queue.push(std::pair<int, int>(tx, ty));
@@ -767,10 +773,10 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
 
       if (current_tx >= 0 && current_tx < m_level_map->get_width_tiles() &&
           current_ty >= 0 && current_ty < m_level_map->get_height_tiles()) {
-        tile& adjacent_tile = m_level_map->get_tile(current_tx, current_ty, m_active_layer);
-        if (adjacent_tile.index == fill_index) {
+        int adjacent_tile_index = m_level_map->get_tile(current_tx, current_ty, m_active_layer).index;
+        if (adjacent_tile_index == fill_index) {
           queue.push(std::pair<int, int>(current_tx, current_ty));
-          adjacent_tile.index = fill_with_index;
+          m_level_map->set_tile(tile(fill_with_index), current_tx, current_ty, m_active_layer);
         }
       }
     }
@@ -903,7 +909,7 @@ void level_display::draw_tiles(level* current_level) {
       // Build texture coordinates
       for (int x = 0; x < width; ++x) {
         for (int y = 0; y < height; ++y) {
-          tile& _tile = tiles.get_tile(x, y);
+          const tile& _tile = tiles.get_tile(x, y);
           // Add a new chunk once a transparent tile is reached
           if (_tile.transparent()) {
             if (current_length > 0) {
@@ -1081,6 +1087,11 @@ void level_display::draw_all() {
 
   m_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
   m_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
+
+  // Send level name changed and unsaved changed signals
+  m_signal_title_changed(get_current_level_path().leaf());
+  m_signal_unsaved_status_changed(m_unsaved_levels[std::pair<int, int>(m_current_level_x, m_current_level_y)]);
+
   // Draw surrounding levels
   const int start_x = std::max(0, m_current_level_x - 1);
   const int start_y = std::max(0, m_current_level_y - 1);
@@ -1199,4 +1210,21 @@ const boost::filesystem::path level_editor::level_display::get_current_level_pat
 void level_editor::level_display::set_unsaved(int level_x, int level_y, bool new_unsaved) {
   std::pair<int, int> level_key(level_x, level_y);
   m_unsaved_levels[level_key] = new_unsaved;
+}
+
+void level_editor::level_display::focus_level(int level_x, int level_y) {
+  /*int center_x = static_cast<int>((level_x + 0.5) * m_level_map->get_level_width() * m_tile_width);
+  int center_y = static_cast<int>((level_y + 0.5) * m_level_map->get_level_height() * m_tile_height);
+
+  set_scroll_offset(
+    center_x - get_width()/2,
+    center_y - get_height()/2);*/
+  set_scroll_offset(
+    level_x * m_level_map->get_level_width() * m_tile_width,
+    level_y * m_level_map->get_level_height() * m_tile_height);
+}
+
+void level_display::on_level_changed(int x, int y) {
+  std::cout << "set unsaved: " << x << "," << y << std::endl;
+  set_unsaved(x, y, true);
 }

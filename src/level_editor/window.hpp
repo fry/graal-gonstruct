@@ -28,7 +28,7 @@ namespace Graal {
       void load_level(const boost::filesystem::path& file_path, bool activate = true);
       level_display* get_nth_level_display(int n);
       level_display* get_current_level_display();
-      void set_current_page(const level_display& display);
+      void set_current_level(level_display& display, int level_x, int level_y);
       void create_new_page(level_display& display, const std::string& name, bool activate = true);
 
       void update_matching_level_displays(const std::string& prefix);

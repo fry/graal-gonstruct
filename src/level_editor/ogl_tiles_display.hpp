@@ -39,12 +39,15 @@ public:
 
   // Return the current offset specified by the Gtk::Adjustment
   void get_scroll_offset(int& x, int& y);
+  // Set the scroll offset
+  void set_scroll_offset(int x, int y);
 
   // Return the positon of the cursor adjusted by the offset
   void get_cursor_position(int& x, int& y);
 
   // Return the cursor position in tiles rounded down
   void get_cursor_tiles_position(int& x, int& y);
+
 protected:
   Gtk::Adjustment* m_hadjustment;
   Gtk::Adjustment* m_vadjustment;
@@ -53,7 +56,7 @@ protected:
   bool on_gl_expose_event(GdkEventExpose* event);
   bool on_gl_configure_event(GdkEventConfigure* event);
 
-  virtual void draw_tile(tile& _tile, int x, int y);
+  virtual void draw_tile(const tile& _tile, int x, int y);
   virtual void draw_all();
 
   void load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface);

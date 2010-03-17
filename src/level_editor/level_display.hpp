@@ -68,6 +68,9 @@ public:
   // Adds the npc to the level and start dragging it
   void drag_selection(const npc& _npc);
 
+  // Scrolls to the specified level
+  void focus_level(int level_x = 0, int level_y = 0);
+
 
   inline int to_tiles_x(int x);
   inline int to_tiles_y(int y);
@@ -130,6 +133,8 @@ protected:
   void on_button_released(GdkEventButton* event);
   void on_button_motion(GdkEventMotion* event);
   void on_mouse_leave(GdkEventCrossing* event);
+
+  void on_level_changed(int x, int y);
 
   int m_current_level_x, m_current_level_y;
   boost::shared_ptr<level_map> m_level_map;

@@ -18,7 +18,7 @@ namespace Graal {
 
     tile(): index(0) {}
     explicit tile(int index_): index(index_) {}
-    bool transparent() { return index == transparent_index; }
+    bool transparent() const { return index == transparent_index; }
   };
 
   class tile_buf {

@@ -90,7 +90,8 @@ public:
 
   /* Loads the level at the specified GLOBAL position if it is not loaded
    * already and returns the tile from inside that level */
-  tile& get_tile(int x, int y, int layer = 0);
+  const tile& get_tile(int x, int y, int layer = 0);
+  void set_tile(const tile& tile, int x, int y, int layer = 0);
 
   /* Return the list of NPCs from the level at the specified tile position.
    * Loads the level if it is not loaded already */
@@ -119,7 +120,16 @@ public:
   int get_level_width() const;
   int get_level_height() const;
   void set_level_size(int width, int height);
+
+  // Signal to notify users if a specific level was changed
+  typedef sigc::signal<void, int, int> signal_level_changed_type;
+  signal_level_changed_type& signal_level_changed();
 protected:
+  signal_level_changed_type m_signal_level_changed;
+
+  // Keep this protected so we can signal on level changes
+  tile& get_tile_editable(int x, int y, int layer = 0);
+
   // Size of one level in tiles
   int m_level_width, m_level_height;
 

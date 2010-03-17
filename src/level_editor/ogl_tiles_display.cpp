@@ -191,7 +191,7 @@ void ogl_tiles_display::draw_all() {
   glEnd();
 }
 
-void ogl_tiles_display::draw_tile(tile& _tile, int x, int y) {
+void ogl_tiles_display::draw_tile(const tile& _tile, int x, int y) {
   // The position of the actual tile inside the tileset
   const int tx = helper::get_tile_x(_tile.index);
   const int ty = helper::get_tile_y(_tile.index);
@@ -341,6 +341,13 @@ void ogl_tiles_display::get_scroll_offset(int& x, int& y) {
 
   if (m_vadjustment)
     y = static_cast<int>(m_vadjustment->get_value());
+}
+
+void ogl_tiles_display::set_scroll_offset(int x, int y) {
+  if (m_hadjustment)
+    m_hadjustment->set_value(x);
+  if (m_vadjustment)
+    m_vadjustment->set_value(y);
 }
 
 void ogl_tiles_display::get_cursor_position(int& x, int& y) {

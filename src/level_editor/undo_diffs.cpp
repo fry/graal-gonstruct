@@ -19,9 +19,10 @@ level_editor::basic_diff* level_editor::tile_diff::apply(
       const int tx = m_x + x;
       const int ty = m_y + y;
 
-      tile& t = target.get_tile(tx, ty);
-      buf.get_tile(x, y) = t;
-      t = m_tiles.get_tile(x, y);
+      // Create a new tile_diff for redoing the action
+      buf.get_tile(x, y) = target.get_tile(tx, ty);
+      // Write old tile to board
+      target.set_tile(m_tiles.get_tile(x, y), tx, ty, m_layer);
     }
   }
 

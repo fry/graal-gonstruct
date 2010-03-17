@@ -13,10 +13,11 @@
 using namespace Graal;
 
 namespace {
-  bool confirm_changes(Graal::level_editor::window& parent,
-                      level_editor::level_display& display) {
-    parent.set_current_page(display);
-    const boost::filesystem::path path = display.get_current_level_path();
+  bool confirm_changes_level(Graal::level_editor::window& parent,
+                      level_editor::level_display& display,
+                      int level_x, int level_y) {
+    parent.set_current_level(display, level_x, level_y);
+    const boost::filesystem::path path = display.get_level_source()->get_level_name(level_x, level_y);
 
     Glib::ustring basename;
     if (path.empty())
@@ -48,6 +49,22 @@ namespace {
     return parent.save_current_page();
   }
 
+  bool confirm_changes(Graal::level_editor::window& parent,
+                       level_editor::level_display& display) {
+    level_editor::level_display::unsaved_level_map_type::iterator iter, end = display.get_unsaved_levels().end();
+    for (iter = display.get_unsaved_levels().begin(); iter != end; ++iter) {
+      // Is unsaved
+      if (iter->second) {
+        int level_x = iter->first.first;
+        int level_y = iter->first.second;
+        if (!confirm_changes_level(parent, display, level_x, level_y)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
 }
 
 level_editor::window::tab_label::tab_label(const Glib::ustring& label)
@@ -299,7 +316,6 @@ level_editor::window::create_level_display() {
       sigc::mem_fun(this, &window::set_default_tile));
   display->signal_status_update().connect(
       sigc::mem_fun(this, &window::set_status));
-  // TODO: connect to signal firing when the current level changes
 
   return display;
 }
@@ -314,19 +330,15 @@ const boost::shared_ptr<level>& level_editor::window::get_current_level() {
 
 bool level_editor::window::close_all_levels() {
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
-    level_display& disp(*get_nth_level_display(i));
-    /*// TODO: Iterate through ALL unsaved levels here
-    if (disp.get_unsaved()) {
-      if (confirm_changes(*this, disp)) {
-        m_nb_levels.remove_page(i);
-        i = i - 1;
-      } else {
-        return true;
-      }
-    }*/
-    return false;
+    level_display& display(*get_nth_level_display(i));
+    if (confirm_changes(*this, display)) {
+      m_nb_levels.remove_page(i);
+      i --;
+    } else {
+      return true;
+    }
   }
-  
+
   return false;
 }
 
@@ -412,10 +424,11 @@ void level_editor::window::create_new_page(level_display& display, const std::st
     m_nb_levels.set_current_page(m_nb_levels.get_n_pages() - 1);
 }
 
-void level_editor::window::set_current_page(const level_display& display) {
+void level_editor::window::set_current_level(level_display& display, int level_x, int level_y) {
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
     if (get_nth_level_display(i) == &display) {
       m_nb_levels.set_current_page(i);
+      display.focus_level(level_x, level_y);
       return;
     }
   }
@@ -424,11 +437,8 @@ void level_editor::window::set_current_page(const level_display& display) {
 }
 
 void level_editor::window::on_close_level_clicked(Gtk::ScrolledWindow& scrolled, level_display& display) {
-  // TODO: Loop through all unsaved levels here
-  /*if (display.get_unsaved()) {
-    if (!confirm_changes(*this, display))
-      return;
-  }*/
+  if (!confirm_changes(*this, display))
+    return;
 
   m_nb_levels.remove(scrolled);
 
@@ -531,6 +541,7 @@ bool level_editor::window::save_current_page_as() {
   }
 }
 
+// Return true if everything went fine, false to abort
 bool level_editor::window::save_current_page() {
   level_display* disp = get_current_level_display();
   boost::filesystem::path path = disp->get_current_level_path();

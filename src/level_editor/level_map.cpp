@@ -207,7 +207,7 @@ level_map::level_list_type& level_map::get_levels() {
   return m_level_list;
 }
 
-tile& level_map::get_tile(int x, int y, int layer) {
+tile& level_map::get_tile_editable(int x, int y, int layer) {
   const int level_width = get_level_width();
   const int level_height = get_level_height();
 
@@ -226,6 +226,23 @@ tile& level_map::get_tile(int x, int y, int layer) {
   }
 
   throw new std::runtime_error("Attempted to edit a tile outside the map");
+}
+
+const tile& level_map::get_tile(int x, int y, int layer) {
+  return get_tile_editable(x, y, layer);
+}
+
+void level_map::set_tile(const tile& tile, int x, int y, int layer) {
+  get_tile_editable(x, y, layer) = tile;
+
+  const int level_width = get_level_width();
+  const int level_height = get_level_height();
+
+  // The particular level this tile falls in
+  const int level_x = x / level_width;
+  const int level_y = y / level_height;
+
+  m_signal_level_changed(level_x, level_y);
 }
 
 level::npc_list_type& level_map::get_npcs(int x, int y) {
@@ -284,12 +301,17 @@ npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
     ref.id = new_npc->id;
     ref.level_x = new_level_x;
     ref.level_y = new_level_y;
+
+    m_signal_level_changed(ref.level_x, ref.level_y);
   }
+  
+  m_signal_level_changed(new_level_x, new_level_y);
 
   // Set the correct position inside the level
   new_npc->set_level_x(new_tiles_x);
   new_npc->set_level_y(new_tiles_y);
 
+  
   return new_npc;
 }
 
@@ -342,4 +364,8 @@ level_map* level_map::load_from_gmap(filesystem& _filesystem, const boost::files
   map->set_size(source->get_width(), source->get_height());
 
   return map;
+}
+
+level_map::signal_level_changed_type& level_map::signal_level_changed() {
+  return m_signal_level_changed;
 }
