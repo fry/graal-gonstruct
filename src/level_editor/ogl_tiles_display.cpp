@@ -7,6 +7,7 @@
 // Needs this for _gtk_VOID__OBJECT_OBJECT
 #include "gtkmarshalers.h"
 
+using namespace Graal;
 using namespace Graal::level_editor;
 
 #ifdef DEBUG
@@ -133,6 +134,21 @@ bool ogl_tiles_display::on_gl_configure_event(GdkEventConfigure* event) {
 
   glViewport(0, 0, get_width(), get_height());
 
+  // Update adjustments and reclamp
+  if (m_hadjustment) {
+    m_hadjustment->set_page_size(get_width());
+    m_hadjustment->set_value(
+      helper::bound_by(
+        static_cast<int>(m_hadjustment->get_value()),
+        0, static_cast<int>(m_hadjustment->get_upper())));
+  }
+  if (m_vadjustment) {
+    m_vadjustment->set_page_size(get_height());
+    m_vadjustment->set_value(
+      helper::bound_by(
+        static_cast<int>(m_vadjustment->get_value()),
+        0, static_cast<int>(m_vadjustment->get_upper())));
+  }
   invalidate();
 
   return true;
@@ -301,10 +317,10 @@ void ogl_tiles_display::set_tileset_surface(
 void ogl_tiles_display::set_surface_size() {
   // Resize to fit one level
   // TODO
-  set_size_request(
+  /*set_size_request(
     64 * m_tile_width,
     32 * m_tile_height
-  );
+  );*/
 
   invalidate();
 }
@@ -321,14 +337,11 @@ void ogl_tiles_display::set_tile_buf(tile_buf& buf) {
 
 void ogl_tiles_display::set_scroll_size(int width, int height) {
   if (m_hadjustment && m_vadjustment) {
-    // Page size is set to a fraction of the size
     m_hadjustment->set_lower(0);
     m_hadjustment->set_upper(width);
-    m_hadjustment->set_page_size(0.05 * width);
 
     m_vadjustment->set_lower(0);
     m_vadjustment->set_upper(height);
-    m_vadjustment->set_page_size(0.05 * height);
   }
 }
 

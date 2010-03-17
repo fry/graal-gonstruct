@@ -54,6 +54,7 @@ public:
   virtual void save_level(int x, int y, level* _level);
 protected:
   filesystem& m_filesystem;
+  boost::filesystem::path m_gmap_file_name;
 };
 
 /* Contains multiple levels and provides helpful functions for accessing them.

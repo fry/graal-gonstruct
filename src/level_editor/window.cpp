@@ -377,22 +377,34 @@ void level_editor::window::on_action_about() {
 }
 
 void level_editor::window::load_level(const boost::filesystem::path& file_path, bool activate) {
-  // TODO: also handle loading GMaps here, depending on the extensions?
   // check whether the level is already loaded
   for (int i = 0; i < m_nb_levels.get_n_pages(); i ++) {
-    // TODO: Iterate through all levels inside the level_display's level_map here
-    /*if (get_nth_level_display(i)->get_current_level_path() == file_path) {
-      if (activate)
-        m_nb_levels.set_current_page(i);
-      return;
-    }*/
+    /* Loop through the entire level source, checking whether the level we're
+     * trying to load is the same as an already loaded one */
+    level_display& display = *get_nth_level_display(i);
+    level_map_source& source = *display.get_level_source();
+    int width = source.get_width();
+    int height = source.get_height();
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        boost::filesystem::path level_path;
+        // Retrieve level path and compare it
+        if (fs.get_path(source.get_level_name(x, y), level_path)) {
+          if (file_path == level_path) {
+            // Then scroll to the level if we should and return
+            if (activate)
+              set_current_level(display, x, y);
+            return;
+          }
+        }
+      }
+    }
   }
 
   std::string ext = file_path.extension();
   try {
     std::auto_ptr<level_display> display(create_level_display());
     
-    std::cout << "extension: " << ext << std::endl;
     if (ext == ".nw") {
       display->load_level(file_path);
     } else if (ext == ".gmap") {
