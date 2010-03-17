@@ -65,8 +65,7 @@ void level_editor::layers_control::on_layer_visible_toggled() {
 void level_editor::layers_control::on_add_layer() {
   int layer = m_spin_layer.get_value_as_int();
   level_display& display = *m_window.get_current_level_display();
-  display.get_current_level()->insert_layer(layer + 1, m_window.default_tile.get_tile());
-  display.set_layer_visibility(layer + 1, true);
+  display.get_current_level()->insert_layer(layer + 1);
 
   m_spin_layer.set_value(layer + 1);
   on_switch_level_display(display);
