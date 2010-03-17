@@ -1213,18 +1213,11 @@ void level_editor::level_display::set_unsaved(int level_x, int level_y, bool new
 }
 
 void level_editor::level_display::focus_level(int level_x, int level_y) {
-  /*int center_x = static_cast<int>((level_x + 0.5) * m_level_map->get_level_width() * m_tile_width);
-  int center_y = static_cast<int>((level_y + 0.5) * m_level_map->get_level_height() * m_tile_height);
-
-  set_scroll_offset(
-    center_x - get_width()/2,
-    center_y - get_height()/2);*/
   set_scroll_offset(
     level_x * m_level_map->get_level_width() * m_tile_width,
     level_y * m_level_map->get_level_height() * m_tile_height);
 }
 
 void level_display::on_level_changed(int x, int y) {
-  std::cout << "set unsaved: " << x << "," << y << std::endl;
   set_unsaved(x, y, true);
 }

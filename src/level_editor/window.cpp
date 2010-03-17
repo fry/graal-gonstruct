@@ -81,11 +81,16 @@ level_editor::window::tab_label::tab_label(const Glib::ustring& label)
   pack_start(m_label);
   pack_start(m_button);
 
+  set_label(label);
+
   show_all();
 }
 
 void level_editor::window::tab_label::set_label(const Glib::ustring& label) {
-  m_label.set_text(label);
+  if (label.empty())
+    m_label.set_text("new");
+  else
+    m_label.set_text(label);
 }
 
 void level_editor::window::tab_label::set_unsaved_status(bool status) {
@@ -395,18 +400,18 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
     } else {
       throw new std::runtime_error("Unknown level extension");
     }
-    create_new_page(*Gtk::manage(display.release()), file_path.leaf(), activate);
+    create_new_page(*Gtk::manage(display.release()), activate);
     set_level_buttons(true);
   } catch (const std::exception& e) {
     display_error(e.what());
   }
 }
 
-void level_editor::window::create_new_page(level_display& display, const std::string& name, bool activate) {
+void level_editor::window::create_new_page(level_display& display, bool activate) {
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
   
-  tab_label* label = Gtk::manage(new tab_label(name));
+  tab_label* label = Gtk::manage(new tab_label(""));
   label->close_event().connect(sigc::bind(
     sigc::mem_fun(this, &level_editor::window::on_close_level_clicked),
     sigc::ref(*scrolled), sigc::ref(display)

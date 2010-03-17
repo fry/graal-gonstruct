@@ -46,7 +46,7 @@ void file_commands::on_action_new() {
     std::auto_ptr<level_display> display(m_window.create_level_display());
 
     display->new_level(m_window.default_tile.get_tile());
-    m_window.create_new_page(*Gtk::manage((display.release())), "new");
+    m_window.create_new_page(*Gtk::manage((display.release())));
     m_window.set_level_buttons(true);
   } catch (std::exception& e) {
     m_window.display_error(e.what());
