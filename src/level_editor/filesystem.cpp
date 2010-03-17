@@ -39,6 +39,13 @@ void filesystem::update_cache() {
 
 bool filesystem::get_path(const std::string& file_name,
                                         boost::filesystem::path& path_found) {
+  // If the requested file name is a exact path, use it instead
+  boost::filesystem::path file_path(file_name);
+  if (file_path.has_root_directory()) {
+    path_found = file_path;
+    return true;
+  }
+
   if (!valid_dir()) {
     return false;
   }

@@ -58,8 +58,6 @@ namespace {
 }
 
 void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjustment* vadjustment) {
-  std::cout << "set adjustments: " << this << std::endl;
-
   m_hadjustment = hadjustment;
   m_vadjustment = vadjustment;
 

@@ -105,6 +105,7 @@ void gmap_level_map_source::save_level(int x, int y, level* _level) {
   if (!level_name.empty()) {
     boost::filesystem::path level_path;
     if (m_filesystem.get_path(level_name, level_path)) {
+      std::cout << "save level: " << level_path << std::endl;
       save_nw_level(_level, level_path);
     }
   }
@@ -129,7 +130,7 @@ Graal::level* single_level_map_source::load_level(int x, int y) {
 
 void single_level_map_source::save_level(int x, int y, level* _level) {
   std::string level_name = get_level_name(x, y);
-
+  std::cout << "save level: " << level_name << std::endl;
   if (!level_name.empty()) {
     save_nw_level(_level, level_name);
   }

@@ -99,7 +99,7 @@ void Graal::level::insert_layer(int index, int fill_tile) {
 void Graal::level::delete_layer(int index) {
   layers.erase(layers.begin() + index);
 }
-
+#include <iostream>
 Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
     throw std::runtime_error("load_nw_level("+path.string()+") failed: File not found");
@@ -124,7 +124,9 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       int layer = read<int>(file);
       std::string data = read<std::string>(file);
 
-      Graal::tile_buf& tiles = level->create_tiles(layer, 0, false);
+      // Fill lowest layer with tile 0 by default, otherwise use transparent tile
+      int fill_tile = layer ? tile::transparent_index : 0;
+      Graal::tile_buf& tiles = level->create_tiles(layer, fill_tile);
 
       for (int i = 0; i < width * 2; i +=2) {
         int tile_index = helper::parse_base64(data.substr(i, 2));
@@ -208,12 +210,38 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
     const Graal::tile_buf& tiles = level->get_tiles(layer);
     for (int y = 0; y < tiles.get_height(); y ++) {
       std::string data;
-      stream << "BOARD" << s << 0 << s << y << s << level->get_width() << s << layer; // x, y, width, layer
+      // chunk start, chunk data pairs
+      std::list<std::pair<int, std::string> > chunks;
+      /* Separate each row into chunks of actually non-transparent tiles.
+       * Every time we encounter a transparent tile, flush the current data
+       * into the chunk list and clear it. If we never encounter a transparent
+       * tile, flush the entire data after the loop */
+      int current_start = 0;
       for (int x = 0; x < tiles.get_width(); x ++) {
         Graal::tile tile = tiles.get_tile(x, y);
+        if (tile.transparent()) {
+          if (!data.empty()) {
+            chunks.push_back(std::pair<int, std::string>(current_start, data));
+            current_start = x;
+            data.clear();
+          }
+
+          // Skip transparent tile
+          current_start ++;
+          continue;
+        }
+
         data += helper::format_base64(tile.index);      
       }
-      stream << s << data << std::endl;
+      if (!data.empty())
+        chunks.push_back(std::pair<int, std::string>(0, data));
+
+      /* Draw one BOARD entry for each chunk so transparent tile-data is culled */
+      std::list<std::pair<int, std::string> >::iterator iter, end = chunks.end();
+      for (iter = chunks.begin(); iter != end; ++iter) {
+        stream << "BOARD" << s << iter->first << s << y << s << iter->second.length() / 2 << s << layer // x, y, width, layer
+               << s << iter->second << std::endl;
+      }
     }
   }
 
