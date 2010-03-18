@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <gtkmm.h>
 
+
 using namespace Graal::level_editor;
 
 ogl_texture_cache::ogl_texture_cache(image_cache& cache): m_image_cache(cache) {
@@ -23,7 +24,7 @@ void ogl_texture_cache::on_cache_updated() {
 
 unsigned int ogl_texture_cache::get_texture(const std::string& file_name) {
   texture_map_type::iterator iter = m_textures.find(file_name);
-  if (iter != m_textures.end())
+  if (iter != m_textures.end() && iter->second)
     return iter->second;
 
   // Texture not loaded yet, load it

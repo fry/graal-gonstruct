@@ -1031,7 +1031,7 @@ void level_display::draw_misc(level* current_level) {
       Cairo::RefPtr<Cairo::ImageSurface>& npc_img = m_image_cache.get_image(npc_image_file);
       const int width = npc_img->get_width();
       const int height = npc_img->get_height();
-
+      
       glBindTexture(GL_TEXTURE_2D, m_texture_cache.get_texture(npc_image_file));
       glBegin(GL_QUADS);
         glTexCoord2f(0, 0);

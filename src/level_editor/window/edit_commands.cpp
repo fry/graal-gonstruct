@@ -76,7 +76,8 @@ void edit_commands::on_action_copy() {
 
 void edit_commands::on_action_paste() {
   level_display& display = *m_window.get_current_level_display();
-  m_window.copy_cache->paste(display);
+  if (m_window.copy_cache)
+    m_window.copy_cache->paste(display);
 }
 
 void edit_commands::on_action_prefs() {
