@@ -133,6 +133,7 @@ protected:
   void on_button_released(GdkEventButton* event);
   void on_button_motion(GdkEventMotion* event);
   void on_mouse_leave(GdkEventCrossing* event);
+  bool on_key_press_event(GdkEventKey* event);
 
   void on_level_changed(int x, int y);
 

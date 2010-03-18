@@ -328,6 +328,8 @@ void level_display::on_button_motion(GdkEventMotion* event) {
 }
 
 void level_display::on_button_pressed(GdkEventButton* event) {
+  grab_focus();
+
   if (event->button == 1 || event->button == 3) {
     int x, y;
     get_cursor_position(x, y);
@@ -1220,4 +1222,30 @@ void level_editor::level_display::focus_level(int level_x, int level_y) {
 
 void level_display::on_level_changed(int x, int y) {
   set_unsaved(x, y, true);
+}
+
+bool level_display::on_key_press_event(GdkEventKey* event) {
+  int ox, oy;
+  get_scroll_offset(ox, oy);
+
+  /* Scroll a max of 10 tiles */
+  int step_x = std::min(m_tile_width * 10, static_cast<int>(m_hadjustment->get_page_increment()));
+  int step_y = std::min(m_tile_height * 10, static_cast<int>(m_vadjustment->get_page_increment()));
+  switch (event->keyval) {
+  case GDK_Left:
+    ox -= step_x;
+    break;
+  case GDK_Right:
+    ox += step_x;
+    break;
+  case GDK_Up:
+    oy -= step_y;
+    break;
+  case GDK_Down:
+    oy += step_y;
+    break;
+  }
+  set_scroll_offset(ox, oy);
+
+  return true;
 }

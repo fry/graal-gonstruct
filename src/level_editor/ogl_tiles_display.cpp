@@ -122,6 +122,9 @@ ogl_tiles_display::ogl_tiles_display():
   create_gl_area(attrlist);
 
   add_events(Gdk::VISIBILITY_NOTIFY_MASK);
+
+  // Make it possible to grab focus
+  property_can_focus().set_value(true);
 }
 
 bool ogl_tiles_display::on_gl_configure_event(GdkEventConfigure* event) {
@@ -342,6 +345,12 @@ void ogl_tiles_display::set_scroll_size(int width, int height) {
 
     m_vadjustment->set_lower(0);
     m_vadjustment->set_upper(height);
+
+    m_hadjustment->set_step_increment(width * 0.1);
+    m_hadjustment->set_page_increment(width * 0.1);
+
+    m_vadjustment->set_step_increment(height * 0.1);
+    m_vadjustment->set_page_increment(height * 0.1);
   }
 }
 
