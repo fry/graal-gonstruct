@@ -36,15 +36,17 @@ void level_editor::toolbar_tools_display::on_hide_npcs_toggled() {
   level_display& display = *m_window.get_current_level_display();
   if (display.npc_selected())
     display.clear_selection();
-  display.queue_draw();
+  display.invalidate();
 }
 
 void level_editor::toolbar_tools_display::on_hide_signs_toggled() {
   m_preferences.hide_signs = m_hide_signs.get_active();
+  m_window.get_current_level_display()->invalidate();
 }
 
 void level_editor::toolbar_tools_display::on_hide_links_toggled() {
   m_preferences.hide_links = m_hide_links.get_active();
+  m_window.get_current_level_display()->invalidate();
 }
 
 void level_editor::toolbar_tools_display::on_new_npc_clicked() {
