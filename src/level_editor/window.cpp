@@ -67,8 +67,7 @@ namespace {
   }
 }
 
-level_editor::window::tab_label::tab_label(const Glib::ustring& label)
-: m_label(label) {
+level_editor::window::tab_label::tab_label(const Glib::ustring& label) {
   Gtk::Image* image = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE, Gtk::ICON_SIZE_MENU));
   int width, height;
   Gtk::IconSize::lookup(Gtk::ICON_SIZE_MENU, width, height);
@@ -410,7 +409,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
     } else if (ext == ".gmap") {
       display->load_gmap(fs, file_path);
     } else {
-      throw new std::runtime_error("Unknown level extension");
+      throw std::runtime_error("Unknown level extension, can't load " + file_path.leaf());
     }
     create_new_page(*Gtk::manage(display.release()), activate);
     set_level_buttons(true);
@@ -423,20 +422,24 @@ void level_editor::window::create_new_page(level_display& display, bool activate
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
   
-  tab_label* label = Gtk::manage(new tab_label(""));
+  // Initialize tab label with the name of the current level
+  tab_label* label = Gtk::manage(new tab_label(display.get_current_level_path().leaf()));
+  // Connect tab label's close level signal
   label->close_event().connect(sigc::bind(
     sigc::mem_fun(this, &level_editor::window::on_close_level_clicked),
     sigc::ref(*scrolled), sigc::ref(display)
   ));
+  // Update tab label when the title of the display changes
   display.signal_title_changed().connect(
       sigc::mem_fun(*label, &tab_label::set_label));
   display.signal_unsaved_status_changed().connect(
       sigc::mem_fun(*label, &tab_label::set_unsaved_status));
 
-  // TODO: Somehow prevent double on_switch_page here (on append_page and set_current_page)
+  // Add page to notebook
   m_nb_levels.append_page(*scrolled, *label);
   m_nb_levels.set_tab_reorderable(*scrolled, true);
-  m_nb_levels.show_all_children();
+  scrolled->show_all();
+  // Only activate the page if requested
   if (activate)
     m_nb_levels.set_current_page(m_nb_levels.get_n_pages() - 1);
 }
