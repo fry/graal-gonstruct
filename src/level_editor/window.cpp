@@ -404,6 +404,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
   try {
     std::auto_ptr<level_display> display(create_level_display());
     
+    // Load nw level or gmap depending on extension
     if (ext == ".nw") {
       display->load_level(file_path);
     } else if (ext == ".gmap") {

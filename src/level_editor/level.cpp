@@ -157,7 +157,10 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       std::string line;
       while (true) {
         line = read_line(file);
-        if (line == "SIGNEND")
+        
+        // Protect against infinite loop in malformed levels
+        g_assert(!file.eof());
+        if (line == "SIGNEND" || file.eof())
           break;
 
         sign.text += line;
@@ -181,6 +184,9 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       std::string line;
       while (true) {
         line = read_line(file);
+
+        // Protect against infinite loop in malformed levels
+        g_assert(!file.eof());
         if (line == "NPCEND" || file.eof())
           break;
 
@@ -274,6 +280,7 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
        npc_iter != npc_end;
        npc_iter ++) {
     std::string image = npc_iter->image;
+    // No image is represented by "-"
     if (image.empty())
       image = "-";
     stream << "NPC" << s << image << s << npc_iter->get_level_x() << s << npc_iter->get_level_y() << std::endl;

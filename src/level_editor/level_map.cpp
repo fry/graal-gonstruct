@@ -51,6 +51,7 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
     throw std::runtime_error("Loading GMAP failed: Version mismatch (" + version + " != " + GMAP_VERSION + ")");
   }
 
+  int level_count = 0;
   level_names_list_type::extent_gen extend;
   while (!file.eof()) {
     std::string type = read<std::string>(file);
@@ -72,7 +73,10 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
       // Read lines of levels
       while (!file.eof()) {
         std::string line = read_line(file);
-        if (line == "LEVELNAMESEND")
+
+        // Protect against malformed level list
+        g_assert(!file.eof());
+        if (line == "LEVELNAMESEND" || file.eof())
           break;
         
         int x = 0;
@@ -87,11 +91,20 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
           } else {
             set_level_name(x, y, *iter);
           }
+          level_count ++;
           x ++;
         }
         y ++;
       }
     }
+    // Skip the line if it's unknown
+    else {
+      read_line(file);
+    }
+  }
+
+  if (get_width() == 0 || get_height() == 0 || level_count == 0) {
+    throw std::runtime_error("No levels present in GMap (Terrain level? No support for that, yet)");
   }
 }
 
