@@ -159,7 +159,6 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
         line = read_line(file);
         
         // Protect against infinite loop in malformed levels
-        g_assert(!file.eof());
         if (line == "SIGNEND" || file.eof())
           break;
 
@@ -186,7 +185,6 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
         line = read_line(file);
 
         // Protect against infinite loop in malformed levels
-        g_assert(!file.eof());
         if (line == "NPCEND" || file.eof())
           break;
 

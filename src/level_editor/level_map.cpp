@@ -75,8 +75,6 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
         std::string line = read_line(file);
 
         // Protect against malformed level list
-        std::cout << line << std::endl;
-        g_assert(!file.eof());
         if (line == "LEVELNAMESEND" || file.eof())
           break;
         
