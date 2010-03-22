@@ -75,6 +75,7 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
         std::string line = read_line(file);
 
         // Protect against malformed level list
+        std::cout << line << std::endl;
         g_assert(!file.eof());
         if (line == "LEVELNAMESEND" || file.eof())
           break;
@@ -206,8 +207,9 @@ void level_map::set_level(level* _level, int x, int y) {
 }
 
 const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
+  g_assert(x >= 0 && x < get_width() && y >= 0 && y < get_height());
   if (x >= get_width() || y >= get_height())
-    throw new std::runtime_error("Level position out of bounds");
+    throw std::runtime_error("Level position out of bounds");
 
   boost::shared_ptr<level>& level_ptr = m_level_list[x][y];
   // Load the level if it is not loaded and we have a source to look up into
@@ -244,7 +246,7 @@ tile& level_map::get_tile_editable(int x, int y, int layer) {
     return tile_level->create_tiles(layer).get_tile(tile_x, tile_y);
   }
 
-  throw new std::runtime_error("Attempted to edit a tile outside the map");
+  throw std::runtime_error("Attempted to edit a tile outside the map");
 }
 
 const tile& level_map::get_tile(int x, int y, int layer) {
@@ -277,7 +279,7 @@ level::npc_list_type& level_map::get_npcs(int x, int y) {
     return tile_level->npcs;
   }
 
-  throw new std::runtime_error("Attempted to retrieve NPCs from outside the map");
+  throw std::runtime_error("Attempted to retrieve NPCs from outside the map");
 }
 
 npc* level_map::get_npc(const level_map::npc_ref& ref) {

@@ -571,9 +571,9 @@ void level_display::lift_selection() {
         = buf.get_tile(x - offset_left, y - offset_top)
         = t;
 
-      // set to default tile
-      // TODO: set to transparent tile on layers > 0
-      t.index = m_default_tile_index;
+      /* Set tiles below the selection to the default tile on layer 0, and to
+       * the transparent tile on layers > 0 */
+      t.index = m_active_layer ? tile::transparent_index : m_default_tile_index;
       m_level_map->set_tile(t, tx, ty, m_active_layer);
     }
   }
@@ -991,7 +991,10 @@ void level_display::draw_selection() {
     glBegin(GL_QUADS);
     for (int x = 0; x < width; ++x) {
       for (int y = 0; y < height; ++y) {
-        draw_tile(selection.get_tile(x, y), x, y);
+        // Don't draw the transparent tile
+        const tile& t = selection.get_tile(x, y);
+        if (!t.transparent())
+          draw_tile(t, x, y);
       }
     }
     glEnd();

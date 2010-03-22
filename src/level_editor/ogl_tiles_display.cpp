@@ -18,8 +18,9 @@ using namespace Graal::level_editor;
 unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
   glEnable(GL_TEXTURE_2D);
 
-  if (!GLEW_ARB_texture_non_power_of_two)
-    throw std::runtime_error("No ARB_texture_non_power_of_two support");
+  if (!GLEW_ARB_texture_non_power_of_two) {
+    std::cout << "No ARB_texture_non_power_of_two support" << std::endl;
+  }
 
   if (!id) {
     glGenTextures(1, &id);
