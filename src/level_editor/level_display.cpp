@@ -76,10 +76,11 @@ void level_display::set_default_tile(int tile_index) {
 }
 
 void level_display::set_active_layer(int layer) {
-  if (get_current_level()->tiles_exist(layer)) {
-    m_active_layer = layer;
-    invalidate();
-  }
+  // Make sure the layer exists
+  get_current_level()->create_tiles(layer);
+  // Activate the layer
+  m_active_layer = layer;
+  invalidate();
 }
 
 void level_display::load_level(const boost::filesystem::path& file_path) {

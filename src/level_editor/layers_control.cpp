@@ -45,16 +45,14 @@ void level_editor::layers_control::on_layer_changed() {
 }
 
 void level_editor::layers_control::on_switch_level_display(level_display& display) {
-  int layer_count = display.get_current_level()->get_layer_count();
-  m_spin_layer.set_range(0, layer_count - 1);
+  // TODO: Put max. amount of layers somewhere else
+  m_spin_layer.set_range(0, 50);
   //m_spin_layer.set_value(0);
   m_spin_layer.set_increments(1, 1);
 
   int layer = display.get_active_layer();
   m_spin_layer.set_value(layer);
   m_layer_visible.set_active(display.get_layer_visibility(layer));
-
-  m_button_delete_layer.set_sensitive(layer_count > 1);
 }
 
 void level_editor::layers_control::on_layer_visible_toggled() {
