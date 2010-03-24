@@ -223,7 +223,7 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
       int current_start = 0;
       for (int x = 0; x < tiles.get_width(); x ++) {
         Graal::tile tile = tiles.get_tile(x, y);
-        if (tile.transparent()) {
+        if (tile == Graal::tile_transparent) {
           if (!data.empty()) {
             chunks.push_back(std::pair<int, std::string>(current_start, data));
             current_start = x;
@@ -286,4 +286,3 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
     stream << "NPCEND" << std::endl;
   }
 }
-

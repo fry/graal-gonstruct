@@ -361,8 +361,13 @@ void level_display::on_button_pressed(GdkEventButton* event) {
 
       // set default tile
       if (!has_selection()) {
-        const int tile_index = m_level_map->get_tile(x/m_tile_width, y/m_tile_height, m_active_layer).index;
-        m_signal_default_tile_changed.emit(tile_index);
+        /* Round down here instead of to the nearest tile because this is an accurate action */
+        const int tile_x = x / m_tile_width;
+        const int tile_y = y / m_tile_height;
+        if (m_level_map->is_valid_tile(tile_x, tile_y)) {
+          const int tile_index = m_level_map->get_tile(tile_x, tile_y, m_active_layer).index;
+          m_signal_default_tile_changed.emit(tile_index);
+        }
       }
     }
 
@@ -444,8 +449,9 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       const int level_width = m_level_map->get_level_width();
       const int level_height = m_level_map->get_level_height();
 
-      const int mouse_level_x = tile_x / level_width;
-      const int mouse_level_y = tile_y / level_height;
+      // Round mouse -> tile position down for NPC selection
+      const int mouse_level_x = x / m_tile_width / level_width;
+      const int mouse_level_y = y / m_tile_height / level_height;
 
       // The position of the mouse inside the level, in pixel
       const int mouse_pixel_level_x = x - mouse_level_x * level_width * m_tile_width;
@@ -523,6 +529,12 @@ void level_display::on_button_released(GdkEventButton* event) {
 
       // select tiles if no npc is selected 
       if (!npc_selected()) {
+        // Clear empty selections
+        if (m_select_width*m_select_height == 0) {
+          clear_selection();
+          return invalidate();
+        }
+
         // for selections going into a negative direction
         if (m_select_width < 0) {
           m_select_x += m_select_width;
@@ -913,7 +925,7 @@ void level_display::draw_tiles(level* current_level) {
         for (int y = 0; y < height; ++y) {
           const tile& _tile = tiles.get_tile(x, y);
           // Add a new chunk once a transparent tile is reached
-          if (_tile.transparent()) {
+          if (_tile == Graal::tile_transparent) {
             if (current_length > 0) {
               chunks.push_back(std::pair<int, int>(current_start, current_length));
               current_start += current_length;
@@ -993,7 +1005,7 @@ void level_display::draw_selection() {
       for (int y = 0; y < height; ++y) {
         // Don't draw the transparent tile
         const tile& t = selection.get_tile(x, y);
-        if (!t.transparent())
+        if (t != tile_transparent)
           draw_tile(t, x, y);
       }
     }
@@ -1090,8 +1102,12 @@ void level_display::draw_all() {
   const int level_width = m_level_map->get_level_width();
   const int level_height = m_level_map->get_level_height();
 
-  m_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
-  m_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
+  int new_current_level_x = helper::bound_by((offset_x + get_width()/2)/m_tile_width/level_width, 0, map_width);
+  int new_current_level_y = helper::bound_by((offset_y + get_height()/2)/m_tile_height/level_height, 0, map_height);
+
+  //if (m_level_map->get_level(
+  m_current_level_x = new_current_level_x;
+  m_current_level_y = new_current_level_y;
 
   // Send level name changed and unsaved changed signals
   m_signal_title_changed(get_current_level_path().leaf());
@@ -1215,6 +1231,8 @@ const boost::filesystem::path level_editor::level_display::get_current_level_pat
 void level_editor::level_display::set_unsaved(int level_x, int level_y, bool new_unsaved) {
   std::pair<int, int> level_key(level_x, level_y);
   m_unsaved_levels[level_key] = new_unsaved;
+  
+  m_signal_unsaved_status_changed(new_unsaved);
 }
 
 void level_editor::level_display::focus_level(int level_x, int level_y) {

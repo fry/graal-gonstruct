@@ -205,9 +205,10 @@ void level_map::set_level(level* _level, int x, int y) {
 }
 
 const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
-  g_assert(x >= 0 && x < get_width() && y >= 0 && y < get_height());
+  static const boost::shared_ptr<level> no_level;
+  // Fail silently
   if (x >= get_width() || y >= get_height())
-    throw std::runtime_error("Level position out of bounds");
+    return no_level;
 
   boost::shared_ptr<level>& level_ptr = m_level_list[x][y];
   // Load the level if it is not loaded and we have a source to look up into
@@ -217,7 +218,6 @@ const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
       level_ptr.reset(new_level);
     }
   }
-
 
   return level_ptr;
 }
@@ -238,6 +238,7 @@ tile& level_map::get_tile_editable(int x, int y, int layer) {
   const int tile_x = x % level_width;
   const int tile_y = y % level_height;
 
+  //std::cout << "Get tile " << x << "," << y << ": " << tile_x << "," << tile_y << " level: " << level_x << "," << level_y << std::endl;
   level* tile_level = get_level(level_x, level_y).get();
   if (tile_level) {
     // Ensure that the layer exists
@@ -248,7 +249,13 @@ tile& level_map::get_tile_editable(int x, int y, int layer) {
 }
 
 const tile& level_map::get_tile(int x, int y, int layer) {
-  return get_tile_editable(x, y, layer);
+  // Gracefully handle exceptions here and just return an invalid tile
+  try {
+    return get_tile_editable(x, y, layer);
+  } catch (const std::exception& e) {
+    std::cout << "Error reading tile ( " << x << "," << y << "): " << e.what() << std::endl;
+    return tile_invalid;
+  }
 }
 
 void level_map::set_tile(const tile& tile, int x, int y, int layer) {
@@ -262,6 +269,10 @@ void level_map::set_tile(const tile& tile, int x, int y, int layer) {
   const int level_y = y / level_height;
 
   m_signal_level_changed(level_x, level_y);
+}
+
+bool level_map::is_valid_tile(int x, int y) {
+  return get_tile(x, y) != tile_invalid;
 }
 
 level::npc_list_type& level_map::get_npcs(int x, int y) {

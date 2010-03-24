@@ -10,16 +10,25 @@
 
 namespace Graal {
   static const std::string NW_LEVEL_VERSION = "GLEVNW01";
+  // Preset tiles declarations (define at the end of the file)
+
   class tile {
   public:
-    static const int transparent_index = -1;
+    static const int invalid_index = -1;
+    static const int transparent_index = -2;
 
     int index;
 
     tile(): index(0) {}
     explicit tile(int index_): index(index_) {}
-    bool transparent() const { return index == transparent_index; }
+
+    bool operator ==(const tile& other) const { return index == other.index; }
+    bool operator !=(const tile& other) const { return !(operator ==(other)); }
   };
+
+  // Preset tiles definitions
+  static const tile tile_transparent = tile(tile::invalid_index);
+  static const tile tile_invalid = tile(tile::transparent_index);
 
   class tile_buf {
   public:

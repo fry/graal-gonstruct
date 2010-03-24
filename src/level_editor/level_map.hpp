@@ -93,6 +93,7 @@ public:
    * already and returns the tile from inside that level */
   const tile& get_tile(int x, int y, int layer = 0);
   void set_tile(const tile& tile, int x, int y, int layer = 0);
+  bool is_valid_tile(int x, int y);
 
   /* Return the list of NPCs from the level at the specified tile position.
    * Loads the level if it is not loaded already */
