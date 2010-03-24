@@ -4,12 +4,17 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <string>
+#include <iostream>
 
 using namespace Graal::helper;
 
 Graal::level::level(int fill_tile): m_unique_npc_id_counter(0) {
   // Always create one layer
   create_tiles(0, fill_tile);
+
+  // Assert a few things
+  g_assert(Graal::tile_transparent.index == Graal::tile::transparent_index);
+  g_assert(Graal::tile_invalid.index == Graal::tile::invalid_index);
 }
 
 int Graal::level::get_width() const {
@@ -99,7 +104,7 @@ void Graal::level::insert_layer(int index, int fill_tile) {
 void Graal::level::delete_layer(int index) {
   layers.erase(layers.begin() + index);
 }
-#include <iostream>
+
 Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
     throw std::runtime_error("load_nw_level("+path.string()+") failed: File not found");

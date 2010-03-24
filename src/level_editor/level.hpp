@@ -27,8 +27,8 @@ namespace Graal {
   };
 
   // Preset tiles definitions
-  static const tile tile_transparent = tile(tile::invalid_index);
-  static const tile tile_invalid = tile(tile::transparent_index);
+  static const tile tile_transparent = tile(tile::transparent_index);
+  static const tile tile_invalid = tile(tile::invalid_index);
 
   class tile_buf {
   public:
