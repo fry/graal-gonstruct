@@ -8,6 +8,22 @@ AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_LIBTOOL
 AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIR([m4])
+
+AC_MSG_CHECKING(whether to enable debugging)
+debug_default="yes"
+AC_ARG_ENABLE(debug, [  --enable-debug=[no/yes] turn on debugging
+                       [default=$debug_default]],, enable_debug=$debug_default)
+if test "x$enable_debug" = "xyes"; then
+  CFLAGS="$CFLAGS -g -DDEBUG"
+  
+  AC_MSG_RESULT(yes)
+else
+  CFLAGS="$CFLAGS -O3 -ffast-math -mcpu=v8 -mtune=ultrasparc"
+  AC_MSG_RESULT(no)
+fi
+
+AM_CONDITIONAL(DEBUG, test $enable_debug = 'debug')
 
 GONSTRUCT_VERSION=gonstruct_version
 AC_SUBST(GONSTRUCT_VERSION)
