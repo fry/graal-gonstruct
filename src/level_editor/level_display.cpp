@@ -382,68 +382,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       return invalidate();
     }
 
-    // Did we click on a selection?
-    if (in_selection(x, y)) {
-      if (event->button == 3) {
-        // write selection if we right click
-        if (npc_selected()) {
-          // Copy selected NPC
-          npc new_npc = *m_level_map->get_npc(selected_npc);
-          // Retrieve level of selected NPC
-          level* npc_level = m_level_map->get_level(selected_npc.level_x, selected_npc.level_y).get();
-          // Create new NPC in that level
-          selected_npc.id = npc_level->add_npc(new_npc).id;
-          add_undo_diff(new create_npc_diff(selected_npc));
-          m_new_npc = true;
-        } else {
-          if (selection.empty()) {
-            grab_selection();
-          } else {
-            save_selection();
-          }
-        }
-      } else if (!npc_selected() && selection.empty()) {
-        lift_selection();
-      } 
-
-      // start dragging
-      m_dragging = true;
-      m_drag_mouse_x = x - m_select_x;
-      m_drag_mouse_y = y - m_select_y;
-
-      return;
-    } else {
-      if (has_selection()) {
-        // If not and we already have one, copy selection to map and clear selection
-        save_selection();
-        clear_selection();
-      } else {
-       // flood fill if right clicked
-        if (event->button == 3) {
-          // select the exact tile for flood filling
-          const int down_tile_x = x / m_tile_width;
-          const int down_tile_y = y / m_tile_height;
-          flood_fill(down_tile_x, down_tile_y, m_default_tile_index);
-        }
-      }
-
-      // prevent selecting out of bounds
-      if (x > m_level_map->get_width_tiles() * m_tile_width ||
-          y > m_level_map->get_height_tiles() * m_tile_height)
-        return invalidate();
-
-      // otherwise select tiles only with left mouse button
-      if (!npc_selected() && event->button == 1) {   
-        m_select_x = tile_x * m_tile_width;
-        m_select_y = tile_y * m_tile_height;
-
-        m_select_width = 0;
-        m_select_height = 0;
-
-        m_selecting = true;
-      }
-    }
-
+    // Check NPC selection before code specific to an existing selection
     // Check whether we clicked a npc and select it
     if (!m_preferences.hide_npcs) {
       // Determine the level the mouse is in
@@ -494,6 +433,73 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         }
       }
     }
+
+    // Did we click on a selection?
+    if (in_selection(x, y)) {
+      // Right click
+      if (event->button == 3) {
+        // write selection if we right click
+        if (npc_selected()) {
+          // Copy selected NPC
+          npc new_npc = *m_level_map->get_npc(selected_npc);
+          // Retrieve level of selected NPC
+          level* npc_level = m_level_map->get_level(selected_npc.level_x, selected_npc.level_y).get();
+          // Create new NPC in that level
+          selected_npc.id = npc_level->add_npc(new_npc).id;
+          add_undo_diff(new create_npc_diff(selected_npc));
+          m_new_npc = true;
+        } else {
+          if (selection.empty()) {
+            grab_selection();
+          } else {
+            save_selection();
+          }
+        }
+      } else if (!npc_selected() && selection.empty()) {
+        lift_selection();
+      } 
+
+      // start dragging
+      m_dragging = true;
+      m_drag_mouse_x = x - m_select_x;
+      m_drag_mouse_y = y - m_select_y;
+
+      return;
+    // Clicked outside selection
+    } else {
+      // Clear previous selection
+      if (has_selection()) {
+        // If not and we already have one, copy selection to map and clear selection
+        save_selection();
+        clear_selection();
+      } else {
+       // flood fill if right clicked
+        if (event->button == 3) {
+          // select the exact tile for flood filling
+          const int down_tile_x = x / m_tile_width;
+          const int down_tile_y = y / m_tile_height;
+          flood_fill(down_tile_x, down_tile_y, m_default_tile_index);
+        }
+      }
+
+      // prevent selecting out of bounds
+      if (x > m_level_map->get_width_tiles() * m_tile_width ||
+          y > m_level_map->get_height_tiles() * m_tile_height)
+        return invalidate();
+
+      // otherwise select tiles only with left mouse button
+      if (!npc_selected() && event->button == 1) {   
+        m_select_x = tile_x * m_tile_width;
+        m_select_y = tile_y * m_tile_height;
+
+        m_select_width = 0;
+        m_select_height = 0;
+
+        m_selecting = true;
+      }
+    }
+
+
   }
   
   invalidate();
@@ -1125,8 +1131,8 @@ void level_display::draw_all() {
   // TODO: do bounds checking with viewport to only draw those levels that are actually visible
   for (int x = start_x; x < end_x; x++) {
     for (int y = start_y; y < end_y; y++) {
-      const int screen_level_x = x * level_width * m_tile_width,;
-      const int screen_level_y = y * level_height * m_tile_height;  
+      const int screen_level_x = x * level_width * m_tile_width;
+      const int screen_level_y = y * level_height * m_tile_height;
       level* current_level = m_level_map->get_level(x, y).get();
       // Draw level at the correct position
       if (current_level) {
@@ -1140,8 +1146,8 @@ void level_display::draw_all() {
 
   for (int x = start_x; x < end_x; x++) {
     for (int y = start_y; y < end_y; y++) {
-      const int screen_level_x = x * level_width * m_tile_width,;
-      const int screen_level_y = y * level_height * m_tile_height;  
+      const int screen_level_x = x * level_width * m_tile_width;
+      const int screen_level_y = y * level_height * m_tile_height;
       level* current_level = m_level_map->get_level(x, y).get();
       if (current_level) {
         // Draw level at the correct position
@@ -1203,7 +1209,7 @@ void level_display::setup_buffers() {
   }
 }
 
-link level_editor::level_display::create_link() {
+Graal::link level_editor::level_display::create_link() {
   link new_link;
   new_link.x = m_select_x / m_tile_width;
   new_link.y = m_select_y / m_tile_height;
