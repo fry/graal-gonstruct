@@ -1,7 +1,7 @@
 #include "ogl_tiles_display.hpp"
 #include "helper.hpp"
 #include <iostream>
-
+#include <SOIL.h>
 #include <boost/format.hpp>
 
 // Needs this for _gtk_VOID__OBJECT_OBJECT
@@ -29,19 +29,24 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
       throw std::runtime_error("Failed to allocate OpenGL texture");
   }
 
-  glBindTexture(GL_TEXTURE_2D, id);
+  id = SOIL_create_OGL_texture(
+    surface->get_data(),
+    surface->get_width(), surface->get_height(),
+    SOIL_LOAD_RGBA, id,
+    SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_POWER_OF_TWO | SOIL_FLAG_BGRA);
+  /*glBindTexture(GL_TEXTURE_2D, id);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
 
-  glTexImage2D(GL_TEXTURE_2D,
+  /*glTexImage2D(GL_TEXTURE_2D,
     0, GL_RGBA,
     surface->get_width(), surface->get_height(),
     0, GL_BGRA, GL_UNSIGNED_BYTE,
-    surface->get_data());
+    surface->get_data());*/
   
   GLenum err = glGetError();
   if (err)

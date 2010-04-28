@@ -40,7 +40,11 @@ libgonstruct_la_SOURCES = \
 	window/edit_commands.cpp \
 	window/level_commands.cpp \
 	level_map.cpp \
-	gtkmarshalers.c
+	gtkmarshalers.c \
+	../soil/image_DXT.c \
+	../soil/image_helper.c \
+	../soil/SOIL.c \
+	../soil/stb_image_aug.c
 
 noinst_HEADERS = \
 	GLArea.hpp \
@@ -75,7 +79,7 @@ noinst_HEADERS = \
 	window/file_commands.hpp \
 	window/edit_commands.hpp \
 	window/level_commands.hpp \
-	level_map.hpp
+	level_map.hpp \
 	gtkmarshalers.h
 
 AM_CPPFLAGS = \
@@ -84,4 +88,5 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/src \
 	-I$(top_srcdir)/src/level_editor \
 	-I$(top_srcdir)/src/glew \
+	-I$(top_srcdir)/src/soil \
 	-DGLEW_STATIC

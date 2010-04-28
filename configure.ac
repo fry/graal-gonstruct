@@ -60,6 +60,7 @@ AC_CONFIG_FILES([
   	src/core/Makefile
 		src/glew/Makefile
 			src/glew/GL/Makefile
+		src/soil/Makefile
   	src/level_editor/Makefile
 	win/Makefile
 	dist/Makefile

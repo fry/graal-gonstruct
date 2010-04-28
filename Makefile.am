@@ -13,8 +13,7 @@ gonstruct_LDADD = \
 
 if WIN32
 gonstruct_LDFLAGS = \
-	win/gonstruct.res \
-  -mwindows
+	win/gonstruct.res
 endif
 
 gonstruct_SOURCES = 
