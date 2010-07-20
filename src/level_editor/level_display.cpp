@@ -613,7 +613,7 @@ void level_display::lift_selection() {
 
       /* Set tiles below the selection to the default tile on layer 0, and to
        * the transparent tile on layers > 0 */
-      t.index = m_active_layer ? tile::transparent_index : m_default_tile_index;
+      t.index = m_active_layer > 0 ? tile::transparent_index : m_default_tile_index;
       m_level_map->set_tile(t, tx, ty, m_active_layer);
     }
   }
