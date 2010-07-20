@@ -137,7 +137,7 @@ level_editor::header::header():
   group_level_actions->add(action_edit_cut);
   group_level_actions->add(action_edit_copy);
   group_level_actions->add(action_edit_paste);
-  group_level_actions->add(action_edit_delete);
+  group_level_actions->add(action_edit_delete, Gtk::AccelKey("Delete"));
 
   Glib::RefPtr<Gtk::ActionGroup> actions = Gtk::ActionGroup::create();
   actions->add(action_file);
