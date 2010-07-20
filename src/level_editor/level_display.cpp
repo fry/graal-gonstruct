@@ -382,56 +382,35 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       return invalidate();
     }
 
-    // Check NPC selection before code specific to an existing selection
-    // Check whether we clicked a npc and select it
-    if (!m_preferences.hide_npcs) {
-      // Determine the level the mouse is in
-      const int level_width = m_level_map->get_level_width();
-      const int level_height = m_level_map->get_level_height();
 
-      // Round mouse -> tile position down for NPC selection
-      const int mouse_level_x = x / m_tile_width / level_width;
-      const int mouse_level_y = y / m_tile_height / level_height;
+    /* Make sure to select possible NPCs first, so it is possible to select
+     * and copy/etc. a NPC without clicking twice. Only select NPCs though
+     * if we aren't clicking on an already existing selection, so they take
+     * precedence over everything else */
+    if (!m_preferences.hide_npcs && !in_selection(x, y)) {
+      // Find all NPCs at that position
+      std::list<level_map::npc_ref> npcs = get_npcs_at_pos(x, y);
+      std::list<level_map::npc_ref>::iterator iter, end;
+      end = npcs.end();
 
-      // The position of the mouse inside the level, in pixel
-      const int mouse_pixel_level_x = x - mouse_level_x * level_width * m_tile_width;
-      const int mouse_pixel_level_y = y - mouse_level_y * level_height * m_tile_height;
-
-      level* mouse_level = m_level_map->get_level(mouse_level_x, mouse_level_y).get();
-
-      if (!mouse_level)
-        return;
-
-      // Iterate through NPCs in that level
-      level::npc_list_type::iterator iter, end;
-      end = mouse_level->npcs.end();
-      for (iter = mouse_level->npcs.begin(); iter != end; iter ++) {
-        // Retrieve NPC image dimensions
-        Cairo::RefPtr<Cairo::ImageSurface> npc_image =
-          m_image_cache.get_image(iter->image);
-        const int npc_x = static_cast<int>(iter->get_level_x() * m_tile_width);
-        const int npc_y = static_cast<int>(iter->get_level_y() * m_tile_height);
-        const int npc_width = npc_image->get_width();
-        const int npc_height = npc_image->get_height();
-        if (mouse_pixel_level_x >= npc_x && mouse_pixel_level_x < npc_x + npc_width
-            && mouse_pixel_level_y >= npc_y && mouse_pixel_level_y < npc_y + npc_height) {
+      if (!npcs.empty()) {
+        // Iterate through NPCs under the mouse
+        for (iter = npcs.begin(); iter != end; iter ++) {
           // NPC clicked; deselect previous selection
           if (has_selection()) {
             save_selection();
             clear_selection();
           }
-
-          // Select the clicked on NPC and update selection
-          selected_npc.id = iter->id;
-          selected_npc.level_x = mouse_level_x;
-          selected_npc.level_y = mouse_level_y;
+                 
+          selected_npc = *iter;
           set_selection(selected_npc);
 
           m_selecting = true;
-
-          return invalidate();
+          
+          break;
         }
       }
+
     }
 
     // Did we click on a selection?
@@ -473,7 +452,7 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         save_selection();
         clear_selection();
       } else {
-       // flood fill if right clicked
+        // flood fill if right clicked
         if (event->button == 3) {
           // select the exact tile for flood filling
           const int down_tile_x = x / m_tile_width;
@@ -498,13 +477,55 @@ void level_display::on_button_pressed(GdkEventButton* event) {
         m_selecting = true;
       }
     }
-
-
   }
   
   invalidate();
 }
 
+std::list<level_map::npc_ref> level_display::get_npcs_at_pos(int pixel_x, int pixel_y) {
+  std::list<level_map::npc_ref> result_npcs;
+
+  // Determine the level the mouse is in
+  const int level_width = m_level_map->get_level_width();
+  const int level_height = m_level_map->get_level_height();
+
+  // Round mouse -> tile position down for NPC selection
+  const int mouse_level_x = pixel_x / m_tile_width / level_width;
+  const int mouse_level_y = pixel_y / m_tile_height / level_height;
+
+  // The position of the mouse inside the level, in pixel
+  const int mouse_pixel_level_x = pixel_x - mouse_level_x * level_width * m_tile_width;
+  const int mouse_pixel_level_y = pixel_y - mouse_level_y * level_height * m_tile_height;
+
+  level* mouse_level = m_level_map->get_level(mouse_level_x, mouse_level_y).get();
+
+  if (!mouse_level)
+    return result_npcs;
+
+  // Iterate through NPCs in that level
+  level::npc_list_type::iterator iter, end;
+  end = mouse_level->npcs.end();
+  for (iter = mouse_level->npcs.begin(); iter != end; iter ++) {
+    // Retrieve NPC image dimensions
+    Cairo::RefPtr<Cairo::ImageSurface> npc_image =
+      m_image_cache.get_image(iter->image);
+    const int npc_x = static_cast<int>(iter->get_level_x() * m_tile_width);
+    const int npc_y = static_cast<int>(iter->get_level_y() * m_tile_height);
+    const int npc_width = npc_image->get_width();
+    const int npc_height = npc_image->get_height();
+    if (mouse_pixel_level_x >= npc_x && mouse_pixel_level_x < npc_x + npc_width
+        && mouse_pixel_level_y >= npc_y && mouse_pixel_level_y < npc_y + npc_height) {
+      level_map::npc_ref ref;
+      ref.id = iter->id;
+      ref.level_x = mouse_level_x;
+      ref.level_y = mouse_level_y;
+
+      result_npcs.push_back(ref);
+    }
+  }
+  
+  return result_npcs;
+}
 
 void level_display::on_button_released(GdkEventButton* event) {
   if (event->button == 1 || event->button == 3) {

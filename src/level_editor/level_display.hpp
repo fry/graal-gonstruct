@@ -37,6 +37,9 @@ public:
   void delete_selection();
   void lift_selection();
   void grab_selection();
+  
+  // Returns a list of NPC references under the given screen position
+  std::list<level_map::npc_ref> get_npcs_at_pos(int pixel_x, int pixel_y);
 
   // Level loading/etc.
   void new_level(int fill_tile);

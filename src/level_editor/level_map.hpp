@@ -67,6 +67,7 @@ public:
     int id;
 
     npc_ref(): id(0) {}
+    bool operator==(const npc_ref& o) { return level_x == o.level_x && level_y == o.level_y && id == o.id; }
   };
 
   typedef boost::multi_array<boost::shared_ptr<level>, 2> level_list_type;
