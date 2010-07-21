@@ -1,6 +1,12 @@
 * = fixed; + = new; - = removed; dates = DD.MM.YY
 ________________________________________________________________
 
+0.2.2:
+  * 20.07.10 - General fixes when working with tile/NPC selections
+  * 25.03.10 - General fixes when editing layers
+  + 24.03.10 - Layers above layer 0 now have their default tile set to a
+               transparent tile
+  + 16.03.10 - Add support for editing existing GMaps
 0.2.1:
   + 06.03.10 - Add preference to use Graal's FILENAMECACHE.txt for faster
                startup
