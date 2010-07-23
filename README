@@ -11,16 +11,16 @@ To compile Gonstruct from source, the following packages/tools are required:
   * gtkglarea (libgtkgl in Ubuntu)
   * boost
   * ruby
+  * CMake
 
-Now, if you're compiling from the GitHub repository, you have to execute
- $ ./autogen.sh
-otherwise, if you're compiling from a downloaded archive it's
- $ ./configure
+To generate the makefiles required to build gonstruct, execute
+ $ cmake .
+from the repository root. If you need to specify additional options (Debug),
+refer to the CMake manual.
 
 for both
  $ make
- $ sudo make install
- $ gonstruct
+ $ src/level_editor/gonstruct
 
 Compiling on Windows
 --------------------
