@@ -1,0 +1,3 @@
+#pragma once
+#define GONSTRUCT_VERSION "@GONSTRUCT_VERSION@"
+

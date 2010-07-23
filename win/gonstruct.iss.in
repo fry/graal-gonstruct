@@ -1,15 +1,15 @@
 ; Thanks to the Glom guys from whom I stole this!
 [Setup]
 AppName=Gonstruct
-AppVerName=Gonstruct %(version_string)s
+AppVerName=Gonstruct @GONSTRUCT_VERSION@
 DefaultDirName={pf}\Gonstruct
 DefaultGroupName=Gonstruct
 UninstallDisplayIcon={app}\bin\gonstruct.exe
 Uninstallable=yes
 AppPublisher=#gscript on FreeNode
 AppPublisherURL=http://londeroth.org/~fry/gonstruct/
-AppVersion=%(version_string)s
-OutputBaseFilename=gonstruct-setup-%(version_string)s
+AppVersion=@GONSTRUCT_VERSION@
+OutputBaseFilename=gonstruct-setup-@GONSTRUCT_VERSION@
 
 [Components]
 Name: "main"; Description: "Gonstruct"; Types: full compact custom; Flags: fixed

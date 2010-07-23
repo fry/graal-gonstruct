@@ -3,7 +3,7 @@
 #include "toolbar_tools_display.hpp"
 #include "layers_control.hpp"
 
-#include "config.h"
+#include "gonstruct_config.h"
 #include <iostream>
 #include <memory>
 
@@ -112,7 +112,7 @@ level_editor::window::window(preferences& _prefs)
   prefs_display(_prefs)
 {
 
-  set_title(std::string("Gonstruct ") + VERSION);
+  set_title(std::string("Gonstruct ") + GONSTRUCT_VERSION);
 
   Gtk::HPaned* hpane = Gtk::manage(new Gtk::HPaned());
   Gtk::VBox* vbox_tools = Gtk::manage(new Gtk::VBox());
@@ -353,7 +353,7 @@ bool level_editor::window::on_delete_event(GdkEventAny* event) {
 void level_editor::window::on_action_about() {
   Gtk::AboutDialog dialog;
   dialog.set_name("Gonstruct");
-  dialog.set_version(VERSION);
+  dialog.set_version(GONSTRUCT_VERSION);
   dialog.set_comments("An alternative Graal Online level editor");
 
   dialog.set_copyright("Copyright \302\251 2008 "
