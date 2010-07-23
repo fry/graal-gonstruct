@@ -10,11 +10,12 @@
 #include <gtkmm.h>
 #include "GLArea.hpp"
 #include "level.hpp"
+#include "ogl_texture_cache.hpp"
 
 namespace Graal {
 namespace level_editor {
 
-unsigned int load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id = 0);
+texture_info load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id = 0);
 
 class ogl_tiles_display: public GLArea {
 public:
@@ -63,9 +64,8 @@ protected:
 
   sigc::connection m_connection_idle;
 
-  unsigned int m_tileset;
+  texture_info m_tileset;
   int m_tile_width, m_tile_height;
-  int m_tileset_width, m_tileset_height;
 
   tile_buf m_tile_buf;
 

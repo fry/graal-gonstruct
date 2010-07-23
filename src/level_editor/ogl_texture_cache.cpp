@@ -15,22 +15,23 @@ ogl_texture_cache::ogl_texture_cache(image_cache& cache): m_image_cache(cache) {
 void ogl_texture_cache::on_cache_updated() {
   texture_map_type::iterator iter, end = m_textures.end();
 
+  // Delete all textures
   for (iter = m_textures.begin(); iter != end; ++iter) {
-    glDeleteTextures(1, &iter->second);
+    glDeleteTextures(1, &iter->second.index);
   }
 
   m_textures.clear();
 }
 
-unsigned int ogl_texture_cache::get_texture(const std::string& file_name) {
+const texture_info& ogl_texture_cache::get_texture(const std::string& file_name) {
   texture_map_type::iterator iter = m_textures.find(file_name);
-  if (iter != m_textures.end() && iter->second)
+  if (iter != m_textures.end() && iter->second.index)
     return iter->second;
 
   // Texture not loaded yet, load it
   Cairo::RefPtr<Cairo::ImageSurface>& surface = m_image_cache.get_image(file_name);
-  unsigned int id = load_texture_from_surface(surface);
-  m_textures[file_name] = id;
+  texture_info tinfo = load_texture_from_surface(surface);
+  m_textures[file_name] = tinfo;
 
-  return id;
+  return m_textures[file_name];
 }

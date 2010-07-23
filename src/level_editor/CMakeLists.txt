@@ -7,7 +7,6 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/level_editor
   ${PROJECT_SOURCE_DIR}/src/core
   ${PROJECT_SOURCE_DIR}/src/glew
-  ${PROJECT_SOURCE_DIR}/src/soil
   ${PROJECT_SOURCE_DIR}/src)
 
 execute_process(
@@ -52,4 +51,4 @@ add_executable(gonstruct
 	gtkmarshalers.c
   )
 
-target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core SOIL boost_thread boost_system boost_filesystem)
+target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core boost_system boost_filesystem)

@@ -1,7 +1,6 @@
 #include "ogl_tiles_display.hpp"
 #include "helper.hpp"
 #include <iostream>
-#include <SOIL.h>
 #include <boost/format.hpp>
 
 // Needs this for _gtk_VOID__OBJECT_OBJECT
@@ -15,12 +14,18 @@ using namespace Graal::level_editor;
   unsigned int g_frames = 0;
 #endif
 
-unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
-  glEnable(GL_TEXTURE_2D);
-
-  if (!GLEW_ARB_texture_non_power_of_two) {
-    std::cout << "No ARB_texture_non_power_of_two support" << std::endl;
+unsigned int get_nearest_pot(unsigned int size) {
+  //return std::ceil(std::log(size) / std::log(2));
+  unsigned int val = 1;
+  while (val < size) {
+    val <<= 1;
   }
+  
+  return val;
+}
+
+texture_info Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
+  glEnable(GL_TEXTURE_2D);
 
   if (!id) {
     glGenTextures(1, &id);
@@ -29,30 +34,51 @@ unsigned int Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
       throw std::runtime_error("Failed to allocate OpenGL texture");
   }
 
-  id = SOIL_create_OGL_texture(
-    surface->get_data(),
-    surface->get_width(), surface->get_height(),
-    SOIL_LOAD_RGBA, id,
-    SOIL_FLAG_TEXTURE_REPEATS | SOIL_FLAG_POWER_OF_TWO | SOIL_FLAG_BGRA);
-  /*glBindTexture(GL_TEXTURE_2D, id);
+  glBindTexture(GL_TEXTURE_2D, id);
 
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);*/
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
-  /*glTexImage2D(GL_TEXTURE_2D,
+  texture_info info;
+  info.index = id;
+
+  unsigned int width, height;
+  info.image_width = width = surface->get_width();
+  info.image_height = height = surface->get_height();
+
+  // If there's not NPOT texture support, scale texture size up
+  if (!GLEW_ARB_texture_non_power_of_two) {
+    std::cout << "Warning: No ARB_texture_non_power_of_two support" << std::endl;
+    
+    width = get_nearest_pot(width);
+    height = get_nearest_pot(height);
+  }
+
+  info.width = double(surface->get_width()) / width;
+  info.height = double(surface->get_height()) / height;
+
+  // Specify image dimensions
+  glTexImage2D(GL_TEXTURE_2D,
     0, GL_RGBA,
-    surface->get_width(), surface->get_height(),
+    width, height,
     0, GL_BGRA, GL_UNSIGNED_BYTE,
-    surface->get_data());*/
+    0);
+
+  // Transfer texture data
+  glTexSubImage2D(GL_TEXTURE_2D,
+    0, 0, 0,
+    info.image_width, info.image_height,
+    GL_BGRA, GL_UNSIGNED_BYTE,
+    surface->get_data());
   
   GLenum err = glGetError();
   if (err)
     throw std::runtime_error((boost::format("Loading texture failed: %1%") % err).str());
 
-  return id;
+  return info;
 }
 
 namespace {
@@ -82,13 +108,12 @@ void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjus
 
 
 ogl_tiles_display::ogl_tiles_display():
-  m_tileset(0),
   m_tile_width(16), // TODO: take a parameter for this?
   m_tile_height(16),
   m_hadjustment(0),
   m_vadjustment(0)
 {
-
+  m_tileset.index = 0;
   /* Set up for custom scrolling handling. GTK does this in a pretty terrible
    * way by providing a signal slot to fill that gets emitted when the parent
    * sets GtkAdjustments.
@@ -202,7 +227,7 @@ void ogl_tiles_display::on_gl_realize() {
 
 void ogl_tiles_display::draw_all() {
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, m_tileset);
+  glBindTexture(GL_TEXTURE_2D, m_tileset.index);
   tile_buf& buf = get_tile_buf();
   const int width = buf.get_width();
   const int height = buf.get_height();
@@ -224,10 +249,10 @@ void ogl_tiles_display::draw_tile(const tile& _tile, int x, int y) {
   // Build texture coordinates
   int dx = x * m_tile_width;
   int dy = y * m_tile_height;
-  float x1 = (float)(tx * m_tile_width)/m_tileset_width;
-  float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
-  float y1 = (float)(ty*m_tile_height)/m_tileset_height;
-  float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
+  float x1 = (float)(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
+  float x2 = (float)((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
+  float y1 = (float)(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
+  float y2 = (float)((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
 
   //glBegin(GL_QUADS);
     // Top left
@@ -248,10 +273,7 @@ void ogl_tiles_display::draw_tile(const tile& _tile, int x, int y) {
 void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface) {
   glEnable(GL_TEXTURE_2D);
 
-  m_tileset = load_texture_from_surface(surface, m_tileset);
-
-  m_tileset_width = surface->get_width();
-  m_tileset_height = surface->get_height();
+  m_tileset = load_texture_from_surface(surface, m_tileset.index);
   
   invalidate();
 }
@@ -266,7 +288,7 @@ bool ogl_tiles_display::on_gl_expose_event(GdkEventExpose* event) {
     m_new_tileset.clear();
   }
 
-  if (!m_tileset) {
+  if (!m_tileset.index) {
     return false;
   }
 

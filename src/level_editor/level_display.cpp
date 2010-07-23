@@ -908,7 +908,7 @@ void level_display::draw_tiles(level* current_level) {
   std::vector<vertex_texcoord> tcoords; tcoords.resize(size);
 
   glEnable(GL_TEXTURE_2D);
-  glBindTexture(GL_TEXTURE_2D, m_tileset);
+  glBindTexture(GL_TEXTURE_2D, m_tileset.index);
 
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -970,10 +970,10 @@ void level_display::draw_tiles(level* current_level) {
           const int ty = helper::get_tile_y(_tile.index);
 
           // Build texture coordinates
-          float x1 = (float)(tx * m_tile_width)/m_tileset_width;
-          float x2 = (float)((tx+1)*m_tile_width)/m_tileset_width;
-          float y1 = (float)(ty*m_tile_height)/m_tileset_height;
-          float y2 = (float)((ty+1)*m_tile_height)/m_tileset_height;
+          float x1 = (float)(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
+          float x2 = (float)((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
+          float y1 = (float)(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
+          float y2 = (float)((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
           
           // Fill texcoord array at the current vertex position
           int index = (x * height + y) * 4;
@@ -1024,7 +1024,7 @@ void level_display::draw_selection() {
     glTranslatef(m_select_x, m_select_y, 0);
     glColor4f(1, 1, 1, 1);
     glEnable(GL_TEXTURE_2D);
-    glBindTexture(GL_TEXTURE_2D, m_tileset);
+    glBindTexture(GL_TEXTURE_2D, m_tileset.index);
     // Draw selection from its tile_buf
     const int width = selection.get_width();
     const int height = selection.get_height();
@@ -1077,15 +1077,16 @@ void level_display::draw_misc(level* current_level) {
       const int width = npc_img->get_width();
       const int height = npc_img->get_height();
       
-      glBindTexture(GL_TEXTURE_2D, m_texture_cache.get_texture(npc_image_file));
+      const texture_info& tex = m_texture_cache.get_texture(npc_image_file);
+      glBindTexture(GL_TEXTURE_2D, tex.index);
       glBegin(GL_QUADS);
         glTexCoord2f(0, 0);
         glVertex2f(x, y);
-        glTexCoord2f(1, 0);
+        glTexCoord2f(tex.width, 0);
         glVertex2f(x+width, y);
-        glTexCoord2f(1, 1);
+        glTexCoord2f(tex.width, tex.height);
         glVertex2f(x+width, y+height);
-        glTexCoord2f(0, 1);
+        glTexCoord2f(0, tex.height);
         glVertex2f(x, y+height);
       glEnd();
       glBindTexture(GL_TEXTURE_2D, 0);
