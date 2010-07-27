@@ -8,7 +8,7 @@ Compiling
 To compile Gonstruct from source, the following packages/tools are required:
   * gtkmm
   * gtksourceview
-  * gtkglarea (libgtkgl in Ubuntu)
+  * gtkglarea 2.0.1 (libgtkgl in Ubuntu, gtkglarea2 in MacPorts)
   * boost
   * ruby
   * CMake
