@@ -18,6 +18,12 @@ if(NOT RUBY)
   return()
 endif(NOT RUBY)
 
+if(APPLE)
+  find_package(Boost REQUIRED)
+  link_directories ( ${Boost_LIBRARY_DIRS} )
+  include_directories ( ${Boost_INCLUDE_DIRS} )
+endif(APPLE)
+
 if(WIN32)
   find_program(WINDRES windres)
   
