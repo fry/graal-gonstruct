@@ -13,7 +13,7 @@ execute_process(
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src/level_editor
   COMMAND ${RUBY} make_images.rb "${PROJECT_SOURCE_DIR}/icons/png/*.png" image_data.cpp)
 
-add_executable(gonstruct
+add_executable(gonstruct WIN32
 	GLArea.cpp
 	basic_tiles_display.cpp
 	copy_cache.cpp
@@ -52,3 +52,8 @@ add_executable(gonstruct
   )
 
 target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core boost_system boost_filesystem)
+
+if(WINDRES)
+  target_link_libraries(gonstruct ${PROJECT_SOURCE_DIR}/win/gonstruct.res)
+endif(WINDRES)
+

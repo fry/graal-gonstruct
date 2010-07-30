@@ -8,15 +8,10 @@ configure_file(
   "${PROJECT_BINARY_DIR}/gonstruct_config.h"
   )
 
-find_package(PkgConfig)
+find_package(PkgConfig REQUIRED)
 pkg_check_modules(GTKMM gtkmm-2.4 gtksourceview-2.0 gtkgl-2.0)
 
-find_program(RUBY ruby)
-
-if(NOT RUBY)
-  message("Error: Could not find Ruby")
-  return()
-endif(NOT RUBY)
+find_program(RUBY ruby REQUIRED)
 
 if(APPLE)
   find_package(Boost REQUIRED)
@@ -28,7 +23,7 @@ if(WIN32)
   find_program(WINDRES windres)
   
   if(NOT WINDRES)
-    message("Could not find windres for building gonstruct.rc")
+    message("Could not find windres to build gonstruct.rc")
   endif(NOT WINDRES)
 
   # Build InnoSetup file for windows
@@ -36,8 +31,13 @@ if(WIN32)
     "${PROJECT_SOURCE_DIR}/win/gonstruct.iss.in"
     "${PROJECT_BINARY_DIR}/win/gonstruct.iss"
     )
-  
+
   add_subdirectory(win)
+
+  # Hide console on windows in Release mode
+  if(NOT CMAKE_BUILD_TYPE EQUAL Debug)
+  	set(CMAKE_CREATE_WIN32_EXE "-mwindows")
+  endif(NOT CMAKE_BUILD_TYPE EQUAL Debug)
 endif(WIN32)
 
 include_directories("${PROJECT_BINARY_DIR}")
