@@ -9,9 +9,10 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/glew
   ${PROJECT_SOURCE_DIR}/src)
 
-execute_process(
+ADD_CUSTOM_COMMAND(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/image_data.cpp
   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/src/level_editor
-  COMMAND ${RUBY} make_images.rb "${PROJECT_SOURCE_DIR}/icons/png/*.png" image_data.cpp)
+  COMMAND ${RUBY} make_images.rb "${PROJECT_SOURCE_DIR}/icons/png/" "${CMAKE_CURRENT_BINARY_DIR}/image_data.cpp")
 
 add_executable(gonstruct WIN32
 	GLArea.cpp
@@ -21,7 +22,7 @@ add_executable(gonstruct WIN32
 	filesystem.cpp
 	helper.cpp
 	image_cache.cpp
-	image_data.cpp
+	${CMAKE_CURRENT_BINARY_DIR}/image_data.cpp
 	layers_control.cpp
 	level.cpp
 	level_display.cpp
@@ -54,6 +55,7 @@ add_executable(gonstruct WIN32
 target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core boost_system boost_filesystem)
 
 if(WINDRES)
+  add_dependencies(gonstruct generate_resource)
   target_link_libraries(gonstruct ${PROJECT_SOURCE_DIR}/win/gonstruct.res)
 endif(WINDRES)
 
