@@ -308,8 +308,8 @@ npc* level_map::move_npc(level_map::npc_ref& ref, float new_x, float new_y) {
   const int level_width = get_level_width();
   const int level_height = get_level_height();
 
-  const int new_level_x = static_cast<int>(new_x) / level_width;
-  const int new_level_y = static_cast<int>(new_y) / level_height;
+  const int new_level_x = helper::bound_by(static_cast<int>(new_x) / level_width, 0, get_width() - 1);
+  const int new_level_y = helper::bound_by(static_cast<int>(new_y) / level_height, 0, get_height() - 1);
 
   // Determine the position of the NPC inside the level
   const float new_tiles_x = new_x - new_level_x * get_level_width();
@@ -389,7 +389,6 @@ level_map* level_map::load_from_gmap(filesystem& _filesystem, const boost::files
   boost::shared_ptr<gmap_level_map_source> source(new gmap_level_map_source(_filesystem, _file_name));
   level_map* map(new level_map());
 
-  std::cout << "load_from_gmap(): " << source->get_width() << "," << source->get_height() << std::endl;
   map->set_level_source(source);
   map->set_size(source->get_width(), source->get_height());
 
