@@ -722,7 +722,7 @@ void level_display::undo() {
     return;
 
   redo_buffer.push(undo_buffer.apply(*m_level_map));
-  //set_unsaved(true); // TODO!!
+  m_level_map->signal_level_changed()(m_current_level_x, m_current_level_y);
   invalidate();
 }
 
@@ -731,7 +731,7 @@ void level_display::redo() {
     return;
 
   undo_buffer.push(redo_buffer.apply(*m_level_map));
-  //set_unsaved(true); // TODO!!
+  m_level_map->signal_level_changed()(m_current_level_x, m_current_level_y);
   invalidate();
 }
 
@@ -739,7 +739,7 @@ void level_display::add_undo_diff(basic_diff* diff) {
   undo_buffer.push(diff);
   redo_buffer.clear();
 
-  //set_unsaved(true); // TODO!!
+  m_level_map->signal_level_changed()(m_current_level_x, m_current_level_y);
 }
 
 level_display::signal_default_tile_changed_type&
