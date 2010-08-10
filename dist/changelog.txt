@@ -1,6 +1,10 @@
 * = fixed; + = new; - = removed; dates = DD.MM.YY
 ________________________________________________________________
 
+0.2.3:
+  * 10.08.10 - Fix crash bugs related to creating new NPCs
+  * 10.08.10 - Fix bug with tiles on layers with transparent tiles
+               being saved incorrectly
 0.2.2:
   * 20.07.10 - General fixes when working with tile/NPC selections
   * 25.03.10 - General fixes when editing layers
