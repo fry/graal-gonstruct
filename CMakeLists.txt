@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8)
 project (gonstruct)
 
-set(GONSTRUCT_VERSION 0.2.2)
+set(GONSTRUCT_VERSION 0.2.3)
 
 configure_file(
   "${PROJECT_SOURCE_DIR}/gonstruct_config.h.in"
