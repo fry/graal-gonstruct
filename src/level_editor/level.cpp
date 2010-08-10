@@ -243,7 +243,7 @@ void Graal::save_nw_level(const Graal::level* level, const boost::filesystem::pa
         data += helper::format_base64(tile.index);      
       }
       if (!data.empty())
-        chunks.push_back(std::pair<int, std::string>(0, data));
+        chunks.push_back(std::pair<int, std::string>(current_start, data));
 
       /* Draw one BOARD entry for each chunk so transparent tile-data is culled */
       std::list<std::pair<int, std::string> >::iterator iter, end = chunks.end();
