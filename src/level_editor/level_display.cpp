@@ -490,8 +490,8 @@ std::list<level_map::npc_ref> level_display::get_npcs_at_pos(int pixel_x, int pi
   const int level_height = m_level_map->get_level_height();
 
   // Round mouse -> tile position down for NPC selection
-  const int mouse_level_x = pixel_x / m_tile_width / level_width;
-  const int mouse_level_y = pixel_y / m_tile_height / level_height;
+  const int mouse_level_x = helper::bound_by(pixel_x / m_tile_width / level_width, 0, m_level_map->get_width() - 1);
+  const int mouse_level_y = helper::bound_by(pixel_y / m_tile_height / level_height, 0, m_level_map->get_height() - 1);
 
   // The position of the mouse inside the level, in pixel
   const int mouse_pixel_level_x = pixel_x - mouse_level_x * level_width * m_tile_width;
