@@ -34,7 +34,7 @@ namespace {
     security_dialog.add_button(Gtk::Stock::SAVE, Gtk::RESPONSE_YES);
 
     switch (security_dialog.run()) {
-      case Gtk::RESPONSE_CANCEL: 
+      case Gtk::RESPONSE_CANCEL:
       case Gtk::RESPONSE_DELETE_EVENT:
         return false;
       case Gtk::RESPONSE_NO:
@@ -102,35 +102,36 @@ level_editor::window::tab_label::signal_proxy_close level_editor::window::tab_la
 
 // window
 level_editor::window::window(preferences& _prefs)
-: fs(_prefs), m_image_cache(fs), display_tileset(_prefs, m_image_cache),
-  m_preferences(_prefs),
-  m_tile_objects(_prefs), opening_levels(false),
-  m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE),
+: fs(_prefs),
+  prefs_display(_prefs),
+  opening_levels(false),
   m_file_commands(*this, m_header, _prefs),
   m_edit_commands(*this, m_header),
   m_level_commands(*this, m_header, _prefs),
-  prefs_display(_prefs)
+  m_image_cache(fs), display_tileset(_prefs, m_image_cache),
+  m_preferences(_prefs),
+  m_tile_objects(_prefs),
+  m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE)
 {
-
   set_title(std::string("Gonstruct ") + GONSTRUCT_VERSION);
 
   Gtk::HPaned* hpane = Gtk::manage(new Gtk::HPaned());
   Gtk::VBox* vbox_tools = Gtk::manage(new Gtk::VBox());
   Gtk::VBox* vbox_main = Gtk::manage(new Gtk::VBox());
   vbox_main->pack_start(m_header, Gtk::PACK_SHRINK);
-  
+
   add_accel_group(m_header.get_accel_group());
 
   // toolbar + edit area + layers control
-  
+
   // TODO: need to create layers_control here because it uses this in the constructor
   m_layers_control = Gtk::manage(new layers_control(*this, m_preferences));
-  
+
   // hpane with level + side panel
   m_nb_levels.signal_switch_page().connect_notify(
       sigc::mem_fun(this, &window::on_switch_page), true); // after is important
   m_nb_levels.set_scrollable(true);
-  
+
   hpane->pack1(m_nb_levels);
   vbox_tools->pack_start(*m_layers_control, Gtk::PACK_SHRINK);
   vbox_tools->pack_start(m_nb_toolset);
@@ -184,7 +185,7 @@ level_editor::window::window(preferences& _prefs)
   m_tile_objects.signal_create_tile_object().connect(
       sigc::mem_fun(this, &window::get_current_tile_selection));
 
-  // Connect header actions 
+  // Connect header actions
   m_header.action_help_about->signal_activate().connect(
     sigc::mem_fun(*this, &window::on_action_about));
 
@@ -285,7 +286,7 @@ void level_editor::window::update_cache() {
     else
       return;
   }
-  
+
   fs.update_cache();
 }
 
@@ -294,7 +295,7 @@ void level_editor::window::on_preferences_changed(
   if (c & preferences_display::GRAAL_DIR_CHANGED ||
       c & preferences_display::USE_GRAAL_CACHE_CHANGED) {
     m_image_cache.clear_cache();
-    
+
     update_cache();
 
     level_display* display(get_current_level_display());
@@ -403,7 +404,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
   std::string ext = file_path.extension();
   try {
     std::auto_ptr<level_display> display(create_level_display());
-    
+
     // Load nw level or gmap depending on extension
     if (ext == ".nw") {
       display->load_level(file_path);
@@ -422,7 +423,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
 void level_editor::window::create_new_page(level_display& display, bool activate) {
   Gtk::ScrolledWindow* scrolled = Gtk::manage(new Gtk::ScrolledWindow());
   scrolled->add(display);
-  
+
   // Initialize tab label with the name of the current level
   tab_label* label = Gtk::manage(new tab_label(display.get_current_level_path().leaf()));
   // Connect tab label's close level signal
@@ -487,7 +488,7 @@ level_editor::level_display* level_editor::window::get_current_level_display() {
 
 // Update the tileset of all level displays that start with prefix
 void level_editor::window::update_matching_level_displays(const std::string& prefix) {
-  level_display* display = get_current_level_display(); 
+  level_display* display = get_current_level_display();
   if (display->get_current_level_path().leaf().find(prefix) == 0) {
     display_tileset.update_tileset(display->get_current_level_path().leaf());
   }
@@ -549,7 +550,7 @@ bool level_editor::window::save_current_page_as() {
   else
     m_fc_save.set_filename(path.string());
 
-  
+
   if (m_fc_save.run() == Gtk::RESPONSE_OK) {
     std::string path = m_fc_save.get_filename();
     level_display* disp = get_current_level_display();

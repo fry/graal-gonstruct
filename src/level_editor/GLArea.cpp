@@ -39,7 +39,7 @@ void GLArea::glarea_on_realize() {
 
 bool GLArea::glarea_on_expose_event(GdkEventExpose* event) {
   return on_gl_expose_event(event);
-};
+}
 
 bool GLArea::glarea_on_configure_event(GdkEventConfigure* event) {
   return on_gl_configure_event(event);

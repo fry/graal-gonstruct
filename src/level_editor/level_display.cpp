@@ -27,11 +27,12 @@ level_display::level_display(
   level_editor::preferences& _prefs,
   image_cache& cache,
   int default_tile_index)
-    : m_preferences(_prefs),
+    : m_current_level_x(0), m_current_level_y(0),
+      m_preferences(_prefs),
       m_default_tile_index(default_tile_index),
       m_image_cache(cache),
-      m_texture_cache(cache), m_use_vbo(false),
-      m_current_level_x(0), m_current_level_y(0) {
+      m_texture_cache(cache),
+      m_use_vbo(false) {
   add_events(Gdk::BUTTON_PRESS_MASK
              | Gdk::BUTTON_RELEASE_MASK
              | Gdk::BUTTON_MOTION_MASK

@@ -4,7 +4,7 @@
 using namespace Graal;
 
 level_editor::layers_control::layers_control(window& win, preferences& prefs)
-: Gtk::HBox(false, 4), m_window(win), m_preferences(prefs),
+: Gtk::HBox(false, 4), m_preferences(prefs), m_window(win),
   m_button_new_layer("+"), m_button_delete_layer("-") {
   // Layer selection
   m_spin_layer.signal_changed().connect_notify(

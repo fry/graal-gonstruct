@@ -50,7 +50,6 @@ namespace Graal {
 
       virtual ~window();
 
-      tileset_display display_tileset;
       default_tile_display default_tile;
       tileset_map_type tilesets;
       filesystem fs;
@@ -91,6 +90,7 @@ namespace Graal {
       level_commands m_level_commands;
 
       image_cache m_image_cache;
+      tileset_display display_tileset;
       preferences& m_preferences;
 
       toolbar_tools_display* m_tools;
@@ -117,7 +117,7 @@ namespace Graal {
 
       Gtk::Notebook m_nb_levels;
       Gtk::Notebook m_nb_toolset;
-      
+
       Gtk::FileChooserDialog m_fc_save;
     private:
       signal_switch_level_display_type m_signal_switch_level_display;

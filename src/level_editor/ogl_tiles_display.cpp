@@ -108,10 +108,10 @@ void ogl_tiles_display::set_adjustments(Gtk::Adjustment* hadjustment, Gtk::Adjus
 
 
 ogl_tiles_display::ogl_tiles_display():
-  m_tile_width(16), // TODO: take a parameter for this?
-  m_tile_height(16),
   m_hadjustment(0),
-  m_vadjustment(0)
+  m_vadjustment(0),
+  m_tile_width(16), // TODO: take a parameter for this?
+  m_tile_height(16)
 {
   m_tileset.index = 0;
   /* Set up for custom scrolling handling. GTK does this in a pretty terrible

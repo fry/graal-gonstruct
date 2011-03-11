@@ -4,7 +4,7 @@
 using namespace Graal;
 
 level_editor::tile_diff::tile_diff(int x, int y, tile_buf& tiles, int layer)
-    : m_x(x), m_y(y), m_layer(layer) {
+    : m_layer(layer), m_x(x), m_y(y) {
   // if (tiles.get_width() == 0 || tiles.get_height() == 0)
   //   throw std::logic_error("trying to construct zero-size tile_diff");
   m_tiles.swap(tiles);

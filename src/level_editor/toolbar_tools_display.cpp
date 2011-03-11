@@ -4,9 +4,10 @@
 using namespace Graal;
 
 level_editor::toolbar_tools_display::toolbar_tools_display(window& win, preferences& prefs)
-: m_window(win), m_preferences(prefs),
+: m_preferences(prefs), m_window(win),
   m_hide_npcs("Hide NPCs"), m_hide_signs("Hide signs"), m_hide_links("Hide links"),
-  m_button_new_npc("New NPC"), m_fade_layers("Fade inactive layers") {
+  m_fade_layers("Fade inactive layers"),
+  m_button_new_npc("New NPC") {
 
   m_button_new_npc.signal_clicked().connect(
     sigc::mem_fun(this, &toolbar_tools_display::on_new_npc_clicked));
