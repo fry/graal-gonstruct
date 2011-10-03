@@ -1140,7 +1140,7 @@ void level_display::draw_all() {
   m_current_level_y = new_current_level_y;
 
   // Send level name changed and unsaved changed signals
-  m_signal_title_changed(get_current_level_path().leaf());
+  m_signal_title_changed(get_current_level_path().filename().string());
   m_signal_unsaved_status_changed(m_unsaved_levels[std::pair<int, int>(m_current_level_x, m_current_level_y)]);
 
   // Draw surrounding levels
