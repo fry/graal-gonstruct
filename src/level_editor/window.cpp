@@ -23,7 +23,7 @@ namespace {
     if (path.empty())
       basename = "new";
     else
-      basename = path.leaf();
+      basename = path.filename().string();
     Gtk::MessageDialog security_dialog(
       parent, "The file '" + basename + "' is not saved.", false,
       Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_NONE, true);
@@ -272,7 +272,7 @@ void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num)
 
   if (display) {
     if (!opening_levels) {
-      display_tileset.update_tileset(display->get_current_level_path().leaf());
+      display_tileset.update_tileset(display->get_current_level_path().filename().string());
     }
 
     m_signal_switch_level_display(*display);
@@ -300,7 +300,7 @@ void level_editor::window::on_preferences_changed(
 
     level_display* display(get_current_level_display());
     if (display) {
-      display_tileset.update_tileset(display->get_current_level_path().leaf());
+      display_tileset.update_tileset(display->get_current_level_path().filename().string());
       m_tile_objects.get();
     }
   }
@@ -401,7 +401,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
     }
   }
 
-  std::string ext = file_path.extension();
+  boost::filesystem::path ext = file_path.extension();
   try {
     std::auto_ptr<level_display> display(create_level_display());
 
@@ -411,7 +411,7 @@ void level_editor::window::load_level(const boost::filesystem::path& file_path, 
     } else if (ext == ".gmap") {
       display->load_gmap(fs, file_path);
     } else {
-      throw std::runtime_error("Unknown level extension, can't load " + file_path.leaf());
+      throw std::runtime_error("Unknown level extension, can't load " + file_path.filename().string());
     }
     create_new_page(*Gtk::manage(display.release()), activate);
     set_level_buttons(true);
@@ -425,7 +425,7 @@ void level_editor::window::create_new_page(level_display& display, bool activate
   scrolled->add(display);
 
   // Initialize tab label with the name of the current level
-  tab_label* label = Gtk::manage(new tab_label(display.get_current_level_path().leaf()));
+  tab_label* label = Gtk::manage(new tab_label(display.get_current_level_path().filename().string()));
   // Connect tab label's close level signal
   label->close_event().connect(sigc::bind(
     sigc::mem_fun(this, &level_editor::window::on_close_level_clicked),
@@ -489,8 +489,9 @@ level_editor::level_display* level_editor::window::get_current_level_display() {
 // Update the tileset of all level displays that start with prefix
 void level_editor::window::update_matching_level_displays(const std::string& prefix) {
   level_display* display = get_current_level_display();
-  if (display->get_current_level_path().leaf().find(prefix) == 0) {
-    display_tileset.update_tileset(display->get_current_level_path().leaf());
+  std::string level_name = display->get_current_level_path().filename().string();
+  if (level_name.find(prefix) == 0) {
+    display_tileset.update_tileset(level_name);
   }
 }
 

@@ -155,7 +155,7 @@ void preferences::load_tile_objects() {
   for (; it != end; ++it) {
     boost::filesystem::path path = it->path();
 
-    std::string file_name = path.leaf();
+    std::string file_name = path.filename().string();
     if (it->status().type() != boost::filesystem::regular_file || file_name.find("objects") != 0)
       continue;
 

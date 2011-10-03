@@ -32,7 +32,7 @@ void filesystem::update_cache() {
     if (status.type() == boost::filesystem::symlink_file) {
       iter.no_push();
     } else {
-      m_cache[path.leaf()] = path;
+      m_cache[path.filename().string()] = path;
     }
   }
 }
@@ -90,7 +90,7 @@ bool filesystem::update_cache_from_graal() {
     std::vector<std::string> tokens = csv_to_array(line);
     if (!tokens.empty()) {
       boost::filesystem::path file(tokens[0]);
-      m_cache[file.leaf()] = graal_dir / file;
+      m_cache[file.filename().string()] = graal_dir / file;
     } 
   }
 

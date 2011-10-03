@@ -59,7 +59,7 @@ void file_commands::on_action_open() {
     std::list<Glib::ustring>::const_iterator iter, end = files.end();
     for (iter = files.begin();
          iter != end;) {
-      boost::filesystem::path path(*iter);
+      boost::filesystem::path path(iter->raw());
       ++iter;
 
       // TODO: dirty hack for now
