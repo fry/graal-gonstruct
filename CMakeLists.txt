@@ -13,11 +13,9 @@ pkg_check_modules(GTKMM gtkmm-2.4 gtksourceview-2.0 gtkgl-2.0)
 
 find_program(RUBY ruby REQUIRED)
 
-if(APPLE)
-  find_package(Boost REQUIRED)
-  link_directories ( ${Boost_LIBRARY_DIRS} )
-  include_directories ( ${Boost_INCLUDE_DIRS} )
-endif(APPLE)
+find_package(Boost COMPONENTS system filesystem REQUIRED)
+link_directories(${Boost_LIBRARY_DIRS})
+include_directories(${Boost_INCLUDE_DIRS})
 
 if(WIN32)
   find_program(WINDRES windres)

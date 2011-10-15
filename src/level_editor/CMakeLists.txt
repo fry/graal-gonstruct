@@ -52,7 +52,7 @@ add_executable(gonstruct WIN32
 	gtkmarshalers.c
   )
 
-target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core boost_system boost_filesystem)
+target_link_libraries(gonstruct ${GTKMM_LIBRARIES} core ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 
 if(WINDRES)
   add_dependencies(gonstruct generate_resource)
