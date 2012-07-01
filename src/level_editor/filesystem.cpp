@@ -18,13 +18,11 @@ bool filesystem::valid_dir() {
          boost::filesystem::is_directory(graal_dir);
 }
 
-void filesystem::update_cache() {
-  if (!valid_dir())
-    return;
-  std::set<boost::filesystem::path> visited;
+void filesystem::update_cache() try {
+  m_cache.clear();
 
   boost::filesystem::recursive_directory_iterator iter(m_preferences.graal_dir), end;
-  m_cache.clear();
+  std::set<boost::filesystem::path> visited;
   for (;iter != end; iter++) {
     const boost::filesystem::path& path = iter->path();
     const boost::filesystem::file_status& status = iter->status();
@@ -35,6 +33,8 @@ void filesystem::update_cache() {
       m_cache[path.filename().string()] = path;
     }
   }
+} catch (boost::filesystem::filesystem_error& e) {
+  // TODO: log e
 }
 
 bool filesystem::get_path(const std::string& file_name,

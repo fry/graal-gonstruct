@@ -22,6 +22,50 @@ namespace {
     std::getline(stream, line);
     return line;
   }
+
+  void try_load_objects(const boost::filesystem::path& path,
+                        preferences::tile_object_group_type group) {
+    //std::cout << "Group name: " << group_name << std::endl;
+
+    std::ifstream stream(path.string().c_str());
+
+    std::string version = ::read_line(stream);
+    //std::cout << "Version: " << version << std::endl;
+    if (version.find(Graal::TILEOBJECTS_VERSION) != 0) {
+      throw std::runtime_error("Couldn't load tile objects, version mismatch (" +
+          Graal::TILEOBJECTS_VERSION + " != " + version + ")");
+    }
+
+    while (!stream.eof()) {
+      std::string type = read<std::string>(stream);
+
+      if (type == "OBJECT") {
+        int width, height; std::string name;
+        width = read<int>(stream); height = read<int>(stream);
+        name = Graal::helper::strip(read_line(stream));
+
+        //std::cout << "OBJECT: " << name << ", " << width << "/" << height <<std::endl;
+        Graal::tile_buf& tiles = group[name];
+        tiles.resize(width, height);
+        //bool end = false;
+        for (int y = 0; y < height; ++y) {
+          std::string line = read_line(stream);
+          if (line == "OBJECTEND") {
+            // skip transparency check if the object ends
+            //end = true;
+            break;
+          } else {
+            for (int x = 0; x < width; x++) {
+              int tile_index = Graal::helper::parse_base64(line.substr(x * 2, 2));
+              tiles.get_tile(x, y).index = tile_index;
+            }
+          }
+        }
+      } else {
+        read_line(stream);
+      }
+    }
+  }
 }
 
 preferences::preferences():
@@ -99,7 +143,7 @@ void preferences::deserialize() {
   if (iter != m_values.end()) {
     fade_layers = (iter->second == "true");
   }
-  
+ 
   iter = m_values.find("use_graal_cache");
   if (iter != m_values.end()) {
     use_graal_cache = (iter->second == "true");
@@ -144,66 +188,35 @@ void preferences::deserialize() {
   load_tile_objects();
 }
 
-void preferences::load_tile_objects() {
+void preferences::load_tile_objects() try {
   boost::filesystem::path tile_objects_path(
       boost::filesystem::path(graal_dir) / "tileobjects");
-  if (graal_dir.empty() || !boost::filesystem::is_directory(tile_objects_path))
-    return;
+  if (graal_dir.empty())
+    return; // nothing to do!
 
   tile_object_groups.clear();
   boost::filesystem::directory_iterator it(tile_objects_path), end;
+  const std::size_t prefix_len = sizeof("objects") - 1;
   for (; it != end; ++it) {
     boost::filesystem::path path = it->path();
-
     std::string file_name = path.filename().string();
     if (it->status().type() != boost::filesystem::regular_file || file_name.find("objects") != 0)
       continue;
-
-    std::size_t prefix_len = std::string("objects").length();
     std::string group_name = file_name.substr(prefix_len, file_name.find_last_of(".") - prefix_len);
-    //std::cout << "Group name: " << group_name << std::endl;
-
-    std::ifstream stream(path.string().c_str());
-
-    std::string version = ::read_line(stream);
-    //std::cout << "Version: " << version << std::endl;
-    if (version.find(TILEOBJECTS_VERSION) != 0) {
-      throw std::runtime_error("Couldn't load tile objects, version mismatch (" +
-          TILEOBJECTS_VERSION + " != " + version + ")"); 
-    }
-
-
     tile_object_group_type& group = tile_object_groups[group_name];
-    while (!stream.eof()) {
-      std::string type = read<std::string>(stream);
 
-      if (type == "OBJECT") {
-        int width, height; std::string name;
-        width = read<int>(stream); height = read<int>(stream);
-        name = helper::strip(read_line(stream));
-
-        //std::cout << "OBJECT: " << name << ", " << width << "/" << height <<std::endl;
-        tile_buf& tiles = group[name];
-        tiles.resize(width, height);
-        //bool end = false;
-        for (int y = 0; y < height; ++y) {
-          std::string line = read_line(stream);
-          if (line == "OBJECTEND") {
-            // skip transparency check if the object ends
-            //end = true;
-            break;
-          } else {
-            for (int x = 0; x < width; x++) {
-              int tile_index = helper::parse_base64(line.substr(x * 2, 2));
-              tiles.get_tile(x, y).index = tile_index;
-            }
-          }
-        }
-      } else {
-        read_line(stream);
-      }
+    // catch errors in the loop so a single inaccessible
+    // file won't ruin everything
+    try {
+      try_load_objects(path, group);
+    } catch (const boost::filesystem::filesystem_error& e) {
+      // TODO: log e or something
+    } catch (const std::runtime_error& e) {
+      // TODO: log e or something
     }
   }
+} catch (boost::filesystem::filesystem_error& e) {
+  // TODO: log e or something
 }
 
 void preferences::save_tile_objects(const std::string& group) {
