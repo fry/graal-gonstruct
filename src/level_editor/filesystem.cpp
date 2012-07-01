@@ -19,22 +19,30 @@ bool filesystem::valid_dir() {
 }
 
 void filesystem::update_cache() try {
+  // clear first. if the iterator blows up right away, at least we're not
+  // left with a stale cache.
   m_cache.clear();
 
   boost::filesystem::recursive_directory_iterator iter(m_preferences.graal_dir), end;
-  std::set<boost::filesystem::path> visited;
-  for (;iter != end; iter++) {
+  while (iter != end) {
     const boost::filesystem::path& path = iter->path();
     const boost::filesystem::file_status& status = iter->status();
-    // ignore symlinks to avoid possible recursive linkage
-    if (status.type() == boost::filesystem::symlink_file) {
+    m_cache[path.filename().string()] = path;
+
+    // can't use iter.increment(ec) here:
+    // https://svn.boost.org/trac/boost/ticket/5403
+    try {
+      ++iter;
+    } catch (const boost::filesystem::filesystem_error&) {
+      // something went wrong. let's assume it was because we couldn't recurse,
+      // so let's not do that and increment again.
       iter.no_push();
-    } else {
-      m_cache[path.filename().string()] = path;
+      // if this fails again, let it blow up.
+      ++iter;
     }
   }
 } catch (boost::filesystem::filesystem_error& e) {
-  // TODO: log e
+  // TODO: report error?
 }
 
 bool filesystem::get_path(const std::string& file_name,
