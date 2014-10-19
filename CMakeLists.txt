@@ -15,7 +15,7 @@ find_program(RUBY ruby REQUIRED)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 link_directories(${Boost_LIBRARY_DIRS})
-include_directories(${Boost_INCLUDE_DIRS})
+include_directories(SYSTEM ${Boost_INCLUDE_DIRS})
 
 if(WIN32)
   find_program(WINDRES windres)
