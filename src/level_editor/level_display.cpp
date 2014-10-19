@@ -921,7 +921,7 @@ void level_display::draw_tiles(level* current_level) {
 
   // Draw each layer
   int layer_count = current_level->get_layer_count();
-  for (std::size_t i = 0; i < layer_count; i ++) {
+  for (int i = 0; i < layer_count; i ++) {
     // If it's visible
     if (get_layer_visibility(i)) {
       // With its own set of tiles
