@@ -13,7 +13,7 @@ namespace Graal {
     void load(const boost::filesystem::path& path);
     void save(const boost::filesystem::path& path);
 
-    virtual ~preferences() {}
+    virtual ~preferences();
   protected:
     // Virtual functions for the derived class to parse & write the entries
     virtual void serialize() {}    // write

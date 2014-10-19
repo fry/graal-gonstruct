@@ -20,21 +20,7 @@ namespace Graal {
     protected:
       tile_buf m_tile_buf;
 
-      virtual bool on_expose_event(GdkEventExpose* event) {
-        Glib::RefPtr<Gdk::Window> window = get_window();
-
-        if (!window || !m_surface)
-          return true;
-
-        Cairo::RefPtr<Cairo::Context> cr = window->create_cairo_context();
-        cr->rectangle(event->area.x, event->area.y, event->area.width, event->area.height);
-        cr->clip();
-
-        cr->set_source(m_surface, 0, 0);
-        cr->paint();
-
-        return true;
-      }
+      virtual bool on_expose_event(GdkEventExpose* event);
     };
   }
 }

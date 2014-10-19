@@ -28,6 +28,7 @@ namespace Graal {
         npc_columns() {
           add(iter); add(image); add(x); add(y);
         }
+        virtual ~npc_columns();
 
         Gtk::TreeModelColumn<level::npc_list_type::iterator> iter;
         Gtk::TreeModelColumn<Glib::ustring> image;

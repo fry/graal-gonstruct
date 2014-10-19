@@ -73,6 +73,7 @@ namespace Graal {
       class tab_label: public Gtk::HBox {
       public:
         tab_label(const Glib::ustring& label);
+        virtual ~tab_label();
         typedef Glib::SignalProxy0<void> signal_proxy_close;
 
         signal_proxy_close close_event();

@@ -67,6 +67,8 @@ level_editor::edit_link::edit_link(window& _window)
   show_all_children();
 }
 
+level_editor::edit_link::~edit_link() {}
+
 Graal::link level_editor::edit_link::get_link() {
   link new_link;
   parse<int>(m_edit_x.get_text(), new_link.x);
@@ -181,6 +183,7 @@ void level_editor::link_list::get() {
     (*row)[columns.destination] = iter->destination; // TODO: unicode
     (*row)[columns.new_x] = iter->new_x;
     (*row)[columns.new_y] = iter->new_y;
-  } 
+  }
 }
 
+level_editor::link_list::link_columns::~link_columns() {}

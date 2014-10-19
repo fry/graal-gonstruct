@@ -12,6 +12,7 @@ namespace Graal {
     public:
       // TODO: window is currently required to be initialized on construction
       layers_control(window& win, preferences& prefs);
+      ~layers_control();
     protected:
       void on_layer_changed();
       void on_switch_level_display(level_display& display);

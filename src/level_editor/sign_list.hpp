@@ -38,6 +38,7 @@ namespace Graal {
         sign_columns() {
           add(iter); add(index); add(x); add(y); add(text);
         }
+        virtual ~sign_columns();
 
         Gtk::TreeModelColumn<level::sign_list_type::iterator> iter;
         Gtk::TreeModelColumn<int> index;

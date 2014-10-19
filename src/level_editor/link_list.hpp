@@ -10,6 +10,7 @@ namespace Graal {
     class edit_link: public Gtk::Dialog {
     public:
       edit_link(window& _window);
+      virtual ~edit_link();
 
       void get(const link& _link);
       link get_link();
@@ -46,6 +47,7 @@ namespace Graal {
         link_columns() {
           add(iter); add(destination); add(new_x); add(new_y);
         }
+        virtual ~link_columns();
 
         Gtk::TreeModelColumn<level::link_list_type::iterator> iter;
         Gtk::TreeModelColumn<Glib::ustring> destination;

@@ -3,6 +3,8 @@
 
 using namespace Graal;
 
+level_editor::basic_diff::~basic_diff() {}
+
 level_editor::tile_diff::tile_diff(int x, int y, tile_buf& tiles, int layer)
     : m_layer(layer), m_x(x), m_y(y) {
   // if (tiles.get_width() == 0 || tiles.get_height() == 0)

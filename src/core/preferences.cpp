@@ -4,6 +4,8 @@
 
 using namespace Graal;
 
+preferences::~preferences() {}
+
 void preferences::load(const boost::filesystem::path& path) {
   if (!boost::filesystem::exists(path))
     return;

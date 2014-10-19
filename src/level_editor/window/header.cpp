@@ -161,6 +161,8 @@ level_editor::header::header():
   pack_start(*m_toolbar, Gtk::PACK_SHRINK);
 }
 
+level_editor::header::~header() {}
+
 Gtk::MenuBar& level_editor::header::get_menubar() {
   return *m_menubar;
 }

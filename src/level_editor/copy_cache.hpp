@@ -8,7 +8,7 @@ namespace Graal {
     class level_display;
     class basic_cache {
     public:
-      virtual ~basic_cache() {}
+      virtual ~basic_cache();
       virtual void paste(level_display& target) = 0;
     };
 

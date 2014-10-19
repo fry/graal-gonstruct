@@ -84,6 +84,8 @@ level_editor::window::tab_label::tab_label(const Glib::ustring& label) {
   show_all();
 }
 
+level_editor::window::tab_label::~tab_label() {}
+
 void level_editor::window::tab_label::set_label(const Glib::ustring& label) {
   if (label.empty())
     m_label.set_text("new");

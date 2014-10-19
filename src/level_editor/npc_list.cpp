@@ -110,5 +110,7 @@ void level_editor::npc_list::get() {
     (*row)[columns.image] = iter->image; // TODO: unicode
     (*row)[columns.x] = iter->get_level_x();
     (*row)[columns.y] = iter->get_level_y();
-  } 
+  }
 }
+
+level_editor::npc_list::npc_columns::~npc_columns() {}

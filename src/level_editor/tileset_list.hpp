@@ -11,6 +11,7 @@ namespace Graal {
     class edit_tileset: public Gtk::Dialog {
     public:
       edit_tileset();
+      virtual ~edit_tileset();
 
       void get(const tileset& _tileset);
       void set(tileset& _tileset);
@@ -55,6 +56,7 @@ namespace Graal {
         tileset_columns() {
           add(iter); add(active); add(image); add(prefix); add(main); add(x); add(y);
         }
+        virtual ~tileset_columns();
 
         Gtk::TreeModelColumn<tileset_list_type::iterator> iter;
         Gtk::TreeModelColumn<bool> active;

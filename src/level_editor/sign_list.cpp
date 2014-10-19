@@ -211,3 +211,5 @@ void level_editor::sign_list::on_text_changed() {
 
   set();
 }
+
+level_editor::sign_list::sign_columns::~sign_columns() {}

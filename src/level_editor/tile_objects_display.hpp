@@ -10,6 +10,7 @@ namespace Graal {
     class tile_objects_display: public Gtk::VBox {
     public:
       tile_objects_display(level_editor::preferences& preferences);
+      virtual ~tile_objects_display();
 
       void set();
       void get();

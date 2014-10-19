@@ -3,6 +3,8 @@
 
 using namespace Graal;
 
+level_editor::basic_cache::~basic_cache() {}
+
 level_editor::tiles_cache::tiles_cache(Graal::tile_buf& tile_buf) {
   m_tile_buf.swap(tile_buf);
 }

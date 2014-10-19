@@ -21,6 +21,7 @@ ADD_CUSTOM_COMMAND(
 
 add_executable(gonstruct WIN32
 	GLArea.cpp
+	tiles_display.cpp
 	basic_tiles_display.cpp
 	copy_cache.cpp
 	default_tile_display.cpp

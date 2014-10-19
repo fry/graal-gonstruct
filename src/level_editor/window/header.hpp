@@ -9,6 +9,7 @@ namespace level_editor {
 class header: public Gtk::VBox {
 public:
   header();
+  virtual ~header();
 
   Glib::RefPtr<Gtk::AccelGroup> get_accel_group();
   const Glib::RefPtr<Gtk::AccelGroup> get_accel_group() const;

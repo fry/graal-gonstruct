@@ -68,6 +68,8 @@ level_editor::edit_npc::edit_npc()
   show_all_children();
 }
 
+level_editor::edit_npc::~edit_npc() {}
+
 void level_editor::edit_npc::set(const npc& _npc) {
   m_npc = _npc;
   m_edit_image.set_text(_npc.image);

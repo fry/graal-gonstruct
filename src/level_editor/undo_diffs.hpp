@@ -8,7 +8,7 @@ namespace Graal {
   namespace level_editor {
     class basic_diff {
     public:
-      virtual ~basic_diff() {}
+      virtual ~basic_diff();
       virtual basic_diff* apply(level_map& target) = 0;
     };
 

@@ -82,6 +82,8 @@ level_editor::tile_objects_display::tile_objects_display(level_editor::preferenc
   show_all_children();
 }
 
+level_editor::tile_objects_display::~tile_objects_display() {}
+
 void level_editor::tile_objects_display::set() {
 }
 

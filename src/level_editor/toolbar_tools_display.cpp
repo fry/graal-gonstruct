@@ -31,6 +31,8 @@ level_editor::toolbar_tools_display::toolbar_tools_display(window& win, preferen
   pack_start(m_fade_layers, Gtk::PACK_SHRINK);
 }
 
+level_editor::toolbar_tools_display::~toolbar_tools_display() {}
+
 void level_editor::toolbar_tools_display::on_hide_npcs_toggled() {
   m_preferences.hide_npcs = m_hide_npcs.get_active();
   m_button_new_npc.set_sensitive(!m_preferences.hide_npcs);

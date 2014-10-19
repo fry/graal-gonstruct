@@ -38,6 +38,8 @@ level_editor::edit_tileset::edit_tileset()
   show_all_children();
 }
 
+level_editor::edit_tileset::~edit_tileset() {}
+
 void level_editor::edit_tileset::on_main_toggled() {
   bool enable = !m_check_main.get_active();
   m_edit_x.set_sensitive(enable);
@@ -210,5 +212,7 @@ void level_editor::tileset_list::get() {
     (*row)[columns.main] = iter->main;
     (*row)[columns.x] = iter->x;
     (*row)[columns.y] = iter->y;
-  } 
+  }
 }
+
+level_editor::tileset_list::tileset_columns::~tileset_columns() {}

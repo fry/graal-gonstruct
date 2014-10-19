@@ -35,6 +35,8 @@ level_editor::layers_control::layers_control(window& win, preferences& prefs)
     sigc::mem_fun(this, &layers_control::on_switch_level_display));
 }
 
+level_editor::layers_control::~layers_control() {}
+
 void level_editor::layers_control::on_layer_changed() {
   level_display* display = m_window.get_current_level_display();
   int layer = m_spin_layer.get_value_as_int();
