@@ -20,6 +20,8 @@ class level_map_source {
 public:
   typedef boost::multi_array<std::string, 2> level_names_list_type;
 
+  virtual ~level_map_source();
+
   /* Returns the name of the level at the passed positon, returning an empty
    * string if no level is found */
   std::string get_level_name(int x, int y);

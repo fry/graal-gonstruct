@@ -10,6 +10,8 @@ using namespace Graal;
 using namespace Graal::level_editor;
 using namespace Graal::helper;
 
+level_map_source::~level_map_source() {}
+
 std::string level_map_source::get_level_name(int x, int y) {
   // Return an empty name if the index is out of bounds
   if (x >= get_width() || y >= get_height())
