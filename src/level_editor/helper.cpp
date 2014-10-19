@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <cstring>
 
 using namespace Graal;
 
@@ -27,11 +28,11 @@ std::string helper::strip(const std::string& str, const char* ws) {
 std::size_t helper::parse_base64(const std::string& str) {
   std::size_t num = 0;
   for (std::size_t i = 0; i < str.length(); ++i) {
-    std::size_t pos = BASE64.find(str[i]);
-    if (pos == std::string::npos) {
+    const char* pos = strchr(BASE64, str[i]);
+    if (pos == NULL) {
       throw std::runtime_error("BASE64: invalid format");
     }
-    num += static_cast<int>(pos) << (str.length() - i - 1) * 6;
+    num += static_cast<std::size_t>(pos - BASE64) << (str.length() - i - 1) * 6;
   }
   return num;
 }

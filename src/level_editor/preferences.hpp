@@ -8,7 +8,7 @@
 #include "level.hpp"
 
 namespace Graal {
-  static const std::string TILEOBJECTS_VERSION = "GOBJSET01";
+  static const char TILEOBJECTS_VERSION[] = "GOBJSET01";
   namespace level_editor {
     typedef std::list<tileset> tileset_list_type;
     struct preferences: public Graal::preferences {

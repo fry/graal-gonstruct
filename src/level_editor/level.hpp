@@ -9,7 +9,7 @@
 #include <string>
 
 namespace Graal {
-  static const std::string NW_LEVEL_VERSION = "GLEVNW01";
+  static const char NW_LEVEL_VERSION[] = "GLEVNW01";
   // Preset tiles declarations (define at the end of the file)
 
   class tile {

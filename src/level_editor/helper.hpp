@@ -9,7 +9,7 @@
 
 namespace Graal {
   namespace helper {
-    static const std::string BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    static const char BASE64[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     inline int get_tile_x(int index) {
       return index % 16 + index/512 * 16;

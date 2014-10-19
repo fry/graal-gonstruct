@@ -39,7 +39,7 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
   m_filesystem(_filesystem),
   m_gmap_file_name(gmap_file_name)
 {
-  static const std::string GMAP_VERSION = "GRMAP001";
+  static const char GMAP_VERSION[] = "GRMAP001";
 
   std::ifstream file(gmap_file_name.string().c_str());
 
@@ -50,7 +50,10 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
   std::string version = read_line(file);
 
   if (version.find(GMAP_VERSION) != 0) {
-    throw std::runtime_error("Loading GMAP failed: Version mismatch (" + version + " != " + GMAP_VERSION + ")");
+    std::ostringstream ss;
+    ss << "Loading GMAP failed: Version mismatch ("
+       << version << " != " << GMAP_VERSION << ")";
+    throw std::runtime_error(ss.str());
   }
 
   int level_count = 0;
@@ -207,6 +210,7 @@ void level_map::set_level(level* _level, int x, int y) {
 }
 
 const boost::shared_ptr<level>& level_map::get_level(int x, int y) {
+  // FIXME: this requires a static destructor, gross
   static const boost::shared_ptr<level> no_level;
   // Fail silently
   if (x >= get_width() || y >= get_height())

@@ -32,8 +32,11 @@ namespace {
     std::string version = ::read_line(stream);
     //std::cout << "Version: " << version << std::endl;
     if (version.find(Graal::TILEOBJECTS_VERSION) != 0) {
-      throw std::runtime_error("Couldn't load tile objects, version mismatch (" +
-          Graal::TILEOBJECTS_VERSION + " != " + version + ")");
+      std::ostringstream ss;
+      ss << "Couldn't load tile objects, version mismatch ("
+         << Graal::TILEOBJECTS_VERSION
+         <<" != " + version + ")";
+      throw std::runtime_error(ss.str());
     }
 
     while (!stream.eof()) {
