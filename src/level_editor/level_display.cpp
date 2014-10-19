@@ -537,6 +537,10 @@ void level_display::on_button_released(GdkEventButton* event) {
         const float dsx = static_cast<float>(m_drag_start_x) / m_tile_width;
         const float dsy = static_cast<float>(m_drag_start_y) / m_tile_height;
         // Did the position actually change?
+        // FIXME: this is super wonky. float comparison, and tile_x/y is just
+        // current cursor position while dsx/y is the top left corner of the
+        // dragged npc?
+        // Also, uh, where is the npc actually moved here?
         if (dsx != tile_x || dsy != tile_y) {
           // Add npc move diff
           add_undo_diff(new move_npc_diff(selected_npc, dsx, dsy));
