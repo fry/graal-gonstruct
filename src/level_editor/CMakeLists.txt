@@ -7,7 +7,9 @@ include_directories(
   ${PROJECT_SOURCE_DIR}/src/level_editor
   ${PROJECT_SOURCE_DIR}/src/core
   ${PROJECT_SOURCE_DIR}/src/glew
-  ${PROJECT_SOURCE_DIR}/src)
+  ${PROJECT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_BINARY_DIR}
+  )
 
 ADD_CUSTOM_COMMAND(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/image_data.cpp
