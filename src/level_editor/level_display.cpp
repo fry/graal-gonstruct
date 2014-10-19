@@ -930,13 +930,13 @@ void level_display::draw_tiles(level* current_level) {
       const int height = tiles.get_height();
 
       // Draw layers below the current darker, above transparent
-      glColor3f(1, 1, 1);
+      glColor3f(1.0f, 1.0f, 1.0f);
       if (m_preferences.fade_layers) {
         if (i > m_active_layer) {
           int level_diff = std::abs(m_active_layer - i);
-          glColor4f(1, 1, 1, std::pow(0.5, level_diff));
+          glColor4f(1.0f, 1.0f, 1.0f, std::pow(0.5f, level_diff));
         } else if (i < m_active_layer) {
-          glColor4f(0.5, 0.5, 0.5, 1);
+          glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
         }
       }
 
@@ -1018,7 +1018,7 @@ void level_display::draw_selection() {
     // Draw at selection position
     glPushMatrix();
     glTranslatef(m_select_x, m_select_y, 0);
-    glColor4f(1, 1, 1, 1);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, m_tileset.index);
     // Draw selection from its tile_buf
@@ -1055,7 +1055,7 @@ void level_display::draw_selection() {
     draw_rectangle(
       m_select_x, m_select_y,
       m_select_width, m_select_height,
-      0.7, 1, 1, 0.2,
+      0.7f, 1.0f, 1.0f, 0.2f,
       m_preferences.selection_background);
   }
 }
@@ -1063,7 +1063,7 @@ void level_display::draw_selection() {
 void level_display::draw_misc(level* current_level) {
   // NPCs
   if (!m_preferences.hide_npcs) {
-    glColor3f(1, 1, 1);
+    glColor3f(1.0f, 1.0f, 1.0f);
     Graal::level::npc_list_type::iterator npc_iter, npc_end = current_level->npcs.end();
     for (npc_iter = current_level->npcs.begin(); npc_iter != npc_end; npc_iter ++) {
       const int x = static_cast<int>(npc_iter->get_level_x() * m_tile_width);
@@ -1076,13 +1076,13 @@ void level_display::draw_misc(level* current_level) {
       const texture_info& tex = m_texture_cache.get_texture(npc_image_file);
       glBindTexture(GL_TEXTURE_2D, tex.index);
       glBegin(GL_QUADS);
-        glTexCoord2f(0, 0);
+        glTexCoord2f(0.0f, 0.0f);
         glVertex2f(x, y);
-        glTexCoord2f(tex.width, 0);
+        glTexCoord2f(tex.width, 0.0f);
         glVertex2f(x+width, y);
         glTexCoord2f(tex.width, tex.height);
         glVertex2f(x+width, y+height);
-        glTexCoord2f(0, tex.height);
+        glTexCoord2f(0.0f, tex.height);
         glVertex2f(x, y+height);
       glEnd();
       glBindTexture(GL_TEXTURE_2D, 0);
@@ -1096,7 +1096,7 @@ void level_display::draw_misc(level* current_level) {
       draw_rectangle(
         sign_iter->x * m_tile_width, sign_iter->y * m_tile_height,
         2 * m_tile_width, 1 * m_tile_height, // Signs are by default 2x1 tiles big
-        1, 0, 0, 0.2,
+        1.0f, 0.0f, 0.0f, 0.2f,
         true);
     }
   }
@@ -1108,7 +1108,7 @@ void level_display::draw_misc(level* current_level) {
       draw_rectangle(
         link_iter->x * m_tile_width, link_iter->y * m_tile_height,
         link_iter->width * m_tile_width, link_iter->height * m_tile_height,
-        1, 1, 0.4, 0.2,
+        1.0f, 1.0f, 0.4f, 0.2f,
         true);
     }
   }
