@@ -10,6 +10,8 @@ end
 
 File.open(target, 'w') do |dst|
   dst.puts(<<-END_OF_HEADER)
+#include "image_data.hpp"
+
 namespace Graal {
   namespace level_editor {
     namespace image_data {

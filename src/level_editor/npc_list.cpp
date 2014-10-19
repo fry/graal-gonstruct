@@ -82,12 +82,12 @@ void level_editor::npc_list::on_delete_clicked() {
   Glib::RefPtr<Gtk::TreeView::Selection> selection = m_tree_view.get_selection();
   Gtk::TreeModel::iterator iter = selection->get_selected();
   if (iter) {
-    Gtk::TreeRow row = *iter;
     level_display* display = m_window.get_current_level_display();
-    Graal::level::npc_list_type::iterator npc_iter = row.get_value(columns.iter);
     // TODO: move this into level_display, too
-    /*display->add_undo_diff(new delete_npc_diff(*npc_iter));
-    display->get_current_level()->npcs.erase(npc_iter);*/
+    // Gtk::TreeRow row = *iter;
+    // Graal::level::npc_list_type::iterator npc_iter = row.get_value(columns.iter);
+    // display->add_undo_diff(new delete_npc_diff(*npc_iter));
+    // display->get_current_level()->npcs.erase(npc_iter);
     get();
 
     display->clear_selection();

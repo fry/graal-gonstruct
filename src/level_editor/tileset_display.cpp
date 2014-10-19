@@ -182,7 +182,7 @@ void level_editor::tileset_display::on_button_pressed(GdkEventButton* event) {
   queue_draw();
 }
 
-void level_editor::tileset_display::on_button_motion(GdkEventMotion* event) {
+void level_editor::tileset_display::on_button_motion(GdkEventMotion*) {
   if (!m_surface)
     return;
 
@@ -280,7 +280,7 @@ void level_editor::tileset_display::copy_selection() {
   m_signal_tiles_selected(selection, drag_x, drag_y);
 }
 
-void level_editor::tileset_display::on_mouse_leave(GdkEventCrossing* event) {
+void level_editor::tileset_display::on_mouse_leave(GdkEventCrossing*) {
   /*if (!m_selecting)
     reset_selection();*/
 

@@ -3,7 +3,7 @@
 using namespace Graal;
 
 namespace {
-  const Glib::ustring ui_xml(
+  const char ui_xml[] =
     "<ui>"
     "  <menubar name='MenuBar'>"
     "    <menu action='FileMenu'>"
@@ -61,8 +61,7 @@ namespace {
 #endif
     "    <toolitem action='EditPreferences'/>"
     "  </toolbar>"
-    "</ui>"
-      );
+    "</ui>";
 }
 
 level_editor::header::header():

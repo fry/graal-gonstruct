@@ -93,7 +93,7 @@ const Graal::tile_buf& Graal::level::get_tiles(int layer) const {
 }
 
 int Graal::level::get_layer_count() const {
-  return layers.size();
+  return static_cast<int>(layers.size());
 }
 
 void Graal::level::insert_layer(int index, int fill_tile) {
@@ -134,7 +134,7 @@ Graal::level* Graal::load_nw_level(const boost::filesystem::path& path) {
       Graal::tile_buf& tiles = level->create_tiles(layer, fill_tile);
 
       for (int i = 0; i < width * 2; i +=2) {
-        int tile_index = helper::parse_base64(data.substr(i, 2));
+        int tile_index = static_cast<int>(helper::parse_base64(data.substr(i, 2)));
         int x = start_x + i/2;
 
         tiles.get_tile(x, start_y) = Graal::tile(tile_index);

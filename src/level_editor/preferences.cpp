@@ -56,7 +56,7 @@ namespace {
             break;
           } else {
             for (int x = 0; x < width; x++) {
-              int tile_index = Graal::helper::parse_base64(line.substr(x * 2, 2));
+              int tile_index = static_cast<int>(Graal::helper::parse_base64(line.substr(x * 2, 2)));
               tiles.get_tile(x, y).index = tile_index;
             }
           }
@@ -209,14 +209,14 @@ void preferences::load_tile_objects() try {
     // file won't ruin everything
     try {
       try_load_objects(path, group);
-    } catch (const boost::filesystem::filesystem_error& e) {
-      // TODO: log e or something
-    } catch (const std::runtime_error& e) {
-      // TODO: log e or something
+    } catch (const boost::filesystem::filesystem_error&) {
+      // TODO: log error or something
+    } catch (const std::runtime_error&) {
+      // TODO: log error or something
     }
   }
-} catch (boost::filesystem::filesystem_error& e) {
-  // TODO: log e or something
+} catch (boost::filesystem::filesystem_error&) {
+  // TODO: log error or something
 }
 
 void preferences::save_tile_objects(const std::string& group) {

@@ -75,7 +75,7 @@ void level_editor::edit_npc::set(const npc& _npc) {
   m_edit_y.set_text(boost::lexical_cast<std::string>(_npc.get_level_y()));
 
   GtkTextBuffer* buf = gtk_text_view_get_buffer(GTK_TEXT_VIEW(m_view));
-  gtk_text_buffer_set_text(buf, _npc.script.c_str(), _npc.script.size());
+  gtk_text_buffer_set_text(buf, _npc.script.c_str(), static_cast<gint>(_npc.script.size()));
 }
 
 npc level_editor::edit_npc::get_npc() {

@@ -966,10 +966,10 @@ void level_display::draw_tiles(level* current_level) {
           const int ty = helper::get_tile_y(_tile.index);
 
           // Build texture coordinates
-          float x1 = (float)(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
-          float x2 = (float)((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
-          float y1 = (float)(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
-          float y2 = (float)((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
+          float x1 = static_cast<float>(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
+          float x2 = static_cast<float>((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
+          float y1 = static_cast<float>(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
+          float y2 = static_cast<float>((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
           
           // Fill texcoord array at the current vertex position
           int index = (x * height + y) * 4;

@@ -14,14 +14,16 @@ using namespace Graal::level_editor;
   unsigned int g_frames = 0;
 #endif
 
-unsigned int get_nearest_pot(unsigned int size) {
-  //return std::ceil(std::log(size) / std::log(2));
-  unsigned int val = 1;
-  while (val < size) {
-    val <<= 1;
+namespace {
+  unsigned int get_nearest_pot(unsigned int size) {
+    //return std::ceil(std::log(size) / std::log(2));
+    unsigned int val = 1;
+    while (val < size) {
+      val <<= 1;
+    }
+
+    return val;
   }
-  
-  return val;
 }
 
 texture_info Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo::ImageSurface>& surface, unsigned int id) {
@@ -57,8 +59,8 @@ texture_info Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
     height = get_nearest_pot(height);
   }
 
-  info.width = double(surface->get_width()) / width;
-  info.height = double(surface->get_height()) / height;
+  info.width = static_cast<float>(surface->get_width()) / width;
+  info.height = static_cast<float>(surface->get_height()) / height;
 
   // Specify image dimensions
   glTexImage2D(GL_TEXTURE_2D,
@@ -83,7 +85,7 @@ texture_info Graal::level_editor::load_texture_from_surface(Cairo::RefPtr<Cairo:
 
 namespace {
   // A little wrapper for the GTK C signal callback from set-scroll-adjustments
-  static void ogl_tiles_display_set_adjustments(void* display_gobj, GtkAdjustment* hadj, GtkAdjustment* vadj, ogl_tiles_display* display) {
+  static void ogl_tiles_display_set_adjustments(void* /*display_gobj*/, GtkAdjustment* hadj, GtkAdjustment* vadj, ogl_tiles_display* display) {
     display->set_adjustments(
       Glib::wrap(hadj),
       Glib::wrap(vadj));
@@ -121,14 +123,14 @@ ogl_tiles_display::ogl_tiles_display():
    * connect to it right again because the function you can provide in
    * g_signal_new is only a gobject class offset, which we can't provide.
    */
-  GtkWidget* widget = (GtkWidget*)gobj();
+  GtkWidget* widget = GTK_WIDGET(gobj());
   GtkWidgetClass* klass = GTK_WIDGET_GET_CLASS(widget);
 
   if (!klass->set_scroll_adjustments_signal) {
     guint adjust_signal = g_signal_new(
       "set-scroll-adjustments",
       G_OBJECT_CLASS_TYPE(klass),
-      (GSignalFlags)(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
+      static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
       0,
       NULL, NULL,
       _gtk_VOID__OBJECT_OBJECT,
@@ -158,7 +160,7 @@ ogl_tiles_display::ogl_tiles_display():
   property_can_focus().set_value(true);
 }
 
-bool ogl_tiles_display::on_gl_configure_event(GdkEventConfigure* event) {
+bool ogl_tiles_display::on_gl_configure_event(GdkEventConfigure*) {
   if (!make_current())
     return false;
 
@@ -196,7 +198,7 @@ void ogl_tiles_display::on_gl_realize() {
 
   if (err != GLEW_OK) {
     std::string err_msg = "Failed to initialize glew: ";
-    err_msg += (const char*)glewGetErrorString(err);
+    err_msg += reinterpret_cast<const char*>(glewGetErrorString(err));
     throw std::runtime_error(err_msg);
   }
 
@@ -249,10 +251,10 @@ void ogl_tiles_display::draw_tile(const tile& _tile, int x, int y) {
   // Build texture coordinates
   int dx = x * m_tile_width;
   int dy = y * m_tile_height;
-  float x1 = (float)(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
-  float x2 = (float)((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
-  float y1 = (float)(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
-  float y2 = (float)((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
+  float x1 = static_cast<float>(tx * m_tile_width)/m_tileset.image_width * m_tileset.width;
+  float x2 = static_cast<float>((tx+1)*m_tile_width)/m_tileset.image_width * m_tileset.width;
+  float y1 = static_cast<float>(ty*m_tile_height)/m_tileset.image_height * m_tileset.height;
+  float y2 = static_cast<float>((ty+1)*m_tile_height)/m_tileset.image_height * m_tileset.height;
 
   //glBegin(GL_QUADS);
     // Top left
@@ -278,7 +280,7 @@ void ogl_tiles_display::load_tileset(Cairo::RefPtr<Cairo::ImageSurface>& surface
   invalidate();
 }
 
-bool ogl_tiles_display::on_gl_expose_event(GdkEventExpose* event) {
+bool ogl_tiles_display::on_gl_expose_event(GdkEventExpose*) {
   if (!make_current()) {
     return false;
   }

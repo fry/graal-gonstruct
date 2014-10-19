@@ -113,7 +113,7 @@ void level_commands::on_action_create_link() {
   }
 }
 
-void level_commands::on_switch_level(level_display& disp) {
+void level_commands::on_switch_level(level_display&) {
   m_link_list.get();
   m_npc_list.get();
   m_sign_list.get();

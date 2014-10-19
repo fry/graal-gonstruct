@@ -10,9 +10,9 @@ public:
   virtual ~GLArea() {}
 
   // Signal proxies
-  virtual void on_gl_realize() {};
-  virtual bool on_gl_expose_event(GdkEventExpose* event) { return false; }
-  virtual bool on_gl_configure_event(GdkEventConfigure* event) { return true; }
+  virtual void on_gl_realize() {}
+  virtual bool on_gl_expose_event(GdkEventExpose*) { return false; }
+  virtual bool on_gl_configure_event(GdkEventConfigure*) { return true; }
 
   void create_gl_area(int* attrList);
 

@@ -163,7 +163,7 @@ void level_editor::tile_objects_display::on_object_changed() {
   m_display.set_tile_buf(tiles);
 }
 
-void level_editor::tile_objects_display::on_mouse_pressed(GdkEventButton* event) {
+void level_editor::tile_objects_display::on_mouse_pressed(GdkEventButton*) {
   // copy the buffer since it will be destroyed by the signal handler
   // TODO: might cause problems with multiple connected handlers?
   tile_buf tiles = m_display.get_tile_buf();

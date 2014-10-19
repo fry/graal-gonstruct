@@ -25,11 +25,11 @@ void level_map_source::set_level_name(int x, int y, const std::string& name) {
 }
 
 int level_map_source::get_width() const {
-  return m_level_names.shape()[0];
+  return static_cast<int>(m_level_names.shape()[0]);
 }
 
 int level_map_source::get_height() const {
-  return m_level_names.shape()[1];
+  return static_cast<int>(m_level_names.shape()[1]);
 }
 
 /* GMap level source */
@@ -58,11 +58,11 @@ gmap_level_map_source::gmap_level_map_source(filesystem& _filesystem, const boos
 
     if (type == "WIDTH") {
       int new_width = read<int>(file);
-      int old_height = m_level_names.shape()[1];
+      int old_height = get_height();
       m_level_names.resize(extend[new_width][old_height]);
     } else if (type == "HEIGHT") {
       int new_height = read<int>(file);
-      int old_width = m_level_names.shape()[0];
+      int old_width = get_width();
       m_level_names.resize(extend[old_width][new_height]);
     } else if (type == "LEVELNAMES") {
       // Skip the rest of this line
@@ -352,11 +352,11 @@ void level_map::get_global_npc_position(const level_map::npc_ref& ref, float& x,
 }
 
 int level_map::get_width() const {
-  return m_level_list.shape()[0];
+  return static_cast<int>(m_level_list.shape()[0]);
 }
 
 int level_map::get_height() const {
-  return m_level_list.shape()[1];
+  return static_cast<int>(m_level_list.shape()[1]);
 }
 
 int level_map::get_width_tiles() const {

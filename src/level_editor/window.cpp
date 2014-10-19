@@ -43,7 +43,6 @@ namespace {
         break;
       default:
         throw std::runtime_error("unexpected dialog response");
-        break;
     }
 
     return parent.save_current_page();
@@ -267,7 +266,7 @@ void level_editor::window::display_error(const Glib::ustring& message) {
 }
 
 // change tileset to the level's one when the page changes
-void level_editor::window::on_switch_page(GtkNotebookPage* page, guint page_num) {
+void level_editor::window::on_switch_page(GtkNotebookPage*, guint page_num) {
   level_display* display = get_nth_level_display(page_num);
 
   if (display) {
@@ -347,7 +346,7 @@ bool level_editor::window::close_all_levels() {
   return false;
 }
 
-bool level_editor::window::on_delete_event(GdkEventAny* event) {
+bool level_editor::window::on_delete_event(GdkEventAny*) {
   return close_all_levels();
 }
 
@@ -537,7 +536,7 @@ level_editor::window::signal_switch_level_display_type& level_editor::window::si
   return m_signal_switch_level_display;
 }
 
-void level_editor::window::on_tileset_expose_event(GdkEventExpose* event) {
+void level_editor::window::on_tileset_expose_event(GdkEventExpose*) {
   level_display* display = get_current_level_display();
   if (display)
     display->invalidate();
@@ -553,9 +552,8 @@ bool level_editor::window::save_current_page_as() {
 
 
   if (m_fc_save.run() == Gtk::RESPONSE_OK) {
-    std::string path = m_fc_save.get_filename();
-    level_display* disp = get_current_level_display();
-    disp->save_current_level(path);
+    std::string path_str = m_fc_save.get_filename();
+    disp->save_current_level(path_str);
     m_fc_save.hide();
     return true;
   } else {
