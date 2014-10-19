@@ -13,14 +13,14 @@ namespace Graal {
     std::transform(str.begin(), 
                    str.end(), 
                    str.begin(),
-                   (int(*)(int)) std::toupper);
+                   static_cast<int(*)(int)>(std::toupper));
   }
 
   void str_tolower(std::string &str) {
     std::transform(str.begin(), 
                    str.end(), 
                    str.begin(),
-                   (int(*)(int)) std::tolower);
+                   static_cast<int(*)(int)>(std::tolower));
   }
   // TODO: UGLY
   std::vector<std::string> csv_to_array(const std::string& str) {
@@ -98,7 +98,7 @@ namespace Graal {
       = out.setf(std::ios::hex, std::ios::basefield);
     std::ostream::char_type old_fill = out.fill('0');
     for (std::string::const_iterator i = s.s.begin(); i != s.s.end(); ++i) {
-      unsigned char c = static_cast<unsigned char>(*i);
+      char c = *i;
       if (std::isprint(c))
         out.put(c);
       else

@@ -17,18 +17,17 @@ namespace Graal {
 
       preferences();
 
+      tile_objects_type tile_object_groups;
       std::string graal_dir;
       tileset_list_type tilesets;
+      int default_tile;
       bool selection_border_while_dragging;
       bool selection_background;
       bool sticky_tile_selection;
       bool hide_npcs, hide_signs, hide_links;
       bool fade_layers;
       bool remember_default_tile;
-      int default_tile;
       bool use_graal_cache;
-
-      tile_objects_type tile_object_groups;
 
       tileset add_tileset(const std::string& name, const std::string& prefix);
       tileset add_tileset(const std::string& name, const std::string& prefix, int x, int y, bool main = false);

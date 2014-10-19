@@ -12,7 +12,7 @@ tile_buf& level_editor::default_tile_display::get_tile_buf() {
   return m_tile_buf;
 }
 
-bool level_editor::default_tile_display::on_expose_event(GdkEventExpose* event) {
+bool level_editor::default_tile_display::on_expose_event(GdkEventExpose*) {
   Glib::RefPtr<Gdk::Window> window = get_window();
 
   if (!window)

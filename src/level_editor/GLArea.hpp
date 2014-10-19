@@ -5,9 +5,9 @@
 
 class GLArea: public Gtk::EventBox  {
 public:
-  GLArea() {};
+  GLArea() {}
   GLArea(int* attrList);
-  virtual ~GLArea() {};
+  virtual ~GLArea() {}
 
   // Signal proxies
   virtual void on_gl_realize() {};

@@ -39,8 +39,8 @@ namespace Graal {
     int get_width() const { return width; }
     int get_height() const { return height; }
 
-          tile& get_tile(int x, int y)       { return tiles[x + y * width]; }
-    const tile& get_tile(int x, int y) const { return tiles[x + y * width]; }
+          tile& get_tile(int x, int y)       { return tiles[static_cast<size_t>(x + y * width)]; }
+    const tile& get_tile(int x, int y) const { return tiles[static_cast<size_t>(x + y * width)]; }
 
     void swap(tile_buf& other) {
       tiles.swap(other.tiles);
@@ -49,7 +49,7 @@ namespace Graal {
     }
 
     void resize(int w, int h) {
-      tiles.resize(w*h);
+      tiles.resize(static_cast<size_t>(w * h));
       width = w;
       height = h;
     }
@@ -84,15 +84,15 @@ namespace Graal {
 
   class sign {
   public:
-    int x, y;
     std::string text;
+    int x, y;
   };
 
   class npc {
   public:
-    int id;
     std::string image;
     std::string script;
+    int id;
 
     bool operator==(const Graal::npc& o) const {
       return id == o.id && x == o.x && y == o.y && image == o.image && script == o.script;

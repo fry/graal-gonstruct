@@ -251,7 +251,7 @@ Cairo::RefPtr<Cairo::ImageSurface> level_display::render_level() {
   return dest;
 }
 
-void level_display::on_button_motion(GdkEventMotion* event) {
+void level_display::on_button_motion(GdkEventMotion*) {
   int x, y;
   get_cursor_position(x, y);
 
@@ -364,10 +364,10 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       // set default tile
       if (!has_selection()) {
         /* Round down here instead of to the nearest tile because this is an accurate action */
-        const int tile_x = x / m_tile_width;
-        const int tile_y = y / m_tile_height;
-        if (m_level_map->is_valid_tile(tile_x, tile_y)) {
-          const int tile_index = m_level_map->get_tile(tile_x, tile_y, m_active_layer).index;
+        const int truncated_tile_x = x / m_tile_width;
+        const int truncated_tile_y = y / m_tile_height;
+        if (m_level_map->is_valid_tile(truncated_tile_x, truncated_tile_y)) {
+          const int tile_index = m_level_map->get_tile(truncated_tile_x, truncated_tile_y, m_active_layer).index;
           m_signal_default_tile_changed.emit(tile_index);
         }
       }
@@ -395,21 +395,16 @@ void level_display::on_button_pressed(GdkEventButton* event) {
       end = npcs.end();
 
       if (!npcs.empty()) {
-        // Iterate through NPCs under the mouse
-        for (iter = npcs.begin(); iter != end; iter ++) {
-          // NPC clicked; deselect previous selection
-          if (has_selection()) {
-            save_selection();
-            clear_selection();
-          }
-                 
-          selected_npc = *iter;
-          set_selection(selected_npc);
-
-          m_selecting = true;
-          
-          break;
+        // NPC clicked; deselect previous selection
+        if (has_selection()) {
+          save_selection();
+          clear_selection();
         }
+
+        selected_npc = npcs.front();
+        set_selection(selected_npc);
+
+        m_selecting = true;
       }
 
     }
@@ -855,7 +850,7 @@ void level_display::flood_fill(int tx, int ty, int fill_with_index) {
   invalidate();
 }
 
-void level_display::on_mouse_leave(GdkEventCrossing* event) {
+void level_display::on_mouse_leave(GdkEventCrossing*) {
   m_signal_status_update("");
 }
 
@@ -905,7 +900,7 @@ void level_display::draw_tiles(level* current_level) {
  
   // TODO: handle different tilesets per level
   // Each tile needs 4 vertices and 4 texcoords
-  const std::size_t size = current_level->get_width() * current_level->get_height() * 4;
+  const std::size_t size = static_cast<std::size_t>(current_level->get_width() * current_level->get_height() * 4);
   std::vector<vertex_texcoord> tcoords; tcoords.resize(size);
 
   glEnable(GL_TEXTURE_2D);
@@ -926,7 +921,7 @@ void level_display::draw_tiles(level* current_level) {
 
   // Draw each layer
   int layer_count = current_level->get_layer_count();
-  for (int i = 0; i < layer_count; i ++) {
+  for (std::size_t i = 0; i < layer_count; i ++) {
     // If it's visible
     if (get_layer_visibility(i)) {
       // With its own set of tiles

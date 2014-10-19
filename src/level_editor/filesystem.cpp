@@ -26,7 +26,6 @@ void filesystem::update_cache() try {
   boost::filesystem::recursive_directory_iterator iter(m_preferences.graal_dir), end;
   while (iter != end) {
     const boost::filesystem::path& path = iter->path();
-    const boost::filesystem::file_status& status = iter->status();
     m_cache[path.filename().string()] = path;
 
     // can't use iter.increment(ec) here:
@@ -41,7 +40,7 @@ void filesystem::update_cache() try {
       ++iter;
     }
   }
-} catch (boost::filesystem::filesystem_error& e) {
+} catch (boost::filesystem::filesystem_error&) {
   // TODO: report error?
 }
 

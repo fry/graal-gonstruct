@@ -113,7 +113,7 @@ public:
   unsaved_level_map_type& get_unsaved_levels() { return m_unsaved_levels; }
 
   void set_active_layer(int layer);
-  int get_active_layer() { return m_active_layer; };
+  int get_active_layer() { return m_active_layer; }
 
   virtual tile_buf& get_tile_buf();
   Cairo::RefPtr<Cairo::ImageSurface> render_level();
@@ -149,7 +149,7 @@ protected:
   // selection stuff
   bool m_selecting;
   int m_select_x, m_select_y, m_select_width, m_select_height;
-  
+
   // currently creating a new npc
   bool m_new_npc;
   // drag stuff

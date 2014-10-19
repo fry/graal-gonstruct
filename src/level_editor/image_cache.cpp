@@ -11,16 +11,16 @@ using namespace Graal::level_editor;
 namespace {
   struct read_data {
     const char* data;
-    std::size_t pos;
-    std::size_t len;
+    unsigned int pos;
+    unsigned int len;
   };
 
   cairo_status_t my_read_func(void* closure,
                               unsigned char* data,
                               unsigned int length) {
     read_data& state(*reinterpret_cast<read_data*>(closure));
-    length = std::min(static_cast<std::size_t>(length), state.len - state.pos);
-      
+    length = std::min(length, state.len - state.pos);
+
     const char* current_pos = state.data + state.pos;
     std::copy(current_pos, current_pos + length, data);
     state.pos += length;
@@ -99,7 +99,7 @@ void image_cache::load_internal_images() {
     const char* begin = *(p++);
     const char* end   = *(p++);
 
-    read_data state = { begin, 0, end - begin};
+    read_data state = { begin, 0, static_cast<unsigned int>(end - begin) };
     // do not handle cairo exceptions - if files do not load, something went
     // wrong during the build, so Cairo::logic_error is appropraite
     m_cache[name] = Cairo::ImageSurface::create_from_png(my_read_func, &state);

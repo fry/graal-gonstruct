@@ -13,9 +13,9 @@ namespace level_editor {
  * image_width, image_height: the actual size of the original image in pixel
  */
 struct texture_info {
-  unsigned int index;
   double width;
   double height;
+  unsigned int index;
   
   unsigned int image_width, image_height;
 };
