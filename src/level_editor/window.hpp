@@ -85,12 +85,13 @@ namespace Graal {
         Gtk::Button m_button;
       };
 
+      image_cache m_image_cache;
+
       header m_header;
       file_commands m_file_commands;
       edit_commands m_edit_commands;
       level_commands m_level_commands;
 
-      image_cache m_image_cache;
       tileset_display display_tileset;
       preferences& m_preferences;
 

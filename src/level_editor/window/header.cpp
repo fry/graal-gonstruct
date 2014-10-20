@@ -86,25 +86,25 @@ level_editor::header::header():
 
   action_level(Gtk::Action::create("LevelMenu", "_Level")),
   action_level_create_link(
-    Gtk::Action::create("LevelCreateLink",
-                        Gtk::Stock::GO_FORWARD, "Create link",
-                        "Create a link from the selected tiles.")),
+    Gtk::Action::create_with_icon_name(
+      "LevelCreateLink", "gonstruct_icon_create_link",
+      "Create link", "Create a link from the selected tiles.")),
   action_level_links(
-    Gtk::Action::create("LevelLinks",
-                        Gtk::Stock::FULLSCREEN, "Links",
-                        "Show a list of level links.")),
+    Gtk::Action::create_with_icon_name(
+      "LevelLinks", "gonstruct_icon_links",
+      "Links", "Show a list of level links.")),
   action_level_signs(
-    Gtk::Action::create("LevelSigns",
-                        Gtk::Stock::DND_MULTIPLE, "Signs",
-                        "Show a list of signs.")),
+    Gtk::Action::create_with_icon_name(
+      "LevelSigns", "gonstruct_icon_signs",
+      "Signs", "Show a list of signs.")),
   action_level_npcs(
-    Gtk::Action::create("LevelNPCs",
-                        Gtk::Stock::SELECT_COLOR, "NPCs",
-                        "Show a list of NPCs.")),
+    Gtk::Action::create_with_icon_name(
+      "LevelNPCs", "gonstruct_icon_npcs",
+      "NPCs", "Show a list of NPCs.")),
   action_level_tilesets(
-    Gtk::Action::create("LevelTilesets",
-                        Gtk::Stock::SELECT_COLOR, "Tilesets",
-                        "Show a list of tilesets.")),
+    Gtk::Action::create_with_icon_name(
+      "LevelTilesets", "gonstruct_icon_tilesets",
+      "Tilesets", "Show a list of tilesets.")),
 #ifdef WIN32
   action_level_play(Gtk::Action::create("LevelPlay", Gtk::Stock::EXECUTE)),
 #endif

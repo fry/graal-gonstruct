@@ -106,10 +106,11 @@ level_editor::window::window(preferences& _prefs)
 : fs(_prefs),
   prefs_display(_prefs),
   opening_levels(false),
+  m_image_cache(fs),
   m_file_commands(*this, m_header, _prefs),
   m_edit_commands(*this, m_header),
   m_level_commands(*this, m_header, _prefs),
-  m_image_cache(fs), display_tileset(_prefs, m_image_cache),
+  display_tileset(_prefs, m_image_cache),
   m_preferences(_prefs),
   m_tile_objects(_prefs),
   m_fc_save(*this, "Save level as", Gtk::FILE_CHOOSER_ACTION_SAVE)

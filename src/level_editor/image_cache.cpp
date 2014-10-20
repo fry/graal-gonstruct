@@ -1,5 +1,8 @@
 #include <cstddef>
 #include <algorithm>
+
+#include <gtkmm.h>
+
 #include "image_cache.hpp"
 #include "image_data.hpp"
 #include "filesystem.hpp"
@@ -94,6 +97,7 @@ image_cache::signal_cache_update_type& image_cache::signal_cache_update() {
 
 void image_cache::load_internal_images() {
   const char** p = image_data::images;
+  Glib::RefPtr<Gtk::IconTheme> theme = Gtk::IconTheme::get_default();
   while (*p) {
     const char* name  = *(p++);
     const char* begin = *(p++);
@@ -102,6 +106,36 @@ void image_cache::load_internal_images() {
     read_data state = { begin, 0, static_cast<unsigned int>(end - begin) };
     // do not handle cairo exceptions - if files do not load, something went
     // wrong during the build, so Cairo::logic_error is appropraite
-    m_cache[name] = Cairo::ImageSurface::create_from_png(my_read_func, &state);
+    image_ptr image = m_cache[name] = Cairo::ImageSurface::create_from_png(my_read_func, &state);
+
+    static const char toolbar_prefix[] = "internal/toolbar_";
+    if (std::strncmp(name, toolbar_prefix, sizeof(toolbar_prefix) - 1) == 0) {
+      const guint8* surface_data = image->get_data();
+      guint8* data = static_cast<guint8*>(g_malloc(32 * 32 * 4));
+      int stride = image->get_stride();
+      for (int i = 0; i < 32; ++i) for (int j = 0; j < 32; ++j) {
+        const int data_pos = (i + j * 32) * 4;
+        const int surface_pos = i * 4 + j * stride;
+        // I guess `data` ought to be RGBA,
+        // while the cairo surface is GBRA?
+        data[data_pos + 0] = surface_data[surface_pos + 2];
+        data[data_pos + 1] = surface_data[surface_pos + 1];
+        data[data_pos + 2] = surface_data[surface_pos + 0];
+        data[data_pos + 3] = surface_data[surface_pos + 3];
+      }
+      Glib::RefPtr<Gdk::Pixbuf> pixbuf =
+          Gdk::Pixbuf::create_from_data(
+              data, Gdk::COLORSPACE_RGB, true, 8,
+              32, 32, 32 * 4,
+              sigc::ptr_fun(reinterpret_cast<void (*)(const guint8*)>(g_free)));
+
+      std::ostringstream icon_name;
+      icon_name << "gonstruct_icon_";
+      for (const char* q = name + sizeof(toolbar_prefix) - 1;
+           *q && *q != '.';
+           ++q)
+        icon_name << *q;
+      theme->add_builtin_icon(icon_name.str(), 32, pixbuf);
+    }
   }
 }
