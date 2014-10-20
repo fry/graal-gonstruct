@@ -1,23 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32"
    height="32"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.46"
+   inkscape:version="0.48.5 r10040"
    version="1.0"
-   sodipodi:docname="toolbar-list-npcs.svg"
+   sodipodi:docname="toolbar-npcs.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs4">
+    <linearGradient
+       id="linearGradient17640">
+      <stop
+         id="stop17642"
+         offset="0"
+         style="stop-color:#ff0000;stop-opacity:1;" />
+      <stop
+         id="stop17644"
+         offset="1"
+         style="stop-color:#790000;stop-opacity:1;" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17632">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17634" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17636" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17624">
+      <stop
+         id="stop17626"
+         offset="0"
+         style="stop-color:#ff0000;stop-opacity:1;" />
+      <stop
+         id="stop17628"
+         offset="1"
+         style="stop-color:#790000;stop-opacity:1;" />
+    </linearGradient>
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
        inkscape:vp_x="0 : 526.18109 : 1"
@@ -25,6 +60,592 @@
        inkscape:vp_z="744.09448 : 526.18109 : 1"
        inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
        id="perspective10" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3157-2"
+       id="radialGradient3163"
+       cx="350"
+       cy="519.5"
+       fx="337.62741"
+       fy="501.53317"
+       r="39.5"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       id="linearGradient3157">
+      <stop
+         style="stop-color:#abdbff;stop-opacity:1;"
+         offset="0"
+         id="stop3159" />
+      <stop
+         id="stop3165"
+         offset="0.5"
+         style="stop-color:#0099e5;stop-opacity:1;" />
+      <stop
+         style="stop-color:#00348b;stop-opacity:1;"
+         offset="0.85526317"
+         id="stop3167" />
+      <stop
+         style="stop-color:#000080;stop-opacity:1;"
+         offset="1"
+         id="stop3161" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient3441"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient3221">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop3223" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop3225" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient15605"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15607">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15609" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15611" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient3421"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       id="linearGradient3411">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop3413" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop3415" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient3451"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15618">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15620" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15622" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient15624"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15626">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15628" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15630" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient3453"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       id="linearGradient15633">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop15635" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop15637" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient3471"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15640">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15642" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15644" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient15646"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15648">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15650" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15652" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient3473"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       id="linearGradient15655">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop15657" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop15659" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient3475"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15662">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15664" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15666" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient15668"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient15670">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop15672" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop15674" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient3477"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       id="linearGradient15677">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop15679" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop15681" />
+    </linearGradient>
+    <filter
+       inkscape:collect="always"
+       id="filter16504">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="1.15701"
+         id="feGaussianBlur16506" />
+    </filter>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3157"
+       id="radialGradient17050"
+       gradientUnits="userSpaceOnUse"
+       cx="350"
+       cy="519.5"
+       fx="337.62741"
+       fy="501.53317"
+       r="39.5" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient17052"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient17054"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient17056"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient17058"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient17060"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient17062"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221"
+       id="linearGradient17064"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3411"
+       id="linearGradient17066"
+       gradientUnits="userSpaceOnUse"
+       x1="12.888753"
+       y1="57.544235"
+       x2="12.888769"
+       y2="63.148117" />
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter3989">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.30206597"
+         id="feGaussianBlur3991" />
+    </filter>
+    <linearGradient
+       id="linearGradient3157-2">
+      <stop
+         style="stop-color:#cbffab;stop-opacity:1;"
+         offset="0"
+         id="stop3159-5" />
+      <stop
+         id="stop3165-0"
+         offset="0.5"
+         style="stop-color:#56e500;stop-opacity:1;" />
+      <stop
+         style="stop-color:#348b00;stop-opacity:1;"
+         offset="0.85526317"
+         id="stop3167-4" />
+      <stop
+         style="stop-color:#308000;stop-opacity:1;"
+         offset="1"
+         id="stop3161-5" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221-0"
+       id="linearGradient3441-5"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient3221-0">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop3223-7" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop3225-5" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221-0"
+       id="linearGradient17341"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient17343">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17345" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17347" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3411-8">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop3413-2" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop3415-5" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17354">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17356" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17358" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221-0"
+       id="linearGradient17360"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient17362">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17364" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17366" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17369">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop17371" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop17373" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17376">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17378" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17380" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221-0"
+       id="linearGradient17382"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient17384">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17386" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17388" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17391">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop17393" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop17395" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17398">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17400" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17402" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3221-0"
+       id="linearGradient17404"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
+    <linearGradient
+       id="linearGradient17406">
+      <stop
+         style="stop-color:#ff0000;stop-opacity:1;"
+         offset="0"
+         id="stop17408" />
+      <stop
+         style="stop-color:#790000;stop-opacity:1;"
+         offset="1"
+         id="stop17410" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient17413">
+      <stop
+         style="stop-color:#00ff00;stop-opacity:1;"
+         offset="0"
+         id="stop17415" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="1"
+         id="stop17417" />
+    </linearGradient>
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:collect="always"
+       id="filter10095"
+       x="-0.10470647"
+       width="1.2094129"
+       y="-0.054862849"
+       height="1.1097257">
+      <feGaussianBlur
+         inkscape:collect="always"
+         stdDeviation="0.35720827"
+         id="feGaussianBlur10097" />
+    </filter>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient17640"
+       id="linearGradient18099"
+       gradientUnits="userSpaceOnUse"
+       x1="100.84375"
+       y1="940.25409"
+       x2="107.94409"
+       y2="943.8606" />
   </defs>
   <sodipodi:namedview
      id="base"
@@ -36,16 +657,17 @@
      objecttolerance="10"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="5.6568542"
-     inkscape:cx="6.879311"
-     inkscape:cy="0.99816946"
+     inkscape:zoom="11.313708"
+     inkscape:cx="19.729051"
+     inkscape:cy="13.630166"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="879"
      inkscape:window-height="707"
-     inkscape:window-x="732"
-     inkscape:window-y="145" />
+     inkscape:window-x="349"
+     inkscape:window-y="295"
+     inkscape:window-maximized="0" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -61,16 +683,311 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <text
-       xml:space="preserve"
-       style="font-size:9px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:center;line-height:100%;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
-       x="16.268089"
-       y="9.8104486"
-       id="text2383"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         x="16.268089"
-         y="18.810448"
-         id="tspan2753">npcs</tspan></text>
+    <g
+       transform="matrix(0.47726695,0.09200416,-0.09200416,0.47726695,46.649471,-445.80576)"
+       id="g3896"
+       style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+      <path
+         sodipodi:type="inkscape:offset"
+         inkscape:radius="0.78217769"
+         inkscape:original="M 115.875 915.4375 C 114.93656 918.05596 113.83565 920.85252 111.78125 922.125 C 111.75005 922.124 111.7187 922.125 111.6875 922.125 C 111.14211 922.125 110.59918 922.33832 110.1875 922.75 C 109.75262 923.18488 109.53799 923.76808 109.5625 924.34375 C 108.29002 926.39815 105.49347 927.49905 102.875 928.4375 C 105.38577 930.12616 108.7673 929.38103 110.8125 927.6875 C 109.74779 929.50398 109.15625 931.62124 109.15625 933.90625 C 109.15625 936.16615 109.7382 938.29051 110.78125 940.09375 C 108.73355 938.42162 105.37197 937.72686 102.875 939.40625 C 105.49347 940.34469 108.29002 941.4456 109.5625 943.5 C 109.538 944.07567 109.75262 944.65886 110.1875 945.09375 C 110.62279 945.52904 111.20505 945.74371 111.78125 945.71875 C 113.83565 946.99124 114.93656 949.78779 115.875 952.40625 C 117.56879 949.88788 116.85945 946.4798 115.15625 944.4375 C 116.96876 945.49565 119.06632 946.125 121.34375 946.125 C 123.62118 946.125 125.75 945.49565 127.5625 944.4375 C 125.8593 946.4798 125.14996 949.88788 126.84375 952.40625 C 127.7822 949.78779 128.88311 946.99124 130.9375 945.71875 C 131.51371 945.74375 132.09596 945.52904 132.53125 945.09375 C 132.96613 944.65886 133.18076 944.07567 133.15625 943.5 C 134.42873 941.4456 137.22528 940.34469 139.84375 939.40625 C 137.32537 937.71247 133.91731 938.42181 131.875 940.125 C 132.93316 938.3125 133.5625 936.18368 133.5625 933.90625 C 133.5625 931.62882 132.93316 929.53126 131.875 927.71875 C 133.91731 929.42195 137.32537 930.13128 139.84375 928.4375 C 137.22528 927.49905 134.42873 926.39815 133.15625 924.34375 C 133.18075 923.76808 132.96613 923.18488 132.53125 922.75 C 132.09596 922.31471 131.51371 922.10004 130.9375 922.125 C 128.88311 920.85252 127.7822 918.05596 126.84375 915.4375 C 125.14996 917.95587 125.8593 921.36395 127.5625 923.40625 C 125.75 922.3481 123.62118 921.71875 121.34375 921.71875 C 119.06632 921.71875 116.96876 922.3481 115.15625 923.40625 C 116.85945 921.36395 117.56879 917.95587 115.875 915.4375 z M 113.78125 923.90625 L 114.09375 924.09375 C 114.00245 924.16095 113.90176 924.2116 113.8125 924.28125 C 113.81218 924.15477 113.80345 924.03122 113.78125 923.90625 z M 128.9375 923.90625 C 128.9162 924.03137 128.90545 924.15465 128.90625 924.28125 C 128.81695 924.21165 128.71627 924.16091 128.625 924.09375 L 128.9375 923.90625 z M 111.34375 926.34375 C 111.46703 926.36475 111.59315 926.3742 111.71875 926.375 C 111.64915 926.4643 111.59842 926.56499 111.53125 926.65625 L 111.34375 926.34375 z M 131.375 926.34375 L 131.1875 926.65625 C 131.1203 926.56495 131.06965 926.46426 131 926.375 C 131.12586 926.37557 131.25062 926.36495 131.375 926.34375 z M 111.53125 941.1875 C 111.59845 941.2788 111.6491 941.37949 111.71875 941.46875 C 111.59216 941.46803 111.46886 941.4788 111.34375 941.5 L 111.53125 941.1875 z M 131.1875 941.1875 L 131.375 941.5 C 131.25062 941.4789 131.12586 941.46815 131 941.46875 C 131.0697 941.37945 131.12033 941.27877 131.1875 941.1875 z M 113.8125 943.5625 C 113.9018 943.6321 114.00248 943.68284 114.09375 943.75 L 113.78125 943.9375 C 113.80255 943.81239 113.8133 943.68909 113.8125 943.5625 z M 128.90625 943.5625 C 128.90554 943.68909 128.9163 943.81239 128.9375 943.9375 L 128.625 943.75 C 128.7163 943.6828 128.81699 943.63214 128.90625 943.5625 z "
+         style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;filter:url(#filter16504);font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+         id="path16482"
+         d="m 115.78125,914.65625 a 0.7822559,0.7822559 0 0 0 -0.65625,0.53125 c -0.9132,2.54803 -1.99219,5.07917 -3.65625,6.1875 -0.67277,0.0523 -1.33978,0.30853 -1.84375,0.8125 -0.4952,0.4952 -0.72062,1.15233 -0.78125,1.8125 -1.0954,1.68409 -3.65269,2.76783 -6.21875,3.6875 a 0.7822559,0.7822559 0 0 0 -0.1875,1.40625 c 2.1012,1.41319 4.66555,1.31895 6.78125,0.4375 -0.48426,1.37587 -0.84375,2.82399 -0.84375,4.375 0,1.54471 0.33129,2.99594 0.8125,4.375 -2.11212,-0.86003 -4.66066,-0.93648 -6.75,0.46875 a 0.7822559,0.7822559 0 0 0 0.1875,1.40625 c 2.56605,0.91965 5.12335,2.00341 6.21875,3.6875 0.0606,0.66016 0.28605,1.31729 0.78125,1.8125 0.49508,0.49508 1.15191,0.72082 1.8125,0.78125 1.68409,1.09541 2.76785,3.65271 3.6875,6.21875 a 0.7822559,0.7822559 0 0 0 1.40625,0.1875 c 1.40299,-2.086 1.35338,-4.63621 0.5,-6.75 1.35472,0.48425 2.7763,0.8125 4.3125,0.8125 1.5362,0 2.97997,-0.32832 4.34375,-0.8125 -0.85338,2.11379 -0.90299,4.664 0.5,6.75 a 0.7822559,0.7822559 0 0 0 1.40625,-0.1875 c 0.91966,-2.56605 2.00342,-5.12334 3.6875,-6.21875 0.66063,-0.0604 1.31744,-0.28619 1.8125,-0.78125 0.49519,-0.4952 0.72062,-1.15233 0.78125,-1.8125 1.0954,-1.68409 3.6527,-2.76785 6.21875,-3.6875 a 0.7822559,0.7822559 0 0 0 0.1875,-1.40625 c -2.086,-1.40298 -4.63622,-1.35337 -6.75,-0.5 0.48418,-1.36379 0.8125,-2.80755 0.8125,-4.34375 0,-1.5362 -0.32825,-2.95778 -0.8125,-4.3125 2.11378,0.85337 4.664,0.90298 6.75,-0.5 a 0.7822559,0.7822559 0 0 0 -0.1875,-1.40625 c -2.56606,-0.91967 -5.12335,-2.00341 -6.21875,-3.6875 -0.0606,-0.66016 -0.28604,-1.31729 -0.78125,-1.8125 -0.49507,-0.49507 -1.15191,-0.72082 -1.8125,-0.78125 -1.68408,-1.0954 -2.76784,-3.6527 -3.6875,-6.21875 A 0.7822559,0.7822559 0 0 0 126.1875,915 c -1.40299,2.086 -1.35338,4.63621 -0.5,6.75 -1.36378,-0.48418 -2.80755,-0.8125 -4.34375,-0.8125 -1.5362,0 -2.95778,0.32825 -4.3125,0.8125 0.85338,-2.11379 0.90299,-4.664 -0.5,-6.75 a 0.7822559,0.7822559 0 0 0 -0.75,-0.34375 z" />
+      <g
+         id="g3719"
+         style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+        <path
+           sodipodi:type="inkscape:offset"
+           inkscape:radius="-21.937336"
+           inkscape:original="M 350 458.0625 C 316.09143 458.0625 288.56249 485.59143 288.5625 519.5 C 288.5625 553.40857 316.09143 580.93748 350 580.9375 C 383.90857 580.9375 411.43751 553.40857 411.4375 519.5 C 411.4375 485.59143 383.90857 458.06249 350 458.0625 z "
+           style="font-size:58.0915184px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#radialGradient3163);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           id="path2385"
+           d="m 350,480 c -22.03524,0 -39.50001,17.46477 -39.5,39.5 0,22.03524 17.46474,39.49999 39.5,39.5 22.03524,0 39.50001,-17.46477 39.5,-39.5 0,-22.03524 -17.46477,-39.50001 -39.5,-39.5 z"
+           transform="matrix(0.3090858,0,0,0.3090858,11.819972,771.79212)" />
+        <g
+           id="g3193"
+           transform="matrix(1.0333051,0,0,1.0333051,-0.7805539,-34.295988)"
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+          <path
+             inkscape:connector-curvature="0"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient18099);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             id="path3215"
+             sodipodi:nodetypes="cccc" />
+          <use
+             x="0"
+             y="0"
+             xlink:href="#path3215"
+             id="use3219"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             width="48"
+             height="48"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <path
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="0.86917478"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3421);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             id="path3419"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)" />
+        </g>
+        <g
+           transform="matrix(-1.0333051,0,0,1.0333051,240.78056,-34.295988)"
+           id="g3443"
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccc"
+             id="path3445"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3451);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <use
+             height="48"
+             width="48"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             id="use3447"
+             xlink:href="#path3215"
+             y="0"
+             x="0"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <path
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             id="path3449"
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3453);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             inkscape:radius="0.86917478"
+             sodipodi:type="inkscape:offset" />
+        </g>
+        <g
+           transform="matrix(1.0333051,0,0,-1.0333051,-0.7805539,1899.0204)"
+           id="g3455"
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+          <path
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccc"
+             id="path3457"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3471);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <use
+             height="48"
+             width="48"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             id="use3459"
+             xlink:href="#path3215"
+             y="0"
+             x="0"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <path
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             id="path3461"
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3473);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             inkscape:radius="0.86917478"
+             sodipodi:type="inkscape:offset" />
+        </g>
+        <g
+           id="g3463"
+           transform="matrix(-1.0333051,0,0,-1.0333051,240.78056,1899.0204)"
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold">
+          <path
+             inkscape:connector-curvature="0"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3475);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             id="path3465"
+             sodipodi:nodetypes="cccc" />
+          <use
+             x="0"
+             y="0"
+             xlink:href="#path3215"
+             id="use3467"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             width="48"
+             height="48"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold" />
+          <path
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="0.86917478"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient3477);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             id="path3469"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)" />
+        </g>
+      </g>
+    </g>
+    <g
+       style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+       id="g17010"
+       transform="matrix(0.56685044,-0.10340032,0.10340032,0.56685044,-151.77959,-496.41805)">
+      <path
+         d="m 115.78125,914.65625 a 0.7822559,0.7822559 0 0 0 -0.65625,0.53125 c -0.9132,2.54803 -1.99219,5.07917 -3.65625,6.1875 -0.67277,0.0523 -1.33978,0.30853 -1.84375,0.8125 -0.4952,0.4952 -0.72062,1.15233 -0.78125,1.8125 -1.0954,1.68409 -3.65269,2.76783 -6.21875,3.6875 a 0.7822559,0.7822559 0 0 0 -0.1875,1.40625 c 2.1012,1.41319 4.66555,1.31895 6.78125,0.4375 -0.48426,1.37587 -0.84375,2.82399 -0.84375,4.375 0,1.54471 0.33129,2.99594 0.8125,4.375 -2.11212,-0.86003 -4.66066,-0.93648 -6.75,0.46875 a 0.7822559,0.7822559 0 0 0 0.1875,1.40625 c 2.56605,0.91965 5.12335,2.00341 6.21875,3.6875 0.0606,0.66016 0.28605,1.31729 0.78125,1.8125 0.49508,0.49508 1.15191,0.72082 1.8125,0.78125 1.68409,1.09541 2.76785,3.65271 3.6875,6.21875 a 0.7822559,0.7822559 0 0 0 1.40625,0.1875 c 1.40299,-2.086 1.35338,-4.63621 0.5,-6.75 1.35472,0.48425 2.7763,0.8125 4.3125,0.8125 1.5362,0 2.97997,-0.32832 4.34375,-0.8125 -0.85338,2.11379 -0.90299,4.664 0.5,6.75 a 0.7822559,0.7822559 0 0 0 1.40625,-0.1875 c 0.91966,-2.56605 2.00342,-5.12334 3.6875,-6.21875 0.66063,-0.0604 1.31744,-0.28619 1.8125,-0.78125 0.49519,-0.4952 0.72062,-1.15233 0.78125,-1.8125 1.0954,-1.68409 3.6527,-2.76785 6.21875,-3.6875 a 0.7822559,0.7822559 0 0 0 0.1875,-1.40625 c -2.086,-1.40298 -4.63622,-1.35337 -6.75,-0.5 0.48418,-1.36379 0.8125,-2.80755 0.8125,-4.34375 0,-1.5362 -0.32825,-2.95778 -0.8125,-4.3125 2.11378,0.85337 4.664,0.90298 6.75,-0.5 a 0.7822559,0.7822559 0 0 0 -0.1875,-1.40625 c -2.56606,-0.91967 -5.12335,-2.00341 -6.21875,-3.6875 -0.0606,-0.66016 -0.28604,-1.31729 -0.78125,-1.8125 -0.49507,-0.49507 -1.15191,-0.72082 -1.8125,-0.78125 -1.68408,-1.0954 -2.76784,-3.6527 -3.6875,-6.21875 A 0.7822559,0.7822559 0 0 0 126.1875,915 c -1.40299,2.086 -1.35338,4.63621 -0.5,6.75 -1.36378,-0.48418 -2.80755,-0.8125 -4.34375,-0.8125 -1.5362,0 -2.95778,0.32825 -4.3125,0.8125 0.85338,-2.11379 0.90299,-4.664 -0.5,-6.75 a 0.7822559,0.7822559 0 0 0 -0.75,-0.34375 z"
+         id="path17012"
+         style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;filter:url(#filter16504);font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+         inkscape:original="M 115.875 915.4375 C 114.93656 918.05596 113.83565 920.85252 111.78125 922.125 C 111.75005 922.124 111.7187 922.125 111.6875 922.125 C 111.14211 922.125 110.59918 922.33832 110.1875 922.75 C 109.75262 923.18488 109.53799 923.76808 109.5625 924.34375 C 108.29002 926.39815 105.49347 927.49905 102.875 928.4375 C 105.38577 930.12616 108.7673 929.38103 110.8125 927.6875 C 109.74779 929.50398 109.15625 931.62124 109.15625 933.90625 C 109.15625 936.16615 109.7382 938.29051 110.78125 940.09375 C 108.73355 938.42162 105.37197 937.72686 102.875 939.40625 C 105.49347 940.34469 108.29002 941.4456 109.5625 943.5 C 109.538 944.07567 109.75262 944.65886 110.1875 945.09375 C 110.62279 945.52904 111.20505 945.74371 111.78125 945.71875 C 113.83565 946.99124 114.93656 949.78779 115.875 952.40625 C 117.56879 949.88788 116.85945 946.4798 115.15625 944.4375 C 116.96876 945.49565 119.06632 946.125 121.34375 946.125 C 123.62118 946.125 125.75 945.49565 127.5625 944.4375 C 125.8593 946.4798 125.14996 949.88788 126.84375 952.40625 C 127.7822 949.78779 128.88311 946.99124 130.9375 945.71875 C 131.51371 945.74375 132.09596 945.52904 132.53125 945.09375 C 132.96613 944.65886 133.18076 944.07567 133.15625 943.5 C 134.42873 941.4456 137.22528 940.34469 139.84375 939.40625 C 137.32537 937.71247 133.91731 938.42181 131.875 940.125 C 132.93316 938.3125 133.5625 936.18368 133.5625 933.90625 C 133.5625 931.62882 132.93316 929.53126 131.875 927.71875 C 133.91731 929.42195 137.32537 930.13128 139.84375 928.4375 C 137.22528 927.49905 134.42873 926.39815 133.15625 924.34375 C 133.18075 923.76808 132.96613 923.18488 132.53125 922.75 C 132.09596 922.31471 131.51371 922.10004 130.9375 922.125 C 128.88311 920.85252 127.7822 918.05596 126.84375 915.4375 C 125.14996 917.95587 125.8593 921.36395 127.5625 923.40625 C 125.75 922.3481 123.62118 921.71875 121.34375 921.71875 C 119.06632 921.71875 116.96876 922.3481 115.15625 923.40625 C 116.85945 921.36395 117.56879 917.95587 115.875 915.4375 z M 113.78125 923.90625 L 114.09375 924.09375 C 114.00245 924.16095 113.90176 924.2116 113.8125 924.28125 C 113.81218 924.15477 113.80345 924.03122 113.78125 923.90625 z M 128.9375 923.90625 C 128.9162 924.03137 128.90545 924.15465 128.90625 924.28125 C 128.81695 924.21165 128.71627 924.16091 128.625 924.09375 L 128.9375 923.90625 z M 111.34375 926.34375 C 111.46703 926.36475 111.59315 926.3742 111.71875 926.375 C 111.64915 926.4643 111.59842 926.56499 111.53125 926.65625 L 111.34375 926.34375 z M 131.375 926.34375 L 131.1875 926.65625 C 131.1203 926.56495 131.06965 926.46426 131 926.375 C 131.12586 926.37557 131.25062 926.36495 131.375 926.34375 z M 111.53125 941.1875 C 111.59845 941.2788 111.6491 941.37949 111.71875 941.46875 C 111.59216 941.46803 111.46886 941.4788 111.34375 941.5 L 111.53125 941.1875 z M 131.1875 941.1875 L 131.375 941.5 C 131.25062 941.4789 131.12586 941.46815 131 941.46875 C 131.0697 941.37945 131.12033 941.27877 131.1875 941.1875 z M 113.8125 943.5625 C 113.9018 943.6321 114.00248 943.68284 114.09375 943.75 L 113.78125 943.9375 C 113.80255 943.81239 113.8133 943.68909 113.8125 943.5625 z M 128.90625 943.5625 C 128.90554 943.68909 128.9163 943.81239 128.9375 943.9375 L 128.625 943.75 C 128.7163 943.6828 128.81699 943.63214 128.90625 943.5625 z "
+         inkscape:radius="0.78217769"
+         sodipodi:type="inkscape:offset" />
+      <g
+         style="font-size:17.95526314px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+         id="g17014">
+        <path
+           transform="matrix(0.3090858,0,0,0.3090858,11.819972,771.79212)"
+           d="m 350,480 c -22.03524,0 -39.50001,17.46477 -39.5,39.5 0,22.03524 17.46474,39.49999 39.5,39.5 22.03524,0 39.50001,-17.46477 39.5,-39.5 0,-22.03524 -17.46477,-39.50001 -39.5,-39.5 z"
+           id="path17016"
+           style="font-size:58.0915184px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#radialGradient17050);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           inkscape:original="M 350 458.0625 C 316.09143 458.0625 288.56249 485.59143 288.5625 519.5 C 288.5625 553.40857 316.09143 580.93748 350 580.9375 C 383.90857 580.9375 411.43751 553.40857 411.4375 519.5 C 411.4375 485.59143 383.90857 458.06249 350 458.0625 z "
+           inkscape:radius="-21.937336"
+           sodipodi:type="inkscape:offset" />
+        <g
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           transform="matrix(1.0333051,0,0,1.0333051,-0.7805539,-34.295988)"
+           id="g17018">
+          <path
+             sodipodi:nodetypes="cccc"
+             id="path17020"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17052);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:connector-curvature="0" />
+          <use
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             height="48"
+             width="48"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             id="use17022"
+             xlink:href="#path3215"
+             y="0"
+             x="0" />
+          <path
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             id="path17024"
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17054);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             inkscape:radius="0.86917478"
+             sodipodi:type="inkscape:offset" />
+        </g>
+        <g
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           id="g17026"
+           transform="matrix(-1.0333051,0,0,1.0333051,240.78056,-34.295988)">
+          <path
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17056);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             id="path17028"
+             sodipodi:nodetypes="cccc"
+             inkscape:connector-curvature="0" />
+          <use
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             x="0"
+             y="0"
+             xlink:href="#path3215"
+             id="use17030"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             width="48"
+             height="48" />
+          <path
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="0.86917478"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17058);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             id="path17032"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)" />
+        </g>
+        <g
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           id="g17034"
+           transform="matrix(1.0333051,0,0,-1.0333051,-0.7805539,1899.0204)">
+          <path
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17060);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             id="path17036"
+             sodipodi:nodetypes="cccc"
+             inkscape:connector-curvature="0" />
+          <use
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             x="0"
+             y="0"
+             xlink:href="#path3215"
+             id="use17038"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             width="48"
+             height="48" />
+          <path
+             sodipodi:type="inkscape:offset"
+             inkscape:radius="0.86917478"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17062);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             id="path17040"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)" />
+        </g>
+        <g
+           style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+           transform="matrix(-1.0333051,0,0,-1.0333051,240.78056,1899.0204)"
+           id="g17042">
+          <path
+             sodipodi:nodetypes="cccc"
+             id="path17044"
+             d="m 105.7742,945.32336 1.71965,-3.01289 c -1.76542,-2.18239 -5.69363,-3.38873 -8.493847,-1.50539 2.761177,0.98959 5.736567,2.16481 6.774197,4.51828 z"
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17064);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:connector-curvature="0" />
+          <use
+             style="font-size:17.37653542px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             height="48"
+             width="48"
+             transform="matrix(0,-1,-1,0,1052.3888,1052.3888)"
+             id="use17046"
+             xlink:href="#path3215"
+             y="0"
+             x="0" />
+          <path
+             transform="matrix(0.4796822,0.4796794,-0.4796822,0.4796794,130.3481,909.87258)"
+             d="m 12.6875,57.1875 c -1.6763,0 -3.03125,1.401349 -3.03125,3.0625 0,1.661151 1.3701,3.031249 3.03125,3.03125 1.661151,0 3.03125,-1.370099 3.03125,-3.03125 0,-1.661151 -1.354951,-3.062499 -3.03125,-3.0625 z"
+             id="path17048"
+             style="font-size:25.61508942px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient17066);fill-opacity:1;fill-rule:evenodd;stroke:none;font-family:Bitstream Vera Sans Mono;-inkscape-font-specification:Bitstream Vera Sans Mono Bold"
+             inkscape:original="M 12.6875 58.0625 C 11.492136 58.0625 10.53125 59.054636 10.53125 60.25 C 10.53125 61.445364 11.492136 62.406249 12.6875 62.40625 C 13.882864 62.40625 14.84375 61.445364 14.84375 60.25 C 14.84375 59.054636 13.882864 58.062501 12.6875 58.0625 z "
+             inkscape:radius="0.86917478"
+             sodipodi:type="inkscape:offset" />
+        </g>
+      </g>
+    </g>
+    <g
+       id="g10099"
+       transform="translate(0.44184443,-1.5468483)">
+      <path
+         transform="translate(0.35355336,0.39774753)"
+         sodipodi:type="inkscape:offset"
+         inkscape:radius="0.92773688"
+         inkscape:original="M 22.1875 16.90625 L 22.1875 17.90625 L 24.84375 17.90625 L 24.84375 29.65625 L 22.1875 29.65625 L 22.1875 30.65625 L 28.5 30.65625 L 28.5 29.65625 L 25.84375 29.65625 L 25.84375 17.90625 L 28.5 17.90625 L 28.5 16.90625 L 22.1875 16.90625 z "
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;filter:url(#filter10095);enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         id="path10093"
+         d="M 22.09375,15.96875 A 0.92782965,0.92782965 0 0 0 21.25,16.90625 l 0,1 a 0.92782965,0.92782965 0 0 0 0.9375,0.9375 l 1.71875,0 0,9.875 -1.71875,0 a 0.92782965,0.92782965 0 0 0 -0.9375,0.9375 l 0,1 a 0.92782965,0.92782965 0 0 0 0.9375,0.9375 l 6.3125,0 a 0.92782965,0.92782965 0 0 0 0.9375,-0.9375 l 0,-1 A 0.92782965,0.92782965 0 0 0 28.5,28.71875 l -1.71875,0 0,-9.875 1.71875,0 a 0.92782965,0.92782965 0 0 0 0.9375,-0.9375 l 0,-1 A 0.92782965,0.92782965 0 0 0 28.5,15.96875 l -6.3125,0 a 0.92782965,0.92782965 0 0 0 -0.09375,0 z" />
+      <path
+         d="M 22.09375,15.96875 A 0.92782965,0.92782965 0 0 0 21.25,16.90625 l 0,1 a 0.92782965,0.92782965 0 0 0 0.9375,0.9375 l 1.71875,0 0,9.875 -1.71875,0 a 0.92782965,0.92782965 0 0 0 -0.9375,0.9375 l 0,1 a 0.92782965,0.92782965 0 0 0 0.9375,0.9375 l 6.3125,0 a 0.92782965,0.92782965 0 0 0 0.9375,-0.9375 l 0,-1 A 0.92782965,0.92782965 0 0 0 28.5,28.71875 l -1.71875,0 0,-9.875 1.71875,0 a 0.92782965,0.92782965 0 0 0 0.9375,-0.9375 l 0,-1 A 0.92782965,0.92782965 0 0 0 28.5,15.96875 l -6.3125,0 a 0.92782965,0.92782965 0 0 0 -0.09375,0 z"
+         id="path10045"
+         style="font-size:medium;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-indent:0;text-align:start;text-decoration:none;line-height:normal;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;text-anchor:start;baseline-shift:baseline;color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1px;marker:none;visibility:visible;display:inline;overflow:visible;enable-background:accumulate;font-family:Sans;-inkscape-font-specification:Sans"
+         inkscape:original="M 22.1875 16.90625 L 22.1875 17.90625 L 24.84375 17.90625 L 24.84375 29.65625 L 22.1875 29.65625 L 22.1875 30.65625 L 28.5 30.65625 L 28.5 29.65625 L 25.84375 29.65625 L 25.84375 17.90625 L 28.5 17.90625 L 28.5 16.90625 L 22.1875 16.90625 z "
+         inkscape:radius="0.92773688"
+         sodipodi:type="inkscape:offset" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path9511"
+         d="m 22.185475,17.415923 6.328006,0"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+      <path
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 22.185475,30.143844 6.328006,0"
+         id="path9513"
+         inkscape:connector-curvature="0" />
+      <path
+         inkscape:connector-curvature="0"
+         id="path9515"
+         d="m 25.349478,17.631651 0,12.512194"
+         style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+    </g>
   </g>
 </svg>
